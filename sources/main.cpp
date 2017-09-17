@@ -118,6 +118,9 @@ extern glm::vec3 positions;
 extern glm::vec3 direction;
 
 void Algorithm() {
+
+	double timeb4 = glfwGetTime();
+
 	gravity.y = gravity_y;
 	if (gota == 1) {
 		hose();
@@ -142,8 +145,12 @@ void Algorithm() {
 		predict_p[i].teardrop = false;*/
 	}
 
+	timeb4 = glfwGetTime();
 	BuildHashTable(predict_p, hash_table);
+	std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+	timeb4 = glfwGetTime();
 	SetUpNeighborsLists(predict_p, hash_table);
+	std::cout << "Time on setting neighbours list: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 
 	int iter = 0;
 	while (iter < ITER) {
@@ -401,22 +408,29 @@ int main(void)
 
 		check_gl_error();
 
-		//use the control key to free the mouse
+		/* -- Keyboard Controls -- */
+
+		//Lock/Unlock Mouse (Right Mouse Button)
 		if (glfwGetMouseButton(g_pWindow, GLFW_MOUSE_BUTTON_RIGHT) != GLFW_PRESS)
 			nUseMouse = 0;
 		else
 			nUseMouse = 1;
-
+		
+		//Reset Particles (Mouse wheel?)
 		if (glfwGetMouseButton(g_pWindow, GLFW_MOUSE_BUTTON_MIDDLE) != GLFW_PRESS)
 			resetParticles = 0;
 		else
 			resetParticles = 1;
 
+		//??????? (R)
 		if (glfwGetKey(g_pWindow, GLFW_KEY_R) == GLFW_PRESS)
 			gota = 1;
 		else
 			gota = 0;
+		
+		/* ----------------------- */
 
+		
 		/*if (glfwGetKey(g_pWindow, GLFW_KEY_R) != GLFW_PRESS)
 		render = false;
 		else
@@ -428,7 +442,10 @@ int main(void)
 		}
 		else
 		glDisable(GL_BLEND);*/
-		// Measure speed
+		
+		
+	
+		//FPS measure
 		double currentTime = glfwGetTime();
 		nbFrames++;
 		if (currentTime - lastTime >= 1.0) { // If last prinf() was more than 1sec ago
@@ -437,6 +454,7 @@ int main(void)
 			nbFrames = 0;
 			lastTime += 1.0;
 		}
+		std::cout << "Rendering Loop" << std::endl;
 
 
 		// Clear the screen
@@ -447,11 +465,13 @@ int main(void)
 		glm::mat4 ProjectionMatrix = getProjectionMatrix();
 		glm::mat4 ViewMatrix = getViewMatrix();
 
-		// Use our shader
+		/* -- Shader -- */
+
 		GLuint MatrixID = glGetUniformLocation(standardProgramID, "MVP");
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix;
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
 
+		//Standard error check
 		check_gl_error();
 
 		glUseProgram(standardProgramID);
@@ -459,15 +479,20 @@ int main(void)
 		GLuint ViewMatrixID = glGetUniformLocation(standardProgramID, "V");
 		GLuint ModelMatrixID = glGetUniformLocation(standardProgramID, "M");
 
-
+		//Light
 		glm::vec3 lightPos = glm::vec3(0, 100, 0);
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+
+		/* ------------ */
 
 		// Bind our texture in Texture Unit 0
 		//glActiveTexture(GL_TEXTURE0);
 		//glBindTexture(GL_TEXTURE_2D, Texture);
 		//// Set our "myTextureSampler" sampler to user Texture Unit 0
 		//glUniform1i(TextureID, 0);
+
+
+		/* -- OpenGL Calls -- */
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -480,6 +505,7 @@ int main(void)
 			0,                  // stride
 			(void*)0            // array buffer offset
 		);
+
 		// 2nd attribute buffer : UVs
 		//glEnableVertexAttribArray(1);
 		//glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
@@ -509,22 +535,25 @@ int main(void)
 
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 
+		/* -------------------------------- */
+
+
 		glm::mat4 ModelMatrix = glm::mat4(1.0f); //Usar posição aleatória
 		ModelMatrix[0][0] = h_sphere; //Escala do modelo (x)
 		ModelMatrix[1][1] = h_sphere; //Escala do modelo (y)
 		ModelMatrix[2][2] = h_sphere; //Escala do modelo (z)
-
-									  //simulação
-									  /*double currentTimeBefore = glfwGetTime();
-									  printf("%f tempo antes de entrar no for \n", double(currentTimeBefore));*/
-
+		
+		double timeb4 = glfwGetTime();
 		Algorithm();
+		std::cout << "Time on algorithm: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 
 		//Render
-
 		GLuint particleColor = glGetUniformLocation(standardProgramID, "particleColor");
 		glUniform3f(particleColor, 0.0f, 0.5f, 0.9f);
+		
+		timeb4 = glfwGetTime();
 
+		/* -- Draw particles -- */
 		for (int teste = 0; teste < particles.size(); teste++) {
 			//for
 
@@ -554,6 +583,10 @@ int main(void)
 			//}
 			//endfor
 		}
+		std::cout << "Time particles loop: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+
+
+		/* ------ Room ------- */
 
 		glUseProgram(wallProgramID);
 
@@ -564,12 +597,6 @@ int main(void)
 
 		glm::vec3 wallLightPos = glm::vec3(1.90f, 2.0f, 3.5f);
 		glUniform3f(wallLightID, wallLightPos.x, wallLightPos.y, wallLightPos.z);
-
-		// Bind our texture in Texture Unit 0
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, Texture);
-		//// Set our "myTextureSampler" sampler to user Texture Unit 0
-		//glUniform1i(TextureID, 0);
 
 		// 1rst attribute buffer : vertices
 		glEnableVertexAttribArray(0);
@@ -582,6 +609,7 @@ int main(void)
 			0,                  // stride
 			(void*)0            // array buffer offset
 		);
+
 		// 2nd attribute buffer : UVs
 		//glEnableVertexAttribArray(1);
 		//glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
@@ -608,15 +636,17 @@ int main(void)
 
 		// Index buffer
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wallelementbuffer);
-
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 
+
+		//Prepara modelmatriz que será usada para as paredes da sala
 		ModelMatrix = glm::mat4(1.0f); //Usar posição aleatória
 		ModelMatrix[0][0] = wallscalex * (g_ymax / 2); //Escala do modelo (x)
 		ModelMatrix[1][1] = wallscaley * (g_ymax / 2); //Escala do modelo (y)
 		ModelMatrix[2][2] = wallscalez * (g_ymax / 2); //Escala do modelo (z)
 
-													   //Parede fundo
+		
+		/* -- Draw Back Wall -- */
 
 		ModelMatrix[3][0] = g_xmin; //posição x
 		ModelMatrix[3][1] = g_ymin;//posição y
@@ -642,7 +672,13 @@ int main(void)
 			(void*)0					// element array buffer offset
 		);
 
-		//parede esquerda
+		/* ----------------- */
+
+
+
+
+		/* -- Draw Left Wall -- */
+
 		ModelMatrix[3][0] = g_xmin; //posição x
 		ModelMatrix[3][1] = g_ymin;//posição y
 		ModelMatrix[3][2] = g_zmin;//posição z
@@ -667,7 +703,13 @@ int main(void)
 			(void*)0					// element array buffer offset
 		);
 
-		//parede esquerda
+		
+		/* ----------------- */
+
+
+
+		/* -- Draw Left Wall -- */
+
 		ModelMatrix[3][0] = g_xmin; //posição x
 		ModelMatrix[3][1] = g_ymin;//posição y
 		ModelMatrix[3][2] = g_zmin;//posição z
@@ -692,7 +734,12 @@ int main(void)
 			(void*)0					// element array buffer offset
 		);
 
-		//parede direita
+		/* ----------------- */
+
+
+
+		/* -- Draw Right Wall -- */
+
 		ModelMatrix[3][0] = g_xmax; //posição x
 		ModelMatrix[3][1] = g_ymin;//posição y
 		ModelMatrix[3][2] = g_zmin;//posição z
@@ -716,6 +763,10 @@ int main(void)
 			GL_UNSIGNED_SHORT,			// type
 			(void*)0					// element array buffer offset
 		);
+
+		/* ----------------- */
+
+
 
 
 		glDisableVertexAttribArray(0);

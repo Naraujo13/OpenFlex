@@ -1,0 +1,748 @@
+The system is: Windows - 10.0.15063 - AMD64
+Compiling the C compiler identification source file "CMakeCCompilerId.c" succeeded.
+Compiler:  
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:40:43 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CompilerIdC\CompilerIdC.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "Debug\".
+  Creating directory "Debug\CompilerIdC.tlog\".
+InitializeBuildStatus:
+  Creating "Debug\CompilerIdC.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /nologo /W0 /WX- /diagnostics:classic /Od /Oy- /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue CMakeCCompilerId.c
+  CMakeCCompilerId.c
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdC.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\CompilerIdC.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdC.lib" /MACHINE:X86 /SAFESEH Debug\CMakeCCompilerId.obj
+  CompilerIdC.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CompilerIdC\.\CompilerIdC.exe
+PostBuildEvent:
+  for %%i in (cl.exe) do @echo CMAKE_C_COMPILER=%%~$PATH:i
+  :VCEnd
+  CMAKE_C_COMPILER=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\cl.exe
+FinalizeBuildStatus:
+  Deleting file "Debug\CompilerIdC.tlog\unsuccessfulbuild".
+  Touching "Debug\CompilerIdC.tlog\CompilerIdC.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CompilerIdC\CompilerIdC.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.86
+
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.exe"
+
+Compilation of the C compiler identification source "CMakeCCompilerId.c" produced "CompilerIdC.vcxproj"
+
+The C compiler identification is MSVC, found in "F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/3.9.2/CompilerIdC/CompilerIdC.exe"
+
+Compiling the CXX compiler identification source file "CMakeCXXCompilerId.cpp" succeeded.
+Compiler:  
+Build flags: 
+Id flags:  
+
+The output was:
+0
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:40:47 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CompilerIdCXX\CompilerIdCXX.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "Debug\".
+  Creating directory "Debug\CompilerIdCXX.tlog\".
+InitializeBuildStatus:
+  Creating "Debug\CompilerIdCXX.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /nologo /W0 /WX- /diagnostics:classic /Od /Oy- /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue CMakeCXXCompilerId.cpp
+  CMakeCXXCompilerId.cpp
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:".\CompilerIdCXX.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /PDB:".\CompilerIdCXX.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:".\CompilerIdCXX.lib" /MACHINE:X86 /SAFESEH Debug\CMakeCXXCompilerId.obj
+  CompilerIdCXX.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CompilerIdCXX\.\CompilerIdCXX.exe
+PostBuildEvent:
+  for %%i in (cl.exe) do @echo CMAKE_CXX_COMPILER=%%~$PATH:i
+  :VCEnd
+  CMAKE_CXX_COMPILER=C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\cl.exe
+FinalizeBuildStatus:
+  Deleting file "Debug\CompilerIdCXX.tlog\unsuccessfulbuild".
+  Touching "Debug\CompilerIdCXX.tlog\CompilerIdCXX.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CompilerIdCXX\CompilerIdCXX.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.06
+
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.exe"
+
+Compilation of the CXX compiler identification source "CMakeCXXCompilerId.cpp" produced "CompilerIdCXX.vcxproj"
+
+The CXX compiler identification is MSVC, found in "F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/3.9.2/CompilerIdCXX/CompilerIdCXX.exe"
+
+Determining if the C compiler works passed with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_9074b.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:40:49 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_9074b.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_9074b.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_9074b.dir\Debug\cmTC_9074b.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_9074b.dir\Debug\cmTC_9074b.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_9074b.dir\Debug\\" /Fd"cmTC_9074b.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\testCCompiler.c
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_9074b.dir\Debug\\" /Fd"cmTC_9074b.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\testCCompiler.c
+  testCCompiler.c
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_9074b.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_9074b.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_9074b.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_9074b.dir\Debug\testCCompiler.obj
+  cmTC_9074b.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_9074b.exe
+  cmTC_9074b.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_9074b.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_9074b.dir\Debug\cmTC_9074b.tlog\unsuccessfulbuild".
+  Touching "cmTC_9074b.dir\Debug\cmTC_9074b.tlog\cmTC_9074b.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_9074b.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.25
+
+
+Detecting C compiler ABI info compiled with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_b6505.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:40:52 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_b6505.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_b6505.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_b6505.dir\Debug\cmTC_b6505.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_b6505.dir\Debug\cmTC_b6505.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b6505.dir\Debug\\" /Fd"cmTC_b6505.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompilerABI.c"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b6505.dir\Debug\\" /Fd"cmTC_b6505.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue "C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCCompilerABI.c"
+  CMakeCCompilerABI.c
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_b6505.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_b6505.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_b6505.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_b6505.dir\Debug\CMakeCCompilerABI.obj
+  cmTC_b6505.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_b6505.exe
+  cmTC_b6505.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_b6505.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_b6505.dir\Debug\cmTC_b6505.tlog\unsuccessfulbuild".
+  Touching "cmTC_b6505.dir\Debug\cmTC_b6505.tlog\cmTC_b6505.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_b6505.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.94
+
+
+Determining if the CXX compiler works passed with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_21e85.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:40:54 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_21e85.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_21e85.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_21e85.dir\Debug\cmTC_21e85.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_21e85.dir\Debug\cmTC_21e85.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_21e85.dir\Debug\\" /Fd"cmTC_21e85.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\testCXXCompiler.cxx
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_21e85.dir\Debug\\" /Fd"cmTC_21e85.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\testCXXCompiler.cxx
+  
+  testCXXCompiler.cxx
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_21e85.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_21e85.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_21e85.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_21e85.dir\Debug\testCXXCompiler.obj
+  cmTC_21e85.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_21e85.exe
+  cmTC_21e85.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_21e85.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_21e85.dir\Debug\cmTC_21e85.tlog\unsuccessfulbuild".
+  Touching "cmTC_21e85.dir\Debug\cmTC_21e85.tlog\cmTC_21e85.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_21e85.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.95
+
+
+Detecting CXX compiler ABI info compiled with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_dfb8d.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:40:56 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_dfb8d.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_dfb8d.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_dfb8d.dir\Debug\cmTC_dfb8d.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_dfb8d.dir\Debug\cmTC_dfb8d.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_dfb8d.dir\Debug\\" /Fd"cmTC_dfb8d.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompilerABI.cpp"
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_dfb8d.dir\Debug\\" /Fd"cmTC_dfb8d.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue "C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXCompilerABI.cpp"
+  CMakeCXXCompilerABI.cpp
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_dfb8d.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_dfb8d.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_dfb8d.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_dfb8d.dir\Debug\CMakeCXXCompilerABI.obj
+  cmTC_dfb8d.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_dfb8d.exe
+  cmTC_dfb8d.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_dfb8d.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_dfb8d.dir\Debug\cmTC_dfb8d.tlog\unsuccessfulbuild".
+  Touching "cmTC_dfb8d.dir\Debug\cmTC_dfb8d.tlog\cmTC_dfb8d.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_dfb8d.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.99
+
+
+
+
+Detecting CXX [] compiler features compiled with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_190b6.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:40:59 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_190b6.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_190b6.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_190b6.dir\Debug\cmTC_190b6.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_190b6.dir\Debug\cmTC_190b6.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_190b6.dir\Debug\\" /Fd"cmTC_190b6.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\feature_tests.cxx
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_190b6.dir\Debug\\" /Fd"cmTC_190b6.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\feature_tests.cxx
+  feature_tests.cxx
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_190b6.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_190b6.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_190b6.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_190b6.dir\Debug\feature_tests.obj
+  cmTC_190b6.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_190b6.exe
+  cmTC_190b6.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_190b6.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_190b6.dir\Debug\cmTC_190b6.tlog\unsuccessfulbuild".
+  Touching "cmTC_190b6.dir\Debug\cmTC_190b6.tlog\cmTC_190b6.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_190b6.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.91
+
+
+    Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
+    Feature record: CXX_FEATURE:1cxx_alias_templates
+    Feature record: CXX_FEATURE:1cxx_alignas
+    Feature record: CXX_FEATURE:1cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_attributes
+    Feature record: CXX_FEATURE:1cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:1cxx_binary_literals
+    Feature record: CXX_FEATURE:1cxx_constexpr
+    Feature record: CXX_FEATURE:1cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:1cxx_decltype_auto
+    Feature record: CXX_FEATURE:1cxx_default_function_template_args
+    Feature record: CXX_FEATURE:1cxx_defaulted_functions
+    Feature record: CXX_FEATURE:1cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:1cxx_delegating_constructors
+    Feature record: CXX_FEATURE:1cxx_deleted_functions
+    Feature record: CXX_FEATURE:1cxx_digit_separators
+    Feature record: CXX_FEATURE:1cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:1cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:1cxx_final
+    Feature record: CXX_FEATURE:1cxx_func_identifier
+    Feature record: CXX_FEATURE:1cxx_generalized_initializers
+    Feature record: CXX_FEATURE:1cxx_generic_lambdas
+    Feature record: CXX_FEATURE:1cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:1cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:1cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:1cxx_noexcept
+    Feature record: CXX_FEATURE:1cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:1cxx_range_for
+    Feature record: CXX_FEATURE:1cxx_raw_string_literals
+    Feature record: CXX_FEATURE:1cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:1cxx_return_type_deduction
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:1cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:1cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:1cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:1cxx_unicode_literals
+    Feature record: CXX_FEATURE:1cxx_uniform_initialization
+    Feature record: CXX_FEATURE:1cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:1cxx_user_literals
+    Feature record: CXX_FEATURE:1cxx_variable_templates
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:1cxx_variadic_templates
+
+
+Detecting CXX [] compiler features compiled with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_f92f9.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:41:01 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_f92f9.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_f92f9.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_f92f9.dir\Debug\cmTC_f92f9.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_f92f9.dir\Debug\cmTC_f92f9.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_f92f9.dir\Debug\\" /Fd"cmTC_f92f9.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\feature_tests.cxx
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_f92f9.dir\Debug\\" /Fd"cmTC_f92f9.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\feature_tests.cxx
+  feature_tests.cxx
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_f92f9.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_f92f9.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_f92f9.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_f92f9.dir\Debug\feature_tests.obj
+  cmTC_f92f9.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_f92f9.exe
+  cmTC_f92f9.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_f92f9.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_f92f9.dir\Debug\cmTC_f92f9.tlog\unsuccessfulbuild".
+  Touching "cmTC_f92f9.dir\Debug\cmTC_f92f9.tlog\cmTC_f92f9.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_f92f9.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.86
+
+
+    Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
+    Feature record: CXX_FEATURE:1cxx_alias_templates
+    Feature record: CXX_FEATURE:1cxx_alignas
+    Feature record: CXX_FEATURE:1cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_attributes
+    Feature record: CXX_FEATURE:1cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:1cxx_binary_literals
+    Feature record: CXX_FEATURE:1cxx_constexpr
+    Feature record: CXX_FEATURE:1cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:1cxx_decltype_auto
+    Feature record: CXX_FEATURE:1cxx_default_function_template_args
+    Feature record: CXX_FEATURE:1cxx_defaulted_functions
+    Feature record: CXX_FEATURE:1cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:1cxx_delegating_constructors
+    Feature record: CXX_FEATURE:1cxx_deleted_functions
+    Feature record: CXX_FEATURE:1cxx_digit_separators
+    Feature record: CXX_FEATURE:1cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:1cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:1cxx_final
+    Feature record: CXX_FEATURE:1cxx_func_identifier
+    Feature record: CXX_FEATURE:1cxx_generalized_initializers
+    Feature record: CXX_FEATURE:1cxx_generic_lambdas
+    Feature record: CXX_FEATURE:1cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:1cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:1cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:1cxx_noexcept
+    Feature record: CXX_FEATURE:1cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:1cxx_range_for
+    Feature record: CXX_FEATURE:1cxx_raw_string_literals
+    Feature record: CXX_FEATURE:1cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:1cxx_return_type_deduction
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:1cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:1cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:1cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:1cxx_unicode_literals
+    Feature record: CXX_FEATURE:1cxx_uniform_initialization
+    Feature record: CXX_FEATURE:1cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:1cxx_user_literals
+    Feature record: CXX_FEATURE:1cxx_variable_templates
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:1cxx_variadic_templates
+
+
+Detecting CXX [] compiler features compiled with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_0d677.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:41:04 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_0d677.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_0d677.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_0d677.dir\Debug\cmTC_0d677.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_0d677.dir\Debug\cmTC_0d677.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_0d677.dir\Debug\\" /Fd"cmTC_0d677.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\feature_tests.cxx
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_0d677.dir\Debug\\" /Fd"cmTC_0d677.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\feature_tests.cxx
+  feature_tests.cxx
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_0d677.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_0d677.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_0d677.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_0d677.dir\Debug\feature_tests.obj
+  cmTC_0d677.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_0d677.exe
+  cmTC_0d677.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_0d677.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_0d677.dir\Debug\cmTC_0d677.tlog\unsuccessfulbuild".
+  Touching "cmTC_0d677.dir\Debug\cmTC_0d677.tlog\cmTC_0d677.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_0d677.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.88
+
+
+    Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
+    Feature record: CXX_FEATURE:1cxx_alias_templates
+    Feature record: CXX_FEATURE:1cxx_alignas
+    Feature record: CXX_FEATURE:1cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_attributes
+    Feature record: CXX_FEATURE:1cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:1cxx_binary_literals
+    Feature record: CXX_FEATURE:1cxx_constexpr
+    Feature record: CXX_FEATURE:1cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:1cxx_decltype_auto
+    Feature record: CXX_FEATURE:1cxx_default_function_template_args
+    Feature record: CXX_FEATURE:1cxx_defaulted_functions
+    Feature record: CXX_FEATURE:1cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:1cxx_delegating_constructors
+    Feature record: CXX_FEATURE:1cxx_deleted_functions
+    Feature record: CXX_FEATURE:1cxx_digit_separators
+    Feature record: CXX_FEATURE:1cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:1cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:1cxx_final
+    Feature record: CXX_FEATURE:1cxx_func_identifier
+    Feature record: CXX_FEATURE:1cxx_generalized_initializers
+    Feature record: CXX_FEATURE:1cxx_generic_lambdas
+    Feature record: CXX_FEATURE:1cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:1cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:1cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:1cxx_noexcept
+    Feature record: CXX_FEATURE:1cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:1cxx_range_for
+    Feature record: CXX_FEATURE:1cxx_raw_string_literals
+    Feature record: CXX_FEATURE:1cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:1cxx_return_type_deduction
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:1cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:1cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:1cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:1cxx_unicode_literals
+    Feature record: CXX_FEATURE:1cxx_uniform_initialization
+    Feature record: CXX_FEATURE:1cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:1cxx_user_literals
+    Feature record: CXX_FEATURE:1cxx_variable_templates
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:1cxx_variadic_templates
+
+
+Detecting CXX [] compiler features compiled with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_a7364.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:41:06 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_a7364.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_a7364.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_a7364.dir\Debug\cmTC_a7364.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_a7364.dir\Debug\cmTC_a7364.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_a7364.dir\Debug\\" /Fd"cmTC_a7364.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\feature_tests.cxx
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /GR /Fo"cmTC_a7364.dir\Debug\\" /Fd"cmTC_a7364.dir\Debug\vc141.pdb" /Gd /TP /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\feature_tests.cxx
+  feature_tests.cxx
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_a7364.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_a7364.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_a7364.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_a7364.dir\Debug\feature_tests.obj
+  cmTC_a7364.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_a7364.exe
+  cmTC_a7364.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_a7364.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_a7364.dir\Debug\cmTC_a7364.tlog\unsuccessfulbuild".
+  Touching "cmTC_a7364.dir\Debug\cmTC_a7364.tlog\cmTC_a7364.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_a7364.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.90
+
+
+    Feature record: CXX_FEATURE:1cxx_aggregate_default_initializers
+    Feature record: CXX_FEATURE:1cxx_alias_templates
+    Feature record: CXX_FEATURE:1cxx_alignas
+    Feature record: CXX_FEATURE:1cxx_alignof
+    Feature record: CXX_FEATURE:1cxx_attributes
+    Feature record: CXX_FEATURE:1cxx_attribute_deprecated
+    Feature record: CXX_FEATURE:1cxx_auto_type
+    Feature record: CXX_FEATURE:1cxx_binary_literals
+    Feature record: CXX_FEATURE:1cxx_constexpr
+    Feature record: CXX_FEATURE:1cxx_contextual_conversions
+    Feature record: CXX_FEATURE:1cxx_decltype
+    Feature record: CXX_FEATURE:1cxx_decltype_auto
+    Feature record: CXX_FEATURE:1cxx_default_function_template_args
+    Feature record: CXX_FEATURE:1cxx_defaulted_functions
+    Feature record: CXX_FEATURE:1cxx_defaulted_move_initializers
+    Feature record: CXX_FEATURE:1cxx_delegating_constructors
+    Feature record: CXX_FEATURE:1cxx_deleted_functions
+    Feature record: CXX_FEATURE:1cxx_digit_separators
+    Feature record: CXX_FEATURE:1cxx_enum_forward_declarations
+    Feature record: CXX_FEATURE:1cxx_explicit_conversions
+    Feature record: CXX_FEATURE:1cxx_extended_friend_declarations
+    Feature record: CXX_FEATURE:1cxx_extern_templates
+    Feature record: CXX_FEATURE:1cxx_final
+    Feature record: CXX_FEATURE:1cxx_func_identifier
+    Feature record: CXX_FEATURE:1cxx_generalized_initializers
+    Feature record: CXX_FEATURE:1cxx_generic_lambdas
+    Feature record: CXX_FEATURE:1cxx_inheriting_constructors
+    Feature record: CXX_FEATURE:1cxx_inline_namespaces
+    Feature record: CXX_FEATURE:1cxx_lambdas
+    Feature record: CXX_FEATURE:1cxx_lambda_init_captures
+    Feature record: CXX_FEATURE:1cxx_local_type_template_args
+    Feature record: CXX_FEATURE:1cxx_long_long_type
+    Feature record: CXX_FEATURE:1cxx_noexcept
+    Feature record: CXX_FEATURE:1cxx_nonstatic_member_init
+    Feature record: CXX_FEATURE:1cxx_nullptr
+    Feature record: CXX_FEATURE:1cxx_override
+    Feature record: CXX_FEATURE:1cxx_range_for
+    Feature record: CXX_FEATURE:1cxx_raw_string_literals
+    Feature record: CXX_FEATURE:1cxx_reference_qualified_functions
+    Feature record: CXX_FEATURE:1cxx_return_type_deduction
+    Feature record: CXX_FEATURE:1cxx_right_angle_brackets
+    Feature record: CXX_FEATURE:1cxx_rvalue_references
+    Feature record: CXX_FEATURE:1cxx_sizeof_member
+    Feature record: CXX_FEATURE:1cxx_static_assert
+    Feature record: CXX_FEATURE:1cxx_strong_enums
+    Feature record: CXX_FEATURE:1cxx_template_template_parameters
+    Feature record: CXX_FEATURE:1cxx_thread_local
+    Feature record: CXX_FEATURE:1cxx_trailing_return_types
+    Feature record: CXX_FEATURE:1cxx_unicode_literals
+    Feature record: CXX_FEATURE:1cxx_uniform_initialization
+    Feature record: CXX_FEATURE:1cxx_unrestricted_unions
+    Feature record: CXX_FEATURE:1cxx_user_literals
+    Feature record: CXX_FEATURE:1cxx_variable_templates
+    Feature record: CXX_FEATURE:1cxx_variadic_macros
+    Feature record: CXX_FEATURE:1cxx_variadic_templates
+Determining if the include file sys/types.h exists passed with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_8b9f9.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:41:11 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_8b9f9.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_8b9f9.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_8b9f9.dir\Debug\cmTC_8b9f9.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_8b9f9.dir\Debug\cmTC_8b9f9.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_8b9f9.dir\Debug\\" /Fd"cmTC_8b9f9.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\CheckIncludeFile.c
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_8b9f9.dir\Debug\\" /Fd"cmTC_8b9f9.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\CheckIncludeFile.c
+  CheckIncludeFile.c
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_8b9f9.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_8b9f9.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_8b9f9.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_8b9f9.dir\Debug\CheckIncludeFile.obj
+  cmTC_8b9f9.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_8b9f9.exe
+  cmTC_8b9f9.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_8b9f9.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_8b9f9.dir\Debug\cmTC_8b9f9.tlog\unsuccessfulbuild".
+  Touching "cmTC_8b9f9.dir\Debug\cmTC_8b9f9.tlog\cmTC_8b9f9.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_8b9f9.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.86
+
+
+Determining if the include file stdint.h exists passed with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_68821.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:41:13 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_68821.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_68821.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_68821.dir\Debug\cmTC_68821.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_68821.dir\Debug\cmTC_68821.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_68821.dir\Debug\\" /Fd"cmTC_68821.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\CheckIncludeFile.c
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_68821.dir\Debug\\" /Fd"cmTC_68821.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\CheckIncludeFile.c
+  CheckIncludeFile.c
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_68821.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_68821.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_68821.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_68821.dir\Debug\CheckIncludeFile.obj
+  cmTC_68821.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_68821.exe
+  cmTC_68821.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_68821.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_68821.dir\Debug\cmTC_68821.tlog\unsuccessfulbuild".
+  Touching "cmTC_68821.dir\Debug\cmTC_68821.tlog\cmTC_68821.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_68821.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.85
+
+
+Determining if the include file stddef.h exists passed with the following output:
+Change Dir: F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp
+
+Run Build Command:"C:\Program Files (x86)\Microsoft Visual Studio\2017\Community/MSBuild/15.0/Bin/MSBuild.exe" "cmTC_b710f.vcxproj" "/p:Configuration=Debug" "/p:VisualStudioVersion=15.0"
+Microsoft (R) Build Engine version 15.3.409.57025 for .NET Framework
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 9/17/2017 3:41:15 PM.
+Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_b710f.vcxproj" on node 1 (default targets).
+PrepareForBuild:
+  Creating directory "cmTC_b710f.dir\Debug\".
+  Creating directory "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\".
+  Creating directory "cmTC_b710f.dir\Debug\cmTC_b710f.tlog\".
+InitializeBuildStatus:
+  Creating "cmTC_b710f.dir\Debug\cmTC_b710f.tlog\unsuccessfulbuild" because "AlwaysCreate" was specified.
+ClCompile:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\CL.exe /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b710f.dir\Debug\\" /Fd"cmTC_b710f.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\CheckIncludeFile.c
+  Microsoft (R) C/C++ Optimizing Compiler Version 19.11.25508.2 for x86
+  Copyright (C) Microsoft Corporation.  All rights reserved.
+  
+  cl /c /Zi /W3 /WX- /diagnostics:classic /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D "CMAKE_INTDIR=\"Debug\"" /D _MBCS /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_b710f.dir\Debug\\" /Fd"cmTC_b710f.dir\Debug\vc141.pdb" /Gd /TC /analyze- /errorReport:queue F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\CheckIncludeFile.c
+  CheckIncludeFile.c
+  
+Link:
+  C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\bin\HostX86\x86\link.exe /ERRORREPORT:QUEUE /OUT:"F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_b710f.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_b710f.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_b710f.lib" /MACHINE:X86 /SAFESEH  /machine:X86 cmTC_b710f.dir\Debug\CheckIncludeFile.obj
+  cmTC_b710f.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\Debug\cmTC_b710f.exe
+  cmTC_b710f.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/CMakeTmp/Debug/cmTC_b710f.pdb (Full PDB)
+FinalizeBuildStatus:
+  Deleting file "cmTC_b710f.dir\Debug\cmTC_b710f.tlog\unsuccessfulbuild".
+  Touching "cmTC_b710f.dir\Debug\cmTC_b710f.tlog\cmTC_b710f.lastbuildstate".
+Done Building Project "F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\CMakeTmp\cmTC_b710f.vcxproj" (default targets).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:01.86
+
+
