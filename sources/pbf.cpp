@@ -469,9 +469,16 @@ void hose()
 
 //SPH Smothing Kernel
 float wPoly6(glm::vec3 &r, float &h) {
+
+	//Dot product of distance btwn particles
 	float dot_rr = glm::dot(r, r);
+	
+	//Smooth ratio^2
 	float h2 = h*h;
+	
+	//Smooth ratio^4
 	float h4 = h2*h2;
+
 	float h2_dot_rr = h2 - dot_rr;
 
 	if (length(r) <= h)
@@ -492,6 +499,7 @@ glm::vec3 wSpiky(glm::vec3 &r, float &h) {
 	return r * -coeff;
 }
 
+//Estimate rho for particle i 
 void DensityEstimator(std::vector<Particle> &predict_p, int &i) {
 
 	float rhof = 0.0f;
@@ -499,46 +507,73 @@ void DensityEstimator(std::vector<Particle> &predict_p, int &i) {
 
 	int neighborsize = predict_p[i].allneighbors.size();
 
+	//For each neighbour that is not a wall
 	#pragma omp parallel for
 	for (int j = 0; j < neighborsize; j++) {
-		glm::vec3 r = predict_p[i].position - predict_p[predict_p[i].allneighbors[j]].position;	//Gets position Delta
-		rhof += wPoly6(r, g_h); //Accumulate up smoothing kernel(delta, radius) 
+		//Gets distance to neighbour
+		glm::vec3 r = predict_p[i].position - predict_p[predict_p[i].allneighbors[j]].position;	
+		//Accumulate smoothing kernel(delta, radius) 
+		rhof += wPoly6(r, g_h);
 	}
 
 	float rhos = 0.0f;
 
 	neighborsize = predict_p[i].wneighbors.size();
+	
+	//For each neighbour that is a wall
 	for (int j = 0; j < neighborsize; j++) {
+		//Gets distance to neighbour
 		glm::vec3 r = predict_p[i].position - predict_p[predict_p[i].wneighbors[j]].position;
-		rhos += wPoly6(r, g_h);
+		//Accumulate smoothing kernel(delta, radius) 
+		rhos += wPoly6(r, g_h);	
 	}
-
+	
+	//Set rho for analyzed particle
 	predict_p[i].rho = rhof + (solid * rhos);
 }
 
+//Nabla??
 float NablaCSquaredSumFunction(Particle &p, std::vector<Particle> &predict_p) {
 	glm::vec3 r;
 	std::vector<glm::vec3> NablaC;
 	float res = 0.0f;
 	int neighborsize = p.neighbors.size();
 
+	//If particle has neighbours
 	if (neighborsize > 0) {
-#pragma omp parallel for
+
+		//For each neighbour (all neighbours)
+		#pragma omp parallel for
 		for (int j = 0; j < neighborsize; j++) {													//for k != i
+
+			//Gets distance to neighbour
 			r = p.position - predict_p[p.neighbors[j]].position;
+
+			//Applies kernel and divides by rest?
 			glm::vec3 nablac = -wSpiky(r, g_h) / REST;
+			
 			NablaC.push_back(nablac);
 		}
 
 		NablaC.push_back(glm::vec3(0.0f));																	//for k = i
 		int last = NablaC.size() - 1;
-#pragma omp parallel for
+		
+		//For each neighbour
+		#pragma omp parallel for
 		for (int j = 0; j < neighborsize; j++) {
+
+			//Gets distance to neighbour
 			glm::vec3 r = p.position - predict_p[p.neighbors[j]].position;
+
+			//Sums distance in the last position of Nabla vector
 			NablaC[last] = NablaC[last] + wSpiky(r, g_h);
 		}
+		
+		//Divides last position for REST
 		NablaC[last] = NablaC[last] / REST;
-#pragma omp parallel for
+		
+		//For each element in Nabla vector
+		#pragma omp parallel for
 		for (int k = 0; k < NablaC.size(); k++) {
 			float norm_nablac = length(NablaC[k]);
 			res += norm_nablac * norm_nablac;
@@ -623,27 +658,43 @@ glm::vec3 surfaceTension(Particle &p, std::vector< Particle > &p_list) {
 }
 
 void CalculateDp(std::vector<Particle> &predict_p) {
+
 	float dqMag = g_dq * g_h;
 	float kpoly = 315.0f / (64.0f * PI * pow(g_h, 9));
 	float wQH = kpoly * pow((g_h * g_h - dqMag * dqMag), 3);
+
 	unsigned int num_particles = predict_p.size();
+
+	//For each particle
 	#pragma omp parallel for
 	for (int i = 0; i < num_particles; i++) {
+
+		//If particle isnt wall or colliding with wall
 		if (!predict_p[i].wall && !predict_p[i].hybrid) {
+
 			int neighborsize = predict_p[i].neighbors.size();
+
 			glm::vec3 res = glm::vec3(0.0f);
 			glm::vec3 r;
 
-
+			//For each neighbour of that particle
 			for (int j = 0; j < neighborsize; j++) {
+
+				//Gets distance of particle to neighbour
 				r = predict_p[i].position - predict_p[predict_p[i].neighbors[j]].position;
+
 				/*float corr = wPoly6(r, g_h) / wQH;
 				corr *= corr * corr * corr;
 				float scorr = -g_k * corr;*/
+
+				//Sums particle and neighbour lambda
 				float lambdaSum = predict_p[i].lambda + predict_p[predict_p[i].neighbors[j]].lambda;
+
+				//Applies kernel an accumulates multiplied with lambda sum
 				res += (lambdaSum /*+ scorr*/)* wSpiky(r, g_h);
 			}
 
+			
 			predict_p[i].delta_p = res / REST;
 		}
 	}
@@ -707,43 +758,62 @@ glm::vec3 XSPHViscosity(Particle &p, std::vector< Particle > &p_list)
 	return visc * viscosityC;
 }
 
+//Collision Detection and Response
 void CollisionDetectionResponse(std::vector< Particle > &p_list)
 {
 	unsigned int num_particles = p_list.size();
 
 	/*glm::vec2 w_min(wall_min_x, wall_min_y);
 	glm::vec2 w_max(wall_max_x, wall_max_y);*/
+
+	//For each particle
 	#pragma omp parallel for
 	for (int i = 0; i < num_particles; i++) {
+
+		//If it's is colliding with min Z boundary
 		if (predict_p[i].position.z < g_zmin + boundary) {
 			predict_p[i].position.z = g_zmin + boundary;
 
 			/*glm::vec3 normal = glm::vec3(0,0,1);
 			predict_p[i].velocity.z = glm::reflect(predict_p[i].velocity, normal).z * DT;*/
 			/*predict_p[i].position = particles[i].position + predict_p[i].velocity * BOUNCE;*/
+
 		}
+
+		//If it's is colliding with max Z boundary
 		if (predict_p[i].position.z > g_zmax - boundary) {
 			predict_p[i].position.z = g_zmax - boundary;
+
 			/*glm::vec3 normal = glm::vec3(0,0,-1);
 			predict_p[i].velocity.z = glm::reflect(predict_p[i].velocity, normal).z * DT;*/
 			/*predict_p[i].position = particles[i].position + predict_p[i].velocity * BOUNCE;*/
+
 		}
+		
+		//If it's is colliding with min Y boundary
 		if (predict_p[i].position.y < g_ymin + boundary) {
 			predict_p[i].position.y = g_ymin + boundary;
+
 			/*glm::vec3 normal = glm::vec3(0,1,0);
 			predict_p[i].velocity.y = glm::reflect(predict_p[i].velocity, normal).y * DT;*/
 			/*predict_p[i].position = particles[i].position + predict_p[i].velocity * BOUNCE;*/
+
 		}
 
+		//If it's is colliding with min X boundary
 		if (predict_p[i].position.x < g_xmin + boundary) {
 			predict_p[i].position.x = g_xmin + boundary;
+
 			/*glm::vec3 normal = glm::vec3(1,0,0);
 			predict_p[i].velocity.x = glm::reflect(predict_p[i].velocity, normal).x * DT;*/
 			/*predict_p[i].position = particles[i].position + predict_p[i].velocity * BOUNCE;*/
 
 		}
+
+		//If it's is colliding with max X boundary
 		if (predict_p[i].position.x > g_xmax - boundary) {
 			predict_p[i].position.x = g_xmax - boundary;
+
 			/*glm::vec3 normal = glm::vec3(-1,0,0);
 			predict_p[i].velocity.x = glm::reflect(predict_p[i].velocity, normal).x * DT;*/
 			/*predict_p[i].position = particles[i].position + predict_p[i].velocity * BOUNCE;*/
@@ -752,6 +822,7 @@ void CollisionDetectionResponse(std::vector< Particle > &p_list)
 	}
 }
 
+//Qual função está sendo usada? Pq n usar Extended Spatial Hashing?
 int ComputeHash(int &grid_x, int &grid_y, int &grid_z)
 {
 	int grid = (grid_x + grid_y * GRID_RESOLUTION) + grid_z * (GRID_RESOLUTION * GRID_RESOLUTION);
@@ -799,19 +870,30 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 		int y_idx;
 		int z_idx;
 
-		int grid_x_min;
-		int grid_y_min;
+		//Min-Max index in X axis
 		int grid_x_max;
+		int grid_x_min;
+
+		//Min-Max index in Y axis
 		int grid_y_max;
+		int grid_y_min;
+
+		//Min-Max index in Z axis
 		int grid_z_max;
 		int grid_z_min;
 
+		//Hash function result
 		int hash;
+
+
 		#pragma omp parallel for nowait
+		//For all particles
 		for (int i = 0; i < num_particles; i++) {
 
+			//Clear particles neighbours
 			p_list[i].neighbors.clear();
 
+			//Calculates min-max grid index based on current particle position
 			grid_x_min = floor((p_list[i].position[0] - g_h) / cell_size);
 			grid_y_min = floor((p_list[i].position[1] - g_h) / cell_size);
 			grid_z_min = floor((p_list[i].position[2] - g_h) / cell_size);
@@ -819,28 +901,56 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 			grid_x_max = floor((p_list[i].position[0] + g_h) / cell_size);
 			grid_y_max = floor((p_list[i].position[1] + g_h) / cell_size);
 			grid_z_max = floor((p_list[i].position[2] + g_h) / cell_size);
+
+			//Iterate from min Z index to max Z index
 			for (z_idx = grid_z_min; z_idx <= grid_z_max; z_idx++) {
+				//Iterate from min Y index to max Y index
 				for (y_idx = grid_y_min; y_idx <= grid_y_max; y_idx++) {
+					//Iterate from min X index to max X index
 					for (x_idx = grid_x_min; x_idx <= grid_x_max; x_idx++) {
+
+							//Get Hash result for current X,Y,Z index
 							hash = ComputeHash(x_idx, y_idx, z_idx);
+						
+							//Get Pair with range (starting, end) of values with this hash index
 							auto its = hash_table.equal_range(hash);
 
+							//Iterate from starting value to end
 							for (auto it = its.first; it != its.second; ++it) {
+
+								//Avoid comparing with itself
 								if (it->second != i) {
+
+									//If current particles are closer than g_h factor  
 									if (length(p_list[i].position - p_list[it->second].position) <= g_h) {
+
+										//If current particle and current neighbour are wall
 										if (p_list[i].wall && p_list[it->second].wall)
-											p_list[i].wneighbors.push_back(it->second);
+											p_list[i].wneighbors.push_back(it->second);	//Push neigbhour to wall vector
+
+										//If current particle not wall, but neighbour is
 										if (!p_list[i].wall && p_list[it->second].wall) {
-											p_list[i].wneighbors.push_back(it->second);
+											p_list[i].wneighbors.push_back(it->second);	//Push neighbour to wall vector
+
+											//If particle is closer to wall than wall_h factor
 											if (glm::length(p_list[i].position - p_list[it->second].position) < wall_h)
-												p_list[i].hybrid = true;
+												p_list[i].hybrid = true;	//Set hybrid constant to true
+
 										}
+
+										//If current particle is wall, and neighbour is hybrid
 										if (p_list[i].wall && p_list[it->second].hybrid)
-											p_list[i].wneighbors.push_back(it->second);
-										if (!p_list[i].wall && !p_list[it->second].wall)
-											p_list[i].allneighbors.push_back(it->second);
+											p_list[i].wneighbors.push_back(it->second);	//Push neighbour to wall vector
+
+										//If both particles are not wall
+										if (!p_list[i].wall && !p_list[it->second].wall)	
+											p_list[i].allneighbors.push_back(it->second);	//Push to all vector
+
+										//Push to neighbors vector
 										p_list[i].neighbors.push_back(it->second);
+
 									}
+
 								}
 							}
 							/*if (length(p_list[i].position - p_list[it->second].position) <= g_h) {

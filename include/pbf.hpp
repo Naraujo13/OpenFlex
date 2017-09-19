@@ -41,22 +41,22 @@ typedef std::unordered_multimap< int, int > Hash;
 class Particle
 {
 public:
-	glm::vec3 position;		// Posição Inicial
+	glm::vec3 position;		  // Posição Inicial
 	glm::vec3 pred_position;  // Posição Prevista durante o passo
 	glm::vec3 velocity;
 	glm::vec3 delta_p;
 	float mass;
 	float lambda;
-	float rho;
-	float C;
-	float hash;
+	float rho;		//Raw density?
+	float C;		//Density constraint?
+	float hash;		//Hashing value to find neighbours
 	bool teardrop;
-	bool wall;
+	bool wall;		//Is a wall?
 	bool pencil;
-	bool hybrid;
-	std::vector<unsigned int> neighbors;
-	std::vector<unsigned int> wneighbors;
-	std::vector<unsigned int> allneighbors;
+	bool hybrid;	//Near a wall?
+	std::vector<unsigned int> neighbors;	//All neighbours particles
+	std::vector<unsigned int> wneighbors;	//Neigbours particles that are wall
+	std::vector<unsigned int> allneighbors;	//Neighbour particles that are not wall
 	float varx;
 	float vary;
 	float phase;

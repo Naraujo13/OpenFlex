@@ -14,13 +14,15 @@ std::vector<Particle> particlesList;
 //????
 std::vector< Particle > predictionList;
 
-//Boundaries
+//Cell boundaries
 #define g_xmax 2
 #define g_xmin 0
 #define g_ymax 2
 #define g_ymin 0
 #define g_zmax 2
 #define g_zmin 0
+
+//Wall boundary
 #define boundary 0.03f
 
 /* -- Particle Functions -- */
@@ -118,9 +120,125 @@ void InitializeParticleList()
 	predictionList = particlesList;
 }
 
-/* -- SPH Kernel Functions -- */
+/* -- Updates neighbours -- */
 
-//SPH Kernel Function - Smoothing?
+void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
+{
+#pragma omp parallel
+	{
+		int num_particles = p_list.size();
+
+		float cell_size = (g_xmax - g_xmin) / GRID_RESOLUTION;
+
+		int x_idx;
+		int y_idx;
+		int z_idx;
+
+		//Min-Max index in X axis
+		int grid_x_max;
+		int grid_x_min;
+
+		//Min-Max index in Y axis
+		int grid_y_max;
+		int grid_y_min;
+
+		//Min-Max index in Z axis
+		int grid_z_max;
+		int grid_z_min;
+
+		//Hash function result
+		int hash;
+
+
+		#pragma omp parallel for nowait
+		//For all particles
+		for (int i = 0; i < num_particles; i++) {
+
+			//Clear particles neighbours
+			p_list[i].neighbors.clear();
+
+			//Calculates min-max grid index based on current particle position
+			grid_x_min = floor((p_list[i].position[0] - g_h) / cell_size);
+			grid_y_min = floor((p_list[i].position[1] - g_h) / cell_size);
+			grid_z_min = floor((p_list[i].position[2] - g_h) / cell_size);
+
+			grid_x_max = floor((p_list[i].position[0] + g_h) / cell_size);
+			grid_y_max = floor((p_list[i].position[1] + g_h) / cell_size);
+			grid_z_max = floor((p_list[i].position[2] + g_h) / cell_size);
+
+			//Iterate from min Z index to max Z index
+			for (z_idx = grid_z_min; z_idx <= grid_z_max; z_idx++) {
+				//Iterate from min Y index to max Y index
+				for (y_idx = grid_y_min; y_idx <= grid_y_max; y_idx++) {
+					//Iterate from min X index to max X index
+					for (x_idx = grid_x_min; x_idx <= grid_x_max; x_idx++) {
+
+						//Get Hash result for current X,Y,Z index
+						hash = ComputeHash(x_idx, y_idx, z_idx);
+
+						//Get Pair with range (starting, end) of values with this hash index
+						auto its = hash_table.equal_range(hash);
+
+						//Iterate from starting value to end
+						for (auto it = its.first; it != its.second; ++it) {
+
+							//Avoid comparing with itself
+							if (it->second != i) {
+
+								//If current particles are closer than g_h factor  
+								if (length(p_list[i].position - p_list[it->second].position) <= g_h) {
+
+									//If current particle and current neighbour are wall
+									if (p_list[i].wall && p_list[it->second].wall)
+										p_list[i].wneighbors.push_back(it->second);	//Push neigbhour to wall vector
+
+																					//If current particle not wall, but neighbour is
+									if (!p_list[i].wall && p_list[it->second].wall) {
+										p_list[i].wneighbors.push_back(it->second);	//Push neighbour to wall vector
+
+																					//If particle is closer to wall than wall_h factor
+										if (glm::length(p_list[i].position - p_list[it->second].position) < wall_h)
+											p_list[i].hybrid = true;	//Set hybrid constant to true
+
+									}
+
+									//If current particle is wall, and neighbour is hybrid
+									if (p_list[i].wall && p_list[it->second].hybrid)
+										p_list[i].wneighbors.push_back(it->second);	//Push neighbour to wall vector
+
+																					//If both particles are not wall
+									if (!p_list[i].wall && !p_list[it->second].wall)
+										p_list[i].allneighbors.push_back(it->second);	//Push to all vector
+
+																						//Push to neighbors vector
+									p_list[i].neighbors.push_back(it->second);
+
+								}
+
+							}
+						}
+						/*if (length(p_list[i].position - p_list[it->second].position) <= g_h) {
+						if ((p_list[i].phase > 0.0f) && (p_list[it->second].phase > 0.0f))
+						p_list[i].wneighbors.push_back(it->second);
+						if ((p_list[i].phase < 1.0f) && (p_list[it->second].phase > 0.0f)){
+						p_list[i].phase = p_list[it->second].phase / 2;
+						p_list[i].wneighbors.push_back(it->second);
+						}
+						if ((p_list[i].phase < 1.0f) && (p_list[it->second].phase < 1.0f))
+						p_list[i].allneighbors.push_back(it->second);
+						p_list[i].neighbors.push_back(it->second);
+						}*/
+					}
+				}
+			}
+		}
+	}
+}
+
+
+/* -- PBD Kernel Functions -- */
+
+//Kernel for Density Estimation
 float wPoly6(glm::vec3 &r, float &h) {
 	float dot_rr = glm::dot(r, r);
 	float h2 = h*h;
@@ -133,7 +251,7 @@ float wPoly6(glm::vec3 &r, float &h) {
 		return 0.0f;
 }
 
-//SPH Kernel Function
+//Kernel for Gradient Calculator
 glm::vec3 wSpiky(glm::vec3 &r, float &h) {
 	float spiky = 45.0f / (PI * pow(h, 6));
 	float rlen = glm::length(r);

@@ -135,6 +135,7 @@ void Algorithm() {
 
 	int npart = particlesList.size();
 
+	//Apply forces to non-wall and not colliding with wall
 	#pragma omp parallel for
 	for (int i = 0; i < npart; i++) {
 		if (!predict_p[i].wall && !predict_p[i].hybrid) {
@@ -153,45 +154,75 @@ void Algorithm() {
 	std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 
 	int iter = 0;
-	while (iter < ITER) {
+
+	//Solver Iterations
+	while (iter < ITER) {	
+
+		//For all particles -> density estimations
 		#pragma omp parallel for
 		for (int i = 0; i < npart; i++) {
-			if (!predict_p[i].wall && !predict_p[i].hybrid) {
-				DensityEstimator(predict_p, i);
-				/*if (predict_p[i].rho / REST - 1 <= 0)*/
-				predict_p[i].C = predict_p[i].rho / REST - 1;
-				/*printf("REST: %f.\n", predict_p[i].C);*/
 
-				/*else
-				predict_p[i].C = 0;*/
+			//If particle isnt wall or colliding with wall
+			if (!predict_p[i].wall && !predict_p[i].hybrid) {
+
+				//Estimate density of current particle
+				DensityEstimator(predict_p, i);
+
+				//Sets density constraint
+				predict_p[i].C = predict_p[i].rho / REST - 1;
+
+				//?
 				float sumNabla = NablaCSquaredSumFunction(predict_p[i], predict_p);
 				predict_p[i].lambda = -predict_p[i].C / (sumNabla + EPSILON);
+
 			}
+
 		}
 
+		//Calculate delta P for prediction
 		CalculateDp(predict_p);
+
+		//Collision Detection and Response
 		CollisionDetectionResponse(predict_p);
+		
+		//For each particle
 		#pragma omp parallel for
 		for (int i = 0; i < npart; i++) {
+			//If particle isnt wall or colliding with wall
 			if (!predict_p[i].wall && !predict_p[i].hybrid)
+				//Predict new particle position
 				predict_p[i].position = predict_p[i].position + predict_p[i].delta_p;
 		}
 
 		iter++;
 	}
 
+
+	//For each particle
 	#pragma omp parallel for
 	for (int i = 0; i < npart; i++) {
+		
+		//If particle isnt wall or colliding with wall
 		if (!predict_p[i].wall && !predict_p[i].hybrid) {
+
+			//Gets velocity based on original and predicted position
 			predict_p[i].velocity = (1 / DT) * (predict_p[i].position - particlesList[i].position);
+			
+			//If it has neighbours
 			if (predict_p[i].wneighbors.size() > 0) {
+				
+				//Applies adhesion and friction factors to velocity
 				predict_p[i].velocity += adhesion(predict_p[i], predict_p);
 				predict_p[i].velocity += particleFriction(predict_p[i], predict_p, i);
 			}
+
+			//Applies surface tension, vorticity and viscosity to velocity
 			predict_p[i].velocity += surfaceTension(predict_p[i], predict_p) * DT;
 			predict_p[i].velocity += VorticityConfinement(predict_p[i], predict_p) * DT;
 			predict_p[i].velocity += XSPHViscosity(predict_p[i], predict_p) * DT;
 		}
+
+		//Clear neighbours
 		predict_p[i].neighbors.clear();
 		predict_p[i].wneighbors.clear();
 		predict_p[i].allneighbors.clear();
