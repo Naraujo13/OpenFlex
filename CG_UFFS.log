@@ -2,5 +2,48 @@
 C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(373,5): warning MSB8004: Output Directory does not end with a trailing slash.  This build instance will add the slash as it is required to allow proper evaluation of the Output Directory.
   main.cpp
 sources\main.cpp(557): warning C4018: '<': signed/unsigned mismatch
+  pbf.cpp
+sources\pbf.cpp(39): warning C4305: 'initializing': truncation from 'double' to 'float'
+sources\pbf.cpp(40): warning C4305: 'initializing': truncation from 'double' to 'float'
+sources\pbf.cpp(70): warning C4305: 'initializing': truncation from 'double' to 'float'
+sources\pbf.cpp(71): warning C4305: 'initializing': truncation from 'double' to 'float'
+sources\pbf.cpp(75): warning C4305: 'initializing': truncation from 'double' to 'float'
+sources\pbf.cpp(539): warning C4018: '<': signed/unsigned mismatch
+sources\pbf.cpp(580): warning C4018: '<': signed/unsigned mismatch
+sources\pbf.cpp(611): warning C4018: '<': signed/unsigned mismatch
+sources\pbf.cpp(628): warning C4018: '<': signed/unsigned mismatch
+sources\pbf.cpp(697): warning C4018: '<': signed/unsigned mismatch
+sources\pbf.cpp(714): warning C4018: '<': signed/unsigned mismatch
+sources\pbf.cpp(774): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+sources\pbf.cpp(775): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+sources\pbf.cpp(776): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+sources\pbf.cpp(778): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+sources\pbf.cpp(812): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+sources\pbf.cpp(813): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+sources\pbf.cpp(814): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+sources\pbf.cpp(816): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+sources\pbf.cpp(817): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+sources\pbf.cpp(818): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+sources\pbf.cpp(879): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+sources\pbf.cpp(881): warning C4018: '<': signed/unsigned mismatch
+C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Tools\MSVC\14.11.25503\include\utility(188): warning C4244: 'initializing': conversion from 'float' to 'const int', possible loss of data
+  sources\pbf.cpp(780): note: see reference to function template instantiation 'std::pair<const _Kty,_Ty>::pair<float&,int&,void,0>(_Other1,_Other2) noexcept' being compiled
+          with
+          [
+              _Kty=int,
+              _Ty=int,
+              _Other1=float &,
+              _Other2=int &
+          ]
+  sources\pbf.cpp(780): note: see reference to function template instantiation 'std::pair<const _Kty,_Ty>::pair<float&,int&,void,0>(_Other1,_Other2) noexcept' being compiled
+          with
+          [
+              _Kty=int,
+              _Ty=int,
+              _Other1=float &,
+              _Other2=int &
+          ]
+  Generating Code...
+     Creating library F:/Downloads/Dev/CG/OpenFlex/Debug/CG_UFFS.lib and object F:/Downloads/Dev/CG/OpenFlex/Debug/CG_UFFS.exp
   CG_UFFS.vcxproj -> F:\Downloads\Dev\CG\OpenFlex\CG_UFFS.exe
   CG_UFFS.vcxproj -> F:/Downloads/Dev/CG/OpenFlex/Debug/CG_UFFS.pdb (Full PDB)

@@ -67,7 +67,7 @@ void WindowSizeCallBack(GLFWwindow *pWindow, int nWidth, int nHeight) {
 typedef std::unordered_multimap< int, int > Hash;
 extern Hash hash_table;
 
-extern std::vector<Particle> particles;
+extern std::vector<Particle> particlesList;
 extern std::vector< Particle > predict_p;
 //std::vector<float> g_grid;
 extern float g_xmax;
@@ -128,18 +128,18 @@ void Algorithm() {
 	}
 
 	if (resetParticles == 1) {
-		particles.clear();
+		particlesList.clear();
 		predict_p.clear();
 		cube();
 	}
 
-	int npart = particles.size();
+	int npart = particlesList.size();
 
 	#pragma omp parallel for
 	for (int i = 0; i < npart; i++) {
 		if (!predict_p[i].wall && !predict_p[i].hybrid) {
-			predict_p[i].velocity = particles[i].velocity + DT * gravity;
-			predict_p[i].position = particles[i].position + DT * predict_p[i].velocity;
+			predict_p[i].velocity = particlesList[i].velocity + DT * gravity;
+			predict_p[i].position = particlesList[i].position + DT * predict_p[i].velocity;
 		}
 		/*else
 		predict_p[i].teardrop = false;*/
@@ -150,7 +150,7 @@ void Algorithm() {
 	std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 	timeb4 = glfwGetTime();
 	SetUpNeighborsLists(predict_p, hash_table);
-	std::cout << "Time on setting neighbours list: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+	std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 
 	int iter = 0;
 	while (iter < ITER) {
@@ -183,7 +183,7 @@ void Algorithm() {
 	#pragma omp parallel for
 	for (int i = 0; i < npart; i++) {
 		if (!predict_p[i].wall && !predict_p[i].hybrid) {
-			predict_p[i].velocity = (1 / DT) * (predict_p[i].position - particles[i].position);
+			predict_p[i].velocity = (1 / DT) * (predict_p[i].position - particlesList[i].position);
 			if (predict_p[i].wneighbors.size() > 0) {
 				predict_p[i].velocity += adhesion(predict_p[i], predict_p);
 				predict_p[i].velocity += particleFriction(predict_p[i], predict_p, i);
@@ -201,7 +201,7 @@ void Algorithm() {
 	movewallx(predict_p);
 
 
-	particles = predict_p;
+	particlesList = predict_p;
 }
 
 
@@ -554,14 +554,14 @@ int main(void)
 		timeb4 = glfwGetTime();
 
 		/* -- Draw particles -- */
-		for (int teste = 0; teste < particles.size(); teste++) {
+		for (int teste = 0; teste < particlesList.size(); teste++) {
 			//for
 
-			ModelMatrix[3][0] = particles[teste].position.x; //posição x
-			ModelMatrix[3][1] = particles[teste].position.y; //posição y
-			ModelMatrix[3][2] = particles[teste].position.z; //posição 
+			ModelMatrix[3][0] = particlesList[teste].position.x; //posição x
+			ModelMatrix[3][1] = particlesList[teste].position.y; //posição y
+			ModelMatrix[3][2] = particlesList[teste].position.z; //posição 
 
-			if (particles[teste].teardrop)
+			if (particlesList[teste].teardrop)
 				glUniform3f(particleColor, 1.0f, 0.0f, 0.0f);
 
 			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;

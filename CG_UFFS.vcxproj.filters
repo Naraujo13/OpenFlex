@@ -28,10 +28,10 @@
     <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\glerror.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sources\pbf.cpp">
+    <ClCompile Include="sources\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sources\main.cpp">
+    <ClCompile Include="sources\pbf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

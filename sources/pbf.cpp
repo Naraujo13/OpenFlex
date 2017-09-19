@@ -27,7 +27,7 @@ using namespace std;
 
 Hash hash_table;
 
-std::vector<Particle> particles;
+std::vector<Particle> particlesList;
 std::vector< Particle > predict_p;
 //std::vector<float> g_grid;
 float g_xmax = 2;
@@ -108,7 +108,7 @@ glm::vec3 direction;
 
 void InitParticleList()
 {
-	particles.clear();
+	particlesList.clear();
 	//start positioning particles at some distance from the left and bottom walls
 	float x_ini_pos = g_xmax / 2 - boundary;
 	float y_ini_pos = g_ymin + boundary;
@@ -159,7 +159,7 @@ void InitParticleList()
 				p.phase = 0.0f;
 
 
-				particles.push_back(p);
+				particlesList.push_back(p);
 				z_pos += d_z;
 			}
 			y_pos += d_y;
@@ -167,7 +167,7 @@ void InitParticleList()
 		x_pos += d_x;
 	}
 
-	predict_p = particles;
+	predict_p = particlesList;
 }
 
 void teardrop()
@@ -216,14 +216,14 @@ void teardrop()
 				p.hybrid = false;
 				p.lambda = 0.0f;
 
-				particles.push_back(p);
+				particlesList.push_back(p);
 				z_pos += d_z;
 			}
 			y_pos += d_y;
 		}
 		x_pos += d_x;
 	}
-	predict_p = particles;
+	predict_p = particlesList;
 }
 
 void wall()
@@ -271,15 +271,15 @@ void wall()
 			p.lambda = 0.0f;
 			p.phase = 1.0f;
 
-			particles.push_back(p);
+			particlesList.push_back(p);
 			y_pos += d_y;
 		}
 		x_pos += d_x;
 	}
 
-	printf("Number of particles in the simulation: %i.\n", particles.size());
+	printf("Number of particles in the simulation: %i.\n", particlesList.size());
 
-	predict_p = particles;
+	predict_p = particlesList;
 }
 
 void wall3()
@@ -327,15 +327,15 @@ void wall3()
 			p.lambda = 0.0f;
 			p.phase = 1.0f;
 
-			particles.push_back(p);
+			particlesList.push_back(p);
 			y_pos += d_y;
 		}
 		x_pos += d_x;
 	}
 
-	printf("Number of particles in the simulation: %i.\n", particles.size());
+	printf("Number of particles in the simulation: %i.\n", particlesList.size());
 
-	predict_p = particles;
+	predict_p = particlesList;
 }
 
 void wall2()
@@ -386,15 +386,15 @@ void wall2()
 			p.vary = y_pos;
 			p.phase = 1.0f;
 
-			particles.push_back(p);
+			particlesList.push_back(p);
 			y_pos += d_y;
 		}
 		x_pos += d_x;
 	}
 
-	printf("Number of particles in the simulation: %i.\n", particles.size());
+	printf("Number of particles in the simulation: %i.\n", particlesList.size());
 
-	predict_p = particles;
+	predict_p = particlesList;
 }
 
 void cube()
@@ -456,7 +456,7 @@ void hose()
 				p.phase = 0.0f;
 
 
-				particles.insert(particles.begin(), p);
+				particlesList.insert(particlesList.begin(), p);
 				z_pos += d_z;
 			}
 			y_pos += d_y;
@@ -464,9 +464,10 @@ void hose()
 		x_pos += d_x;
 	}
 
-	predict_p = particles;
+	predict_p = particlesList;
 }
 
+//SPH Smothing Kernel
 float wPoly6(glm::vec3 &r, float &h) {
 	float dot_rr = glm::dot(r, r);
 	float h2 = h*h;
@@ -479,6 +480,7 @@ float wPoly6(glm::vec3 &r, float &h) {
 		return 0.0f;
 }
 
+//SPH Kernel Function
 glm::vec3 wSpiky(glm::vec3 &r, float &h) {
 	float spiky = 45.0f / (PI * pow(h, 6));
 	float rlen = glm::length(r);
@@ -496,10 +498,11 @@ void DensityEstimator(std::vector<Particle> &predict_p, int &i) {
 	glm::vec3 r;
 
 	int neighborsize = predict_p[i].allneighbors.size();
-#pragma omp parallel for
+
+	#pragma omp parallel for
 	for (int j = 0; j < neighborsize; j++) {
-		glm::vec3 r = predict_p[i].position - predict_p[predict_p[i].allneighbors[j]].position;
-		rhof += wPoly6(r, g_h);
+		glm::vec3 r = predict_p[i].position - predict_p[predict_p[i].allneighbors[j]].position;	//Gets position Delta
+		rhof += wPoly6(r, g_h); //Accumulate up smoothing kernel(delta, radius) 
 	}
 
 	float rhos = 0.0f;
@@ -804,7 +807,7 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 		int grid_z_min;
 
 		int hash;
-		#pragma omp for nowait
+		#pragma omp parallel for nowait
 		for (int i = 0; i < num_particles; i++) {
 
 			p_list[i].neighbors.clear();
@@ -816,41 +819,44 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 			grid_x_max = floor((p_list[i].position[0] + g_h) / cell_size);
 			grid_y_max = floor((p_list[i].position[1] + g_h) / cell_size);
 			grid_z_max = floor((p_list[i].position[2] + g_h) / cell_size);
-			for (z_idx = grid_z_min; z_idx <= grid_z_max; z_idx++)
-				for (y_idx = grid_y_min; y_idx <= grid_y_max; y_idx++)
-					for (x_idx = grid_x_min; x_idx <= grid_x_max; x_idx++)
-					{
-						hash = ComputeHash(x_idx, y_idx, z_idx);
-						auto its = hash_table.equal_range(hash);
+			for (z_idx = grid_z_min; z_idx <= grid_z_max; z_idx++) {
+				for (y_idx = grid_y_min; y_idx <= grid_y_max; y_idx++) {
+					for (x_idx = grid_x_min; x_idx <= grid_x_max; x_idx++) {
+							hash = ComputeHash(x_idx, y_idx, z_idx);
+							auto its = hash_table.equal_range(hash);
 
-						for (auto it = its.first; it != its.second; ++it)
-							if (it->second != i)
-								if (length(p_list[i].position - p_list[it->second].position) <= g_h) {
-									if (p_list[i].wall && p_list[it->second].wall)
-										p_list[i].wneighbors.push_back(it->second);
-									if (!p_list[i].wall && p_list[it->second].wall) {
-										p_list[i].wneighbors.push_back(it->second);
-										if (glm::length(p_list[i].position - p_list[it->second].position) < wall_h)
-											p_list[i].hybrid = true;
+							for (auto it = its.first; it != its.second; ++it) {
+								if (it->second != i) {
+									if (length(p_list[i].position - p_list[it->second].position) <= g_h) {
+										if (p_list[i].wall && p_list[it->second].wall)
+											p_list[i].wneighbors.push_back(it->second);
+										if (!p_list[i].wall && p_list[it->second].wall) {
+											p_list[i].wneighbors.push_back(it->second);
+											if (glm::length(p_list[i].position - p_list[it->second].position) < wall_h)
+												p_list[i].hybrid = true;
+										}
+										if (p_list[i].wall && p_list[it->second].hybrid)
+											p_list[i].wneighbors.push_back(it->second);
+										if (!p_list[i].wall && !p_list[it->second].wall)
+											p_list[i].allneighbors.push_back(it->second);
+										p_list[i].neighbors.push_back(it->second);
 									}
-									if (p_list[i].wall && p_list[it->second].hybrid)
-										p_list[i].wneighbors.push_back(it->second);
-									if (!p_list[i].wall && !p_list[it->second].wall)
-										p_list[i].allneighbors.push_back(it->second);
-									p_list[i].neighbors.push_back(it->second);
 								}
-						/*if (length(p_list[i].position - p_list[it->second].position) <= g_h) {
-						if ((p_list[i].phase > 0.0f) && (p_list[it->second].phase > 0.0f))
-						p_list[i].wneighbors.push_back(it->second);
-						if ((p_list[i].phase < 1.0f) && (p_list[it->second].phase > 0.0f)){
-						p_list[i].phase = p_list[it->second].phase / 2;
-						p_list[i].wneighbors.push_back(it->second);
-						}
-						if ((p_list[i].phase < 1.0f) && (p_list[it->second].phase < 1.0f))
-						p_list[i].allneighbors.push_back(it->second);
-						p_list[i].neighbors.push_back(it->second);
-						}*/
+							}
+							/*if (length(p_list[i].position - p_list[it->second].position) <= g_h) {
+							if ((p_list[i].phase > 0.0f) && (p_list[it->second].phase > 0.0f))
+							p_list[i].wneighbors.push_back(it->second);
+							if ((p_list[i].phase < 1.0f) && (p_list[it->second].phase > 0.0f)){
+							p_list[i].phase = p_list[it->second].phase / 2;
+							p_list[i].wneighbors.push_back(it->second);
+							}
+							if ((p_list[i].phase < 1.0f) && (p_list[it->second].phase < 1.0f))
+							p_list[i].allneighbors.push_back(it->second);
+							p_list[i].neighbors.push_back(it->second);
+							}*/
 					}
+				}
+			}
 		}
 	}
 }
@@ -907,8 +913,8 @@ glm::vec3 particleFriction(Particle &p, std::vector< Particle > &p_list, int i) 
 		glm::vec3 r = p.position - p_list[p.wneighbors[k]].position;
 		float distance = length(r) - g_h;
 		glm::vec3 n = r / length(r);
-		glm::vec3 xi = particles[i].position - p.position;
-		glm::vec3 xj = particles[p.wneighbors[k]].position - p_list[p.wneighbors[k]].position;
+		glm::vec3 xi = particlesList[i].position - p.position;
+		glm::vec3 xj = particlesList[p.wneighbors[k]].position - p_list[p.wneighbors[k]].position;
 		glm::vec3 perp = glm::perp((xi - xj), n);
 
 		float invmass = 1 / p.mass;
