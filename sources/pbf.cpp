@@ -63,7 +63,7 @@ float wallLighty = 1;
 float wallLightz = 1;
 int GRID_RESOLUTION = 20;
 float adhesioncoeff = 0.5;
-float cohesioncoeff = 0.5;
+float cohesioncoeff = 0.1;
 float move_wallz = 0;
 float move_wallx = 0;
 float move_wally = 0;
@@ -123,15 +123,15 @@ void InitParticleList()
 
 	float x_pos = x_ini_pos;
 	/*particles.reserve(PARTICLE_COUNT_X*PARTICLE_COUNT_Y*PARTICLE_COUNT_Z);*/
-
+	#pragma omp parallel for
 	for (unsigned int x = 0; x < PARTICLE_COUNT_X; x++)
 	{
 		float y_pos = y_ini_pos;
-
+		#pragma omp parallel for
 		for (unsigned int y = 0; y < PARTICLE_COUNT_Y; y++)
 		{
 			float z_pos = z_ini_pos;
-
+			#pragma omp parallel for
 			for (unsigned int z = 0; z < PARTICLE_COUNT_Z; z++)
 			{
 				Particle p;
@@ -183,15 +183,15 @@ void teardrop()
 	float d_z = 0.05f;
 
 	float x_pos = x_ini_pos;
-
+	#pragma omp parallel for
 	for (unsigned int x = 0; x < 3; x++)
 	{
 		float y_pos = y_ini_pos;
-
+		#pragma omp parallel for
 		for (unsigned int y = 0; y < 5; y++)
 		{
 			float z_pos = z_ini_pos;
-
+			#pragma omp parallel for
 			for (unsigned int z = 0; z < 2; z++)
 			{
 				Particle p;
@@ -241,11 +241,11 @@ void wall()
 	float limity = 60;
 
 	float x_pos = x_ini_pos;
-
+	#pragma omp parallel for
 	for (unsigned int x = 0; x < limitx; x++)
 	{
 		float y_pos = y_ini_pos;
-
+		#pragma omp parallel for
 		for (unsigned int y = 0; y < limity; y++)
 		{
 			Particle p;
@@ -297,11 +297,11 @@ void wall3()
 	float limity = g_ymax * 30;
 
 	float x_pos = x_ini_pos;
-
+	#pragma omp parallel for
 	for (unsigned int x = 0; x < limitx; x++)
 	{
 		float y_pos = y_ini_pos;
-
+		#pragma omp parallel for
 		for (unsigned int y = 0; y < limity; y++)
 		{
 			Particle p;
@@ -353,11 +353,11 @@ void wall2()
 	float limity = g_ymax * 6;
 
 	float x_pos = x_ini_pos;
-
+	#pragma omp parallel for
 	for (unsigned int x = 0; x < limitx; x++)
 	{
 		float y_pos = y_ini_pos;
-
+		#pragma omp parallel for
 		for (unsigned int y = 0; y < limity; y++)
 		{
 			Particle p;
@@ -399,9 +399,9 @@ void wall2()
 
 void cube()
 {
-	wall();
-	/*wall2();*/
-	/*wall3();*/
+	//wall();
+	//wall2();
+	//wall3();
 }
 
 void hose()
@@ -420,15 +420,16 @@ void hose()
 
 	float x_pos = x_ini_pos;
 	/*particles.reserve(PARTICLE_COUNT_X*PARTICLE_COUNT_Y*PARTICLE_COUNT_Z);*/
-
+	
+	#pragma omp parallel for
 	for (unsigned int x = 0; x < 2; x++)
 	{
 		float y_pos = y_ini_pos;
-
+		#pragma omp parallel for
 		for (unsigned int y = 0; y < 2; y++)
 		{
 			float z_pos = z_ini_pos;
-
+			#pragma omp parallel for
 			for (unsigned int z = 0; z < 1; z++)
 			{
 				Particle p;
@@ -521,6 +522,7 @@ void DensityEstimator(std::vector<Particle> &predict_p, int &i) {
 	neighborsize = predict_p[i].wneighbors.size();
 	
 	//For each neighbour that is a wall
+	#pragma omp parallel for
 	for (int j = 0; j < neighborsize; j++) {
 		//Gets distance to neighbour
 		glm::vec3 r = predict_p[i].position - predict_p[predict_p[i].wneighbors[j]].position;
@@ -614,7 +616,8 @@ glm::vec3 cohesion(Particle &p, Particle &p_neighbor) {
 glm::vec3 surfaceArea(Particle &p, std::vector< Particle > &p_list) {
 	glm::vec3 fext = glm::vec3(0.0f);
 	unsigned int num_neighbors = p.allneighbors.size();
-#pragma omp parallel for
+	
+	#pragma omp parallel for
 	for (int k = 0; k < num_neighbors; k++) {
 		Particle vizinho = p_list[p.allneighbors[k]];
 		/*if (!vizinho.wall) {*/
@@ -645,6 +648,7 @@ glm::vec3 curvature(Particle &p, Particle &p_neighbor, std::vector< Particle > &
 glm::vec3 surfaceTension(Particle &p, std::vector< Particle > &p_list) {
 	glm::vec3 fext = glm::vec3(0.0f);
 	unsigned int num_neighbors = p.allneighbors.size();
+	
 	#pragma omp parallel for
 	for (int k = 0; k < num_neighbors; k++) {
 		float kij = (2 * REST) / (p.rho + p_list[p.allneighbors[k]].rho);
@@ -666,7 +670,7 @@ void CalculateDp(std::vector<Particle> &predict_p) {
 	unsigned int num_particles = predict_p.size();
 
 	//For each particle
-	#pragma omp parallel for
+	#pragma omp parallel for 
 	for (int i = 0; i < num_particles; i++) {
 
 		//If particle isnt wall or colliding with wall
@@ -678,6 +682,7 @@ void CalculateDp(std::vector<Particle> &predict_p) {
 			glm::vec3 r;
 
 			//For each neighbour of that particle
+			#pragma omp parallel for
 			for (int j = 0; j < neighborsize; j++) {
 
 				//Gets distance of particle to neighbour
@@ -704,7 +709,7 @@ glm::vec3 eta(Particle &p, std::vector<Particle> &predict_p, float &vorticityMag
 	glm::vec3 eta = glm::vec3(0.0f);
 	int neighborsize = p.neighbors.size();
 	if (neighborsize > 0) {
-	#pragma omp parallel for
+		#pragma omp parallel for
 		for (int j = 0; j < neighborsize; j++) {
 			glm::vec3 r = p.position - predict_p[p.neighbors[j]].position;
 			eta += wSpiky(r, g_h) * vorticityMag;
@@ -747,7 +752,7 @@ glm::vec3 XSPHViscosity(Particle &p, std::vector< Particle > &p_list)
 	unsigned int num_neighbors = p.neighbors.size();
 	glm::vec3 visc = glm::vec3(0.0f);
 	if (num_neighbors > 0) {
-	#pragma omp parallel for
+		#pragma omp parallel for
 		for (int k = 0; k < num_neighbors; k++)
 		{
 			glm::vec3 v_ij = p_list[p.neighbors[k]].velocity - p.velocity;
@@ -903,10 +908,13 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 			grid_z_max = floor((p_list[i].position[2] + g_h) / cell_size);
 
 			//Iterate from min Z index to max Z index
+			#pragma omp parallel for nowait
 			for (z_idx = grid_z_min; z_idx <= grid_z_max; z_idx++) {
 				//Iterate from min Y index to max Y index
+				#pragma omp parallel for nowait
 				for (y_idx = grid_y_min; y_idx <= grid_y_max; y_idx++) {
 					//Iterate from min X index to max X index
+					#pragma omp parallel for nowait
 					for (x_idx = grid_x_min; x_idx <= grid_x_max; x_idx++) {
 
 							//Get Hash result for current X,Y,Z index
@@ -916,6 +924,7 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 							auto its = hash_table.equal_range(hash);
 
 							//Iterate from starting value to end
+							#pragma omp parallel for 
 							for (auto it = its.first; it != its.second; ++it) {
 
 								//Avoid comparing with itself
@@ -953,17 +962,6 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 
 								}
 							}
-							/*if (length(p_list[i].position - p_list[it->second].position) <= g_h) {
-							if ((p_list[i].phase > 0.0f) && (p_list[it->second].phase > 0.0f))
-							p_list[i].wneighbors.push_back(it->second);
-							if ((p_list[i].phase < 1.0f) && (p_list[it->second].phase > 0.0f)){
-							p_list[i].phase = p_list[it->second].phase / 2;
-							p_list[i].wneighbors.push_back(it->second);
-							}
-							if ((p_list[i].phase < 1.0f) && (p_list[it->second].phase < 1.0f))
-							p_list[i].allneighbors.push_back(it->second);
-							p_list[i].neighbors.push_back(it->second);
-							}*/
 					}
 				}
 			}

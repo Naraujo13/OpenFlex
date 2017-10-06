@@ -146,12 +146,12 @@ void Algorithm() {
 		predict_p[i].teardrop = false;*/
 	}
 
-	timeb4 = glfwGetTime();
+	//timeb4 = glfwGetTime();
 	BuildHashTable(predict_p, hash_table);
-	std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
-	timeb4 = glfwGetTime();
+	//std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+	//timeb4 = glfwGetTime();
 	SetUpNeighborsLists(predict_p, hash_table);
-	std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+	//std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 
 	int iter = 0;
 
@@ -230,7 +230,8 @@ void Algorithm() {
 
 
 	movewallx(predict_p);
-
+	movewally(predict_p);
+	movewallz(predict_p);
 
 	particlesList = predict_p;
 }
@@ -241,7 +242,7 @@ int main(void)
 
 	int nUseMouse = 0;
 	InitParticleList();
-	/*wall();*/
+	//wall();
 	cube();
 
 	// Initialise GLFW
@@ -485,7 +486,6 @@ int main(void)
 			nbFrames = 0;
 			lastTime += 1.0;
 		}
-		std::cout << "Rendering Loop" << std::endl;
 
 
 		// Clear the screen
@@ -574,15 +574,15 @@ int main(void)
 		ModelMatrix[1][1] = h_sphere; //Escala do modelo (y)
 		ModelMatrix[2][2] = h_sphere; //Escala do modelo (z)
 		
-		double timeb4 = glfwGetTime();
+		//double timeb4 = glfwGetTime();
 		Algorithm();
-		std::cout << "Time on algorithm: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+		//std::cout << "Time on algorithm: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 
 		//Render
 		GLuint particleColor = glGetUniformLocation(standardProgramID, "particleColor");
 		glUniform3f(particleColor, 0.0f, 0.5f, 0.9f);
 		
-		timeb4 = glfwGetTime();
+		//timeb4 = glfwGetTime();
 
 		/* -- Draw particles -- */
 		for (int teste = 0; teste < particlesList.size(); teste++) {
@@ -590,7 +590,7 @@ int main(void)
 
 			ModelMatrix[3][0] = particlesList[teste].position.x; //posição x
 			ModelMatrix[3][1] = particlesList[teste].position.y; //posição y
-			ModelMatrix[3][2] = particlesList[teste].position.z; //posição 
+			ModelMatrix[3][2] = particlesList[teste].position.z; //posição z
 
 			if (particlesList[teste].teardrop)
 				glUniform3f(particleColor, 1.0f, 0.0f, 0.0f);
@@ -614,7 +614,7 @@ int main(void)
 			//}
 			//endfor
 		}
-		std::cout << "Time particles loop: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+		//std::cout << "Time particles loop: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 
 
 		/* ------ Room ------- */
