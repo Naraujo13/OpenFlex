@@ -22,7 +22,7 @@ using namespace glm;
 #include <glerror.hpp>
 using namespace std;
 
-
+#include <glfw3.h>
 #include "pbf.hpp"
 
 Hash hash_table;
@@ -40,7 +40,7 @@ float h_sphere = 0.05;
 float g_h = 0.12;
 float POW_H_9 = (g_h*g_h*g_h*g_h*g_h*g_h*g_h*g_h*g_h); // h^9
 float POW_H_6 = (g_h*g_h*g_h*g_h*g_h*g_h); // h^6
-										   //float wall = 10;
+										   //float rigidBody = 10;
 										   //time_t g_initTime = time(0);
 float rotatey = 0;
 float rotatex = 0;
@@ -99,7 +99,7 @@ glm::vec3 direction;
 //		p.delta_p = glm::vec3(0.0f);
 //		p.rho = 0.0;
 //		p.C = 1;
-//		p.pred_position = glm::vec3(0.0f);
+//		p.predicted_position = glm::vec3(0.0f);
 //		p.lambda = 0.0f;
 //		
 //		particles.push_back(p);
@@ -141,19 +141,19 @@ void InitParticleList()
 				//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
 
 
-				p.position.x = x_pos + r;
-				p.position.y = y_pos + r;
-				p.position.z = z_pos + r;
+				p.current_position.x = x_pos + r;
+				p.current_position.y = y_pos + r;
+				p.current_position.z = z_pos + r;
 
 				p.velocity = glm::vec3(0.0f);
 				p.mass = 1;
 				p.delta_p = glm::vec3(0.0f);
 				p.rho = 0.0;
 				p.C = 1;
-				p.pred_position = glm::vec3(0.0f);
+				p.predicted_position = glm::vec3(0.0f);
 				p.teardrop = false;
-				p.wall = false;
-				p.hybrid = false;
+				p.isRigidBody = false;
+				p.isCollidingWithRigidBody = false;
 				p.pencil = false;
 				p.lambda = 0.0f;
 				p.phase = 0.0f;
@@ -201,19 +201,19 @@ void teardrop()
 				//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
 
 
-				p.position.x = x_pos + r;
-				p.position.y = y_pos + r;
-				p.position.z = z_pos + r;
+				p.current_position.x = x_pos + r;
+				p.current_position.y = y_pos + r;
+				p.current_position.z = z_pos + r;
 
 				p.velocity = glm::vec3(0.0f);
 				p.mass = 1;
 				p.delta_p = glm::vec3(0.0f);
 				p.rho = 0.0;
 				p.C = 0;
-				p.pred_position = glm::vec3(0.0f);
+				p.predicted_position = glm::vec3(0.0f);
 				p.teardrop = true;
-				p.wall = false;
-				p.hybrid = false;
+				p.isRigidBody = false;
+				p.isCollidingWithRigidBody = false;
 				p.lambda = 0.0f;
 
 				particlesList.push_back(p);
@@ -229,18 +229,19 @@ void teardrop()
 void wall()
 {
 	//start positioning particles at some distance from the left and bottom walls
-	float x_ini_pos = 0;
+	float x_ini_pos = 0.8;
 	float y_ini_pos = 0;
-	float z_ini_pos = 1;
+	float z_ini_pos = 0.2;
 
 	// deltas for particle distribution
 	float d_x = 0.03f;
 	float d_y = 0.03f;
 	float d_z = 0.03f;
-	float limitx = 60;
-	float limity = 60;
+	float limitx = 20;
+	float limity = 20;
 
 	float x_pos = x_ini_pos;
+	float z_pos = z_ini_pos;
 	#pragma omp parallel for
 	for (unsigned int x = 0; x < limitx; x++)
 	{
@@ -255,19 +256,214 @@ void wall()
 			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
 
 
-			p.position.x = x_pos;
-			p.position.y = y_pos;
-			p.position.z = 0.6f;
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
 
 			p.velocity = glm::vec3(0.0f);
 			p.mass = masswall;
 			p.delta_p = glm::vec3(0.0f);
 			p.rho = 0.0;
 			p.C = 0;
-			p.pred_position = glm::vec3(0.0f);
-			p.wall = true;
+			p.predicted_position = glm::vec3(0.0f);
+			p.isRigidBody = true;
 			p.teardrop = true;
-			p.hybrid = false;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particlesList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	//2
+	x_pos = x_ini_pos;
+	z_pos = z_pos+-0.1;
+#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			Particle p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
+
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity = glm::vec3(0.0f);
+			p.mass = masswall;
+			p.delta_p = glm::vec3(0.0f);
+			p.rho = 0.0;
+			p.C = 0;
+			p.predicted_position = glm::vec3(0.0f);
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particlesList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	//3
+	x_pos = x_ini_pos;
+	z_pos = z_pos+0.1;
+#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			Particle p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
+
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity = glm::vec3(0.0f);
+			p.mass = masswall;
+			p.delta_p = glm::vec3(0.0f);
+			p.rho = 0.0;
+			p.C = 0;
+			p.predicted_position = glm::vec3(0.0f);
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particlesList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	//4
+	x_pos = x_ini_pos;
+	z_pos = z_pos+0.1;
+#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			Particle p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
+
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity = glm::vec3(0.0f);
+			p.mass = masswall;
+			p.delta_p = glm::vec3(0.0f);
+			p.rho = 0.0;
+			p.C = 0;
+			p.predicted_position = glm::vec3(0.0f);
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particlesList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+	
+	//5
+	x_pos = x_ini_pos;
+	z_pos = z_pos+0.1;
+#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			Particle p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
+
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity = glm::vec3(0.0f);
+			p.mass = masswall;
+			p.delta_p = glm::vec3(0.0f);
+			p.rho = 0.0;
+			p.C = 0;
+			p.predicted_position = glm::vec3(0.0f);
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particlesList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	//6
+	x_pos = x_ini_pos;
+	z_pos = z_pos + 0.1;
+#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			Particle p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
+
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity = glm::vec3(0.0f);
+			p.mass = masswall;
+			p.delta_p = glm::vec3(0.0f);
+			p.rho = 0.0;
+			p.C = 0;
+			p.predicted_position = glm::vec3(0.0f);
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
 			p.lambda = 0.0f;
 			p.phase = 1.0f;
 
@@ -311,19 +507,19 @@ void wall3()
 			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
 
 
-			p.position.x = x_pos;
-			p.position.y = 0.6f;
-			p.position.z = y_pos;
+			p.current_position.x = x_pos;
+			p.current_position.y = 0.6f;
+			p.current_position.z = y_pos;
 
 			p.velocity = glm::vec3(0.0f);
 			p.mass = masswall;
 			p.delta_p = glm::vec3(0.0f);
 			p.rho = 0.0;
 			p.C = 0;
-			p.pred_position = glm::vec3(0.0f);
-			p.wall = true;
+			p.predicted_position = glm::vec3(0.0f);
+			p.isRigidBody = true;
 			p.teardrop = true;
-			p.hybrid = false;
+			p.isCollidingWithRigidBody = false;
 			p.lambda = 0.0f;
 			p.phase = 1.0f;
 
@@ -367,8 +563,8 @@ void wall2()
 			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
 
 
-			p.position.x = x_pos;
-			p.position.y = y_pos;
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
 
 			printf("variação %f.\n", x_pos);
 			p.velocity = glm::vec3(0.0f);
@@ -376,11 +572,11 @@ void wall2()
 			p.delta_p = glm::vec3(0.0f);
 			p.rho = 0.0;
 			p.C = 0;
-			p.pred_position = glm::vec3(0.0f);
-			p.wall = true;
+			p.predicted_position = glm::vec3(0.0f);
+			p.isRigidBody = true;
 			p.pencil = true;
 			p.teardrop = true;
-			p.hybrid = false;
+			p.isCollidingWithRigidBody = false;
 			p.lambda = 0.0f;
 			p.varx = x_pos;
 			p.vary = y_pos;
@@ -399,7 +595,7 @@ void wall2()
 
 void cube()
 {
-	//wall();
+	wall();
 	//wall2();
 	//wall3();
 }
@@ -439,20 +635,20 @@ void hose()
 				//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
 
 
-				p.position.x = x_pos;
-				p.position.y = y_pos;
-				p.position.z = z_pos;
+				p.current_position.x = x_pos;
+				p.current_position.y = y_pos;
+				p.current_position.z = z_pos;
 
 				p.velocity = glm::vec3(0.0f, 0.0f, -2.0f);
 				p.mass = 1;
 				p.delta_p = glm::vec3(0.0f);
 				p.rho = 0.0;
 				p.C = 1;
-				p.pred_position = glm::vec3(0.0f);
+				p.predicted_position = glm::vec3(0.0f);
 				p.teardrop = false;
-				p.wall = false;
+				p.isRigidBody = false;
 				p.pencil = false;
-				p.hybrid = false;
+				p.isCollidingWithRigidBody = false;
 				p.lambda = 0.0f;
 				p.phase = 0.0f;
 
@@ -506,26 +702,26 @@ void DensityEstimator(std::vector<Particle> &predict_p, int &i) {
 	float rhof = 0.0f;
 	glm::vec3 r;
 
-	int neighborsize = predict_p[i].allneighbors.size();
+	int neighborsize = predict_p[i].notRigidBodyNeighbours.size();
 
-	//For each neighbour that is not a wall
+	//For each neighbour that is not a rigidBody
 	#pragma omp parallel for
 	for (int j = 0; j < neighborsize; j++) {
 		//Gets distance to neighbour
-		glm::vec3 r = predict_p[i].position - predict_p[predict_p[i].allneighbors[j]].position;	
+		glm::vec3 r = predict_p[i].current_position - predict_p[predict_p[i].notRigidBodyNeighbours[j]].current_position;	
 		//Accumulate smoothing kernel(delta, radius) 
 		rhof += wPoly6(r, g_h);
 	}
 
 	float rhos = 0.0f;
 
-	neighborsize = predict_p[i].wneighbors.size();
+	neighborsize = predict_p[i].rigidBodyNeighbours.size();
 	
-	//For each neighbour that is a wall
+	//For each neighbour that is a rigidBody
 	#pragma omp parallel for
 	for (int j = 0; j < neighborsize; j++) {
 		//Gets distance to neighbour
-		glm::vec3 r = predict_p[i].position - predict_p[predict_p[i].wneighbors[j]].position;
+		glm::vec3 r = predict_p[i].current_position - predict_p[predict_p[i].rigidBodyNeighbours[j]].current_position;
 		//Accumulate smoothing kernel(delta, radius) 
 		rhos += wPoly6(r, g_h);	
 	}
@@ -539,7 +735,7 @@ float NablaCSquaredSumFunction(Particle &p, std::vector<Particle> &predict_p) {
 	glm::vec3 r;
 	std::vector<glm::vec3> NablaC;
 	float res = 0.0f;
-	int neighborsize = p.neighbors.size();
+	int neighborsize = p.allNeighbours.size();
 
 	//If particle has neighbours
 	if (neighborsize > 0) {
@@ -549,7 +745,7 @@ float NablaCSquaredSumFunction(Particle &p, std::vector<Particle> &predict_p) {
 		for (int j = 0; j < neighborsize; j++) {													//for k != i
 
 			//Gets distance to neighbour
-			r = p.position - predict_p[p.neighbors[j]].position;
+			r = p.current_position - predict_p[p.allNeighbours[j]].current_position;
 
 			//Applies kernel and divides by rest?
 			glm::vec3 nablac = -wSpiky(r, g_h) / REST;
@@ -565,7 +761,7 @@ float NablaCSquaredSumFunction(Particle &p, std::vector<Particle> &predict_p) {
 		for (int j = 0; j < neighborsize; j++) {
 
 			//Gets distance to neighbour
-			glm::vec3 r = p.position - predict_p[p.neighbors[j]].position;
+			glm::vec3 r = p.current_position - predict_p[p.allNeighbours[j]].current_position;
 
 			//Sums distance in the last position of Nabla vector
 			NablaC[last] = NablaC[last] + wSpiky(r, g_h);
@@ -581,14 +777,13 @@ float NablaCSquaredSumFunction(Particle &p, std::vector<Particle> &predict_p) {
 			res += norm_nablac * norm_nablac;
 		}
 	}
-
 	return res;
 }
 
 glm::vec3 cohesion(Particle &p, Particle &p_neighbor) {
 	glm::vec3 fext = glm::vec3(0.0f);
 	float term = 32 / (PI * pow(g_h, 9));
-	glm::vec3 r = p.position - p_neighbor.position;
+	glm::vec3 r = p.current_position - p_neighbor.current_position;
 	float normR = length(r);
 	float spline = 0;
 	if ((2 * normR > g_h) && (normR <= g_h)) {
@@ -615,17 +810,17 @@ glm::vec3 cohesion(Particle &p, Particle &p_neighbor) {
 
 glm::vec3 surfaceArea(Particle &p, std::vector< Particle > &p_list) {
 	glm::vec3 fext = glm::vec3(0.0f);
-	unsigned int num_neighbors = p.allneighbors.size();
+	unsigned int num_neighbors = p.notRigidBodyNeighbours.size();
 	
 	#pragma omp parallel for
 	for (int k = 0; k < num_neighbors; k++) {
-		Particle vizinho = p_list[p.allneighbors[k]];
-		/*if (!vizinho.wall) {*/
-		glm::vec3 r = p.position - p_list[p.allneighbors[k]].position;
-		/*glm::vec3 vizinho = p_list[p.allneighbors[k]].position;*/
-		float massavizinho = p_list[p.allneighbors[k]].mass;
-		float rhovizinho = p_list[p.allneighbors[k]].rho;
-		float spline = p_list[p.allneighbors[k]].mass / p_list[p.allneighbors[k]].rho;
+		Particle vizinho = p_list[p.notRigidBodyNeighbours[k]];
+		/*if (!vizinho.rigidBody) {*/
+		glm::vec3 r = p.current_position - p_list[p.notRigidBodyNeighbours[k]].current_position;
+		/*glm::vec3 vizinho = p_list[p.notRigidBodyNeighbours[k]].position;*/
+		float massavizinho = p_list[p.notRigidBodyNeighbours[k]].mass;
+		float rhovizinho = p_list[p.notRigidBodyNeighbours[k]].rho;
+		float spline = p_list[p.notRigidBodyNeighbours[k]].mass / p_list[p.notRigidBodyNeighbours[k]].rho;
 		fext = fext + (spline * wSpiky(r, g_h));
 		/*}*/
 		/*else fext = fext + 0.0f;*/
@@ -647,14 +842,14 @@ glm::vec3 curvature(Particle &p, Particle &p_neighbor, std::vector< Particle > &
 
 glm::vec3 surfaceTension(Particle &p, std::vector< Particle > &p_list) {
 	glm::vec3 fext = glm::vec3(0.0f);
-	unsigned int num_neighbors = p.allneighbors.size();
+	unsigned int num_neighbors = p.notRigidBodyNeighbours.size();
 	
 	#pragma omp parallel for
 	for (int k = 0; k < num_neighbors; k++) {
-		float kij = (2 * REST) / (p.rho + p_list[p.allneighbors[k]].rho);
-		Particle currentng = p_list[p.allneighbors[k]];
-		glm::vec3 cohesionNow = cohesion(p, p_list[p.allneighbors[k]]);
-		glm::vec3 curvatureNow = curvature(p, p_list[p.allneighbors[k]], p_list);
+		float kij = (2 * REST) / (p.rho + p_list[p.notRigidBodyNeighbours[k]].rho);
+		Particle currentng = p_list[p.notRigidBodyNeighbours[k]];
+		glm::vec3 cohesionNow = cohesion(p, p_list[p.notRigidBodyNeighbours[k]]);
+		glm::vec3 curvatureNow = curvature(p, p_list[p.notRigidBodyNeighbours[k]], p_list);
 		fext = fext + (kij * (cohesionNow + curvatureNow));
 	}
 	return fext;
@@ -673,10 +868,10 @@ void CalculateDp(std::vector<Particle> &predict_p) {
 	#pragma omp parallel for 
 	for (int i = 0; i < num_particles; i++) {
 
-		//If particle isnt wall or colliding with wall
-		if (!predict_p[i].wall && !predict_p[i].hybrid) {
+		//If particle isnt rigidBody or colliding with rigidBody
+		if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
 
-			int neighborsize = predict_p[i].neighbors.size();
+			int neighborsize = predict_p[i].allNeighbours.size();
 
 			glm::vec3 res = glm::vec3(0.0f);
 			glm::vec3 r;
@@ -686,14 +881,14 @@ void CalculateDp(std::vector<Particle> &predict_p) {
 			for (int j = 0; j < neighborsize; j++) {
 
 				//Gets distance of particle to neighbour
-				r = predict_p[i].position - predict_p[predict_p[i].neighbors[j]].position;
+				r = predict_p[i].current_position - predict_p[predict_p[i].allNeighbours[j]].current_position;
 
 				/*float corr = wPoly6(r, g_h) / wQH;
 				corr *= corr * corr * corr;
 				float scorr = -g_k * corr;*/
 
 				//Sums particle and neighbour lambda
-				float lambdaSum = predict_p[i].lambda + predict_p[predict_p[i].neighbors[j]].lambda;
+				float lambdaSum = predict_p[i].lambda + predict_p[predict_p[i].allNeighbours[j]].lambda;
 
 				//Applies kernel an accumulates multiplied with lambda sum
 				res += (lambdaSum /*+ scorr*/)* wSpiky(r, g_h);
@@ -707,11 +902,11 @@ void CalculateDp(std::vector<Particle> &predict_p) {
 
 glm::vec3 eta(Particle &p, std::vector<Particle> &predict_p, float &vorticityMag) {
 	glm::vec3 eta = glm::vec3(0.0f);
-	int neighborsize = p.neighbors.size();
+	int neighborsize = p.allNeighbours.size();
 	if (neighborsize > 0) {
 		#pragma omp parallel for
 		for (int j = 0; j < neighborsize; j++) {
-			glm::vec3 r = p.position - predict_p[p.neighbors[j]].position;
+			glm::vec3 r = p.current_position - predict_p[p.allNeighbours[j]].current_position;
 			eta += wSpiky(r, g_h) * vorticityMag;
 		}
 	}
@@ -721,12 +916,12 @@ glm::vec3 eta(Particle &p, std::vector<Particle> &predict_p, float &vorticityMag
 
 glm::vec3 VorticityConfinement(Particle &p, std::vector< Particle > &p_list) {
 	glm::vec3 omega = glm::vec3(0.0f);
-	int num_neighbors = p.neighbors.size();
+	int num_neighbors = p.allNeighbours.size();
 
 	#pragma omp parallel for
 	for (int k = 0; k < num_neighbors; k++) {
-		glm::vec3 v_ij = p_list[p.neighbors[k]].velocity - p.velocity;
-		glm::vec3 r = p.position - p_list[p.neighbors[k]].position;
+		glm::vec3 v_ij = p_list[p.allNeighbours[k]].velocity - p.velocity;
+		glm::vec3 r = p.current_position - p_list[p.allNeighbours[k]].current_position;
 		omega += glm::cross(v_ij, wSpiky(r, g_h));
 	}
 
@@ -749,14 +944,14 @@ glm::vec3 VorticityConfinement(Particle &p, std::vector< Particle > &p_list) {
 
 glm::vec3 XSPHViscosity(Particle &p, std::vector< Particle > &p_list)
 {
-	unsigned int num_neighbors = p.neighbors.size();
+	unsigned int num_neighbors = p.allNeighbours.size();
 	glm::vec3 visc = glm::vec3(0.0f);
 	if (num_neighbors > 0) {
 		#pragma omp parallel for
 		for (int k = 0; k < num_neighbors; k++)
 		{
-			glm::vec3 v_ij = p_list[p.neighbors[k]].velocity - p.velocity;
-			glm::vec3 r = p.position - p_list[p.neighbors[k]].position;
+			glm::vec3 v_ij = p_list[p.allNeighbours[k]].velocity - p.velocity;
+			glm::vec3 r = p.current_position - p_list[p.allNeighbours[k]].current_position;
 			visc += v_ij * wPoly6(r, g_h);
 		}
 	}
@@ -776,8 +971,8 @@ void CollisionDetectionResponse(std::vector< Particle > &p_list)
 	for (int i = 0; i < num_particles; i++) {
 
 		//If it's is colliding with min Z boundary
-		if (predict_p[i].position.z < g_zmin + boundary) {
-			predict_p[i].position.z = g_zmin + boundary;
+		if (predict_p[i].current_position.z < g_zmin + boundary) {
+			predict_p[i].current_position.z = g_zmin + boundary;
 
 			/*glm::vec3 normal = glm::vec3(0,0,1);
 			predict_p[i].velocity.z = glm::reflect(predict_p[i].velocity, normal).z * DT;*/
@@ -786,8 +981,8 @@ void CollisionDetectionResponse(std::vector< Particle > &p_list)
 		}
 
 		//If it's is colliding with max Z boundary
-		if (predict_p[i].position.z > g_zmax - boundary) {
-			predict_p[i].position.z = g_zmax - boundary;
+		if (predict_p[i].current_position.z > g_zmax - boundary) {
+			predict_p[i].current_position.z = g_zmax - boundary;
 
 			/*glm::vec3 normal = glm::vec3(0,0,-1);
 			predict_p[i].velocity.z = glm::reflect(predict_p[i].velocity, normal).z * DT;*/
@@ -796,8 +991,8 @@ void CollisionDetectionResponse(std::vector< Particle > &p_list)
 		}
 		
 		//If it's is colliding with min Y boundary
-		if (predict_p[i].position.y < g_ymin + boundary) {
-			predict_p[i].position.y = g_ymin + boundary;
+		if (predict_p[i].current_position.y < g_ymin + boundary) {
+			predict_p[i].current_position.y = g_ymin + boundary;
 
 			/*glm::vec3 normal = glm::vec3(0,1,0);
 			predict_p[i].velocity.y = glm::reflect(predict_p[i].velocity, normal).y * DT;*/
@@ -806,8 +1001,8 @@ void CollisionDetectionResponse(std::vector< Particle > &p_list)
 		}
 
 		//If it's is colliding with min X boundary
-		if (predict_p[i].position.x < g_xmin + boundary) {
-			predict_p[i].position.x = g_xmin + boundary;
+		if (predict_p[i].current_position.x < g_xmin + boundary) {
+			predict_p[i].current_position.x = g_xmin + boundary;
 
 			/*glm::vec3 normal = glm::vec3(1,0,0);
 			predict_p[i].velocity.x = glm::reflect(predict_p[i].velocity, normal).x * DT;*/
@@ -816,8 +1011,8 @@ void CollisionDetectionResponse(std::vector< Particle > &p_list)
 		}
 
 		//If it's is colliding with max X boundary
-		if (predict_p[i].position.x > g_xmax - boundary) {
-			predict_p[i].position.x = g_xmax - boundary;
+		if (predict_p[i].current_position.x > g_xmax - boundary) {
+			predict_p[i].current_position.x = g_xmax - boundary;
 
 			/*glm::vec3 normal = glm::vec3(-1,0,0);
 			predict_p[i].velocity.x = glm::reflect(predict_p[i].velocity, normal).x * DT;*/
@@ -850,9 +1045,9 @@ void BuildHashTable(std::vector<Particle> &p_list, Hash &hash_table)
 
 	for (int i = 0; i < num_particles; i++)
 	{
-		grid_x = floor(p_list[i].position[0] / cell_size);
-		grid_y = floor(p_list[i].position[1] / cell_size);
-		grid_z = floor(p_list[i].position[2] / cell_size);
+		grid_x = floor(p_list[i].current_position[0] / cell_size);
+		grid_y = floor(p_list[i].current_position[1] / cell_size);
+		grid_z = floor(p_list[i].current_position[2] / cell_size);
 
 		p_list[i].hash = ComputeHash(grid_x, grid_y, grid_z);
 
@@ -896,16 +1091,16 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 		for (int i = 0; i < num_particles; i++) {
 
 			//Clear particles neighbours
-			p_list[i].neighbors.clear();
+			p_list[i].allNeighbours.clear();
 
 			//Calculates min-max grid index based on current particle position
-			grid_x_min = floor((p_list[i].position[0] - g_h) / cell_size);
-			grid_y_min = floor((p_list[i].position[1] - g_h) / cell_size);
-			grid_z_min = floor((p_list[i].position[2] - g_h) / cell_size);
+			grid_x_min = floor((p_list[i].current_position[0] - g_h) / cell_size);
+			grid_y_min = floor((p_list[i].current_position[1] - g_h) / cell_size);
+			grid_z_min = floor((p_list[i].current_position[2] - g_h) / cell_size);
 
-			grid_x_max = floor((p_list[i].position[0] + g_h) / cell_size);
-			grid_y_max = floor((p_list[i].position[1] + g_h) / cell_size);
-			grid_z_max = floor((p_list[i].position[2] + g_h) / cell_size);
+			grid_x_max = floor((p_list[i].current_position[0] + g_h) / cell_size);
+			grid_y_max = floor((p_list[i].current_position[1] + g_h) / cell_size);
+			grid_z_max = floor((p_list[i].current_position[2] + g_h) / cell_size);
 
 			//Iterate from min Z index to max Z index
 			#pragma omp parallel for nowait
@@ -931,32 +1126,32 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 								if (it->second != i) {
 
 									//If current particles are closer than g_h factor  
-									if (length(p_list[i].position - p_list[it->second].position) <= g_h) {
+									if (length(p_list[i].current_position - p_list[it->second].current_position) <= g_h) {
 
-										//If current particle and current neighbour are wall
-										if (p_list[i].wall && p_list[it->second].wall)
-											p_list[i].wneighbors.push_back(it->second);	//Push neigbhour to wall vector
+										//If current particle and current neighbour are rigidBody
+										if (p_list[i].isRigidBody && p_list[it->second].isRigidBody)
+											p_list[i].rigidBodyNeighbours.push_back(it->second);	//Push neigbhour to rigidBody vector
 
-										//If current particle not wall, but neighbour is
-										if (!p_list[i].wall && p_list[it->second].wall) {
-											p_list[i].wneighbors.push_back(it->second);	//Push neighbour to wall vector
+										//If current particle not rigidBody, but neighbour is
+										if (!p_list[i].isRigidBody && p_list[it->second].isRigidBody) {
+											p_list[i].rigidBodyNeighbours.push_back(it->second);	//Push neighbour to rigidBody vector
 
-											//If particle is closer to wall than wall_h factor
-											if (glm::length(p_list[i].position - p_list[it->second].position) < wall_h)
-												p_list[i].hybrid = true;	//Set hybrid constant to true
+											//If particle is closer to rigidBody than wall_h factor
+											if (glm::length(p_list[i].current_position - p_list[it->second].current_position) < wall_h)
+												p_list[i].isCollidingWithRigidBody = true;	//Set isCollidingWithRigidBody constant to true
 
 										}
 
-										//If current particle is wall, and neighbour is hybrid
-										if (p_list[i].wall && p_list[it->second].hybrid)
-											p_list[i].wneighbors.push_back(it->second);	//Push neighbour to wall vector
+										//If current particle is rigidBody, and neighbour is isCollidingWithRigidBody
+										if (p_list[i].isRigidBody && p_list[it->second].isCollidingWithRigidBody)
+											p_list[i].rigidBodyNeighbours.push_back(it->second);	//Push neighbour to rigidBody vector
 
-										//If both particles are not wall
-										if (!p_list[i].wall && !p_list[it->second].wall)	
-											p_list[i].allneighbors.push_back(it->second);	//Push to all vector
+										//If both particles are not rigidBody
+										if (!p_list[i].isRigidBody && !p_list[it->second].isRigidBody)	
+											p_list[i].notRigidBodyNeighbours.push_back(it->second);	//Push to all vector
 
 										//Push to neighbors vector
-										p_list[i].neighbors.push_back(it->second);
+										p_list[i].allNeighbours.push_back(it->second);
 
 									}
 
@@ -973,10 +1168,10 @@ float boundaryVolume(unsigned int &i, std::vector< Particle > &p_list) {
 	float massboundary = 0;
 	glm::vec3 r;
 
-	int neighborsize = p_list[i].wneighbors.size();
+	int neighborsize = p_list[i].rigidBodyNeighbours.size();
 	#pragma omp parallel for
 	for (int j = 0; j < neighborsize; j++) {
-		glm::vec3 r = p_list[i].position - p_list[p_list[i].wneighbors[j]].position;
+		glm::vec3 r = p_list[i].current_position - p_list[p_list[i].rigidBodyNeighbours[j]].current_position;
 		massboundary += wPoly6(r, h_adhesion);
 	}
 	massboundary = 1 / massboundary;
@@ -986,11 +1181,11 @@ float boundaryVolume(unsigned int &i, std::vector< Particle > &p_list) {
 
 glm::vec3 adhesion(Particle &p, std::vector< Particle > &p_list) {
 	glm::vec3 fext = glm::vec3(0.0f);
-	unsigned int num_neighbors = p.wneighbors.size();
+	unsigned int num_neighbors = p.rigidBodyNeighbours.size();
 	float term = 0.007 / pow(h_adhesion, 3.25f);
 	#pragma omp parallel for
 	for (int k = 0; k < num_neighbors; k++) {
-		glm::vec3 r = p.position - p_list[p.wneighbors[k]].position;
+		glm::vec3 r = p.current_position - p_list[p.rigidBodyNeighbours[k]].current_position;
 		float normR = glm::length(r);
 		float spline = 0;
 		if ((2 * normR > h_adhesion) && (normR <= h_adhesion)) {
@@ -1002,9 +1197,9 @@ glm::vec3 adhesion(Particle &p, std::vector< Particle > &p_list) {
 		else
 			spline = term * 0;
 		glm::vec3 divR = r / normR;
-		float boundaryVol = boundaryVolume(p.wneighbors[k], p_list);
+		float boundaryVol = boundaryVolume(p.rigidBodyNeighbours[k], p_list);
 		float coeff = adhesioncoeff;
-		if (p_list[p.wneighbors[k]].pencil)
+		if (p_list[p.rigidBodyNeighbours[k]].pencil)
 			coeff = adhesioncoeff;
 		fext = fext + ((-coeff)*(p.mass)*(boundaryVol)*(spline)*(divR));
 	}
@@ -1015,14 +1210,14 @@ glm::vec3 adhesion(Particle &p, std::vector< Particle > &p_list) {
 
 glm::vec3 particleFriction(Particle &p, std::vector< Particle > &p_list, int i) {
 	glm::vec3 deltax = glm::vec3(0.0f);
-	unsigned int num_neighbors = p.wneighbors.size();
+	unsigned int num_neighbors = p.rigidBodyNeighbours.size();
 	#pragma omp parallel for
 	for (int k = 0; k < 1; k++) {
-		glm::vec3 r = p.position - p_list[p.wneighbors[k]].position;
+		glm::vec3 r = p.current_position - p_list[p.rigidBodyNeighbours[k]].current_position;
 		float distance = length(r) - g_h;
 		glm::vec3 n = r / length(r);
-		glm::vec3 xi = particlesList[i].position - p.position;
-		glm::vec3 xj = particlesList[p.wneighbors[k]].position - p_list[p.wneighbors[k]].position;
+		glm::vec3 xi = particlesList[i].current_position - p.current_position;
+		glm::vec3 xj = particlesList[p.rigidBodyNeighbours[k]].current_position - p_list[p.rigidBodyNeighbours[k]].current_position;
 		glm::vec3 perp = glm::perp((xi - xj), n);
 
 		float invmass = 1 / p.mass;
@@ -1037,7 +1232,7 @@ glm::vec3 particleFriction(Particle &p, std::vector< Particle > &p_list, int i) 
 			deltax += invmass * (perp*mini);
 		}
 
-		predict_p[p.wneighbors[k]].velocity = -invmass * deltax;
+		predict_p[p.rigidBodyNeighbours[k]].velocity = -invmass * deltax;
 
 	}
 
@@ -1052,7 +1247,7 @@ void movewallz(std::vector<Particle> &p_list) {
 
 	for (int i = 0; i < num_particles; i++) {
 		if (p_list[i].pencil) {
-			p_list[i].position.z = p_list[i].position.z + positions.z;
+			p_list[i].current_position.z = p_list[i].current_position.z + positions.z;
 		}
 	}
 }
@@ -1062,7 +1257,7 @@ void movewallx(std::vector<Particle> &p_list) {
 
 	for (int i = 0; i < num_particles; i++) {
 		if (p_list[i].pencil) {
-			p_list[i].position = (positions + glm::vec3(p_list[i].varx, p_list[i].vary, -1.0f));
+			p_list[i].current_position = (positions + glm::vec3(p_list[i].varx, p_list[i].vary, -1.0f));
 		}
 	}
 }
@@ -1072,7 +1267,7 @@ void movewally(std::vector<Particle> &p_list) {
 
 	for (int i = 0; i < num_particles; i++) {
 		if (p_list[i].pencil) {
-			p_list[i].position.y = p_list[i].position.y + move_wally;
+			p_list[i].current_position.y = p_list[i].current_position.y + move_wally;
 		}
 	}
 }

@@ -34,15 +34,17 @@ using namespace glm;
 #include <vboindexer.hpp>
 #include <glerror.hpp>
 
+#include "particle.hpp"
+
 using namespace std;
 
 typedef std::unordered_multimap< int, int > Hash;
 
-class Particle
+class ParticleOld
 {
 public:
-	glm::vec3 position;		  // Posição Inicial
-	glm::vec3 pred_position;  // Posição Prevista durante o passo
+	glm::vec3 current_position;		  // Posição Inicial
+	glm::vec3 predicted_position;  // Posição Prevista durante o passo
 	glm::vec3 velocity;
 	glm::vec3 delta_p;
 	float mass;
@@ -51,12 +53,12 @@ public:
 	float C;		//Density constraint?
 	float hash;		//Hashing value to find neighbours
 	bool teardrop;
-	bool wall;		//Is a wall?
+	bool isRigidBody;		//Is a wall?
 	bool pencil;
-	bool hybrid;	//Near a wall?
-	std::vector<unsigned int> neighbors;	//All neighbours particles
-	std::vector<unsigned int> wneighbors;	//Neigbours particles that are wall
-	std::vector<unsigned int> allneighbors;	//Neighbour particles that are not wall
+	bool isCollidingWithRigidBody;	//Near a wall?
+	std::vector<unsigned int> allNeighbours;	//All neighbours particles
+	std::vector<unsigned int> rigidBodyNeighbours;	//Neigbours particles that are wall
+	std::vector<unsigned int> notRigidBodyNeighbours;	//Neighbour particles that are not wall
 	float varx;
 	float vary;
 	float phase;
@@ -64,7 +66,7 @@ public:
 
 void InitParticleList();
 void teardrop();
-void wall();
+void rigidBody();
 void wall3();
 void wall2();
 void cube();

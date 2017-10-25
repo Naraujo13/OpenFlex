@@ -80,7 +80,7 @@ extern float h_sphere;
 extern float g_h;
 extern float POW_H_9; // h^9
 extern float POW_H_6; // h^6
-					  //float wall = 10;
+					  //float rigidBody = 10;
 					  //time_t g_initTime = time(0);
 extern float rotatey;
 extern float rotatex;
@@ -122,6 +122,7 @@ void Algorithm() {
 	double timeb4 = glfwGetTime();
 
 	gravity.y = gravity_y;
+	
 	if (gota == 1) {
 		hose();
 		gota = 2;
@@ -135,12 +136,12 @@ void Algorithm() {
 
 	int npart = particlesList.size();
 
-	//Apply forces to non-wall and not colliding with wall
+	//Apply forces to non-rigidBody and not colliding with rigidBody
 	#pragma omp parallel for
 	for (int i = 0; i < npart; i++) {
-		if (!predict_p[i].wall && !predict_p[i].hybrid) {
+		if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
 			predict_p[i].velocity = particlesList[i].velocity + DT * gravity;
-			predict_p[i].position = particlesList[i].position + DT * predict_p[i].velocity;
+			predict_p[i].current_position = particlesList[i].current_position + DT * predict_p[i].velocity;
 		}
 		/*else
 		predict_p[i].teardrop = false;*/
@@ -162,8 +163,8 @@ void Algorithm() {
 		#pragma omp parallel for
 		for (int i = 0; i < npart; i++) {
 
-			//If particle isnt wall or colliding with wall
-			if (!predict_p[i].wall && !predict_p[i].hybrid) {
+			//If particle isnt rigidBody or colliding with rigidBody
+			if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
 
 				//Estimate density of current particle
 				DensityEstimator(predict_p, i);
@@ -188,10 +189,10 @@ void Algorithm() {
 		//For each particle
 		#pragma omp parallel for
 		for (int i = 0; i < npart; i++) {
-			//If particle isnt wall or colliding with wall
-			if (!predict_p[i].wall && !predict_p[i].hybrid)
+			//If particle isnt rigidBody or colliding with rigidBody
+			if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody)
 				//Predict new particle position
-				predict_p[i].position = predict_p[i].position + predict_p[i].delta_p;
+				predict_p[i].current_position = predict_p[i].current_position + predict_p[i].delta_p;
 		}
 
 		iter++;
@@ -202,14 +203,14 @@ void Algorithm() {
 	#pragma omp parallel for
 	for (int i = 0; i < npart; i++) {
 		
-		//If particle isnt wall or colliding with wall
-		if (!predict_p[i].wall && !predict_p[i].hybrid) {
+		//If particle isnt rigidBody or colliding with rigidBody
+		if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
 
 			//Gets velocity based on original and predicted position
-			predict_p[i].velocity = (1 / DT) * (predict_p[i].position - particlesList[i].position);
+			predict_p[i].velocity = (1 / DT) * (predict_p[i].current_position - particlesList[i].current_position);
 			
 			//If it has neighbours
-			if (predict_p[i].wneighbors.size() > 0) {
+			if (predict_p[i].rigidBodyNeighbours.size() > 0) {
 				
 				//Applies adhesion and friction factors to velocity
 				predict_p[i].velocity += adhesion(predict_p[i], predict_p);
@@ -223,9 +224,9 @@ void Algorithm() {
 		}
 
 		//Clear neighbours
-		predict_p[i].neighbors.clear();
-		predict_p[i].wneighbors.clear();
-		predict_p[i].allneighbors.clear();
+		predict_p[i].allNeighbours.clear();
+		predict_p[i].rigidBodyNeighbours.clear();
+		predict_p[i].notRigidBodyNeighbours.clear();
 	}
 
 
@@ -242,7 +243,6 @@ int main(void)
 
 	int nUseMouse = 0;
 	InitParticleList();
-	//wall();
 	cube();
 
 	// Initialise GLFW
@@ -297,9 +297,9 @@ int main(void)
 	vec3 oColor(0.0f);
 	TwAddVarRW(g_pToolBar, "bgColor", TW_TYPE_COLOR3F, &oColor[0], " label='Background color' ");
 	TwAddVarRW(g_pToolBar, "g_h", TW_TYPE_FLOAT, &g_h, " label='H radius' min=0.1 max=5 step=0.01 keyIncr=h keyDecr=H help='Rotation speed (turns/second)' ");
-	/*TwAddVarRW(g_pToolBar, "rotatey", TW_TYPE_FLOAT, &rotatey, " label='rotation y of wall' min=-360 max=360 step=1.0 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
-	TwAddVarRW(g_pToolBar, "rotatex", TW_TYPE_FLOAT, &rotatex, " label='rotation x of wall' min=-360 max=360 step=1.0 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
-	TwAddVarRW(g_pToolBar, "rotatez", TW_TYPE_FLOAT, &rotatez, " label='rotation y of wall' min=-360 max=360 step=1.0 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");*/
+	/*TwAddVarRW(g_pToolBar, "rotatey", TW_TYPE_FLOAT, &rotatey, " label='rotation y of rigidBody' min=-360 max=360 step=1.0 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
+	TwAddVarRW(g_pToolBar, "rotatex", TW_TYPE_FLOAT, &rotatex, " label='rotation x of rigidBody' min=-360 max=360 step=1.0 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
+	TwAddVarRW(g_pToolBar, "rotatez", TW_TYPE_FLOAT, &rotatez, " label='rotation y of rigidBody' min=-360 max=360 step=1.0 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");*/
 	TwAddVarRW(g_pToolBar, "g_zmax", TW_TYPE_FLOAT, &g_zmax, " label='position z of wall' min=-13 max=13 step=0.05 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
 	TwAddVarRW(g_pToolBar, "g_xmax", TW_TYPE_FLOAT, &g_xmax, " label='position x of wall' min=-40 max=40 step=0.01 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
 	/*TwAddVarRW(g_pToolBar, "g_k", TW_TYPE_FLOAT, &g_k, " label='k for scorr' min=-13 max=13 step=0.0001 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
@@ -588,9 +588,9 @@ int main(void)
 		for (int teste = 0; teste < particlesList.size(); teste++) {
 			//for
 
-			ModelMatrix[3][0] = particlesList[teste].position.x; //posição x
-			ModelMatrix[3][1] = particlesList[teste].position.y; //posição y
-			ModelMatrix[3][2] = particlesList[teste].position.z; //posição z
+			ModelMatrix[3][0] = particlesList[teste].current_position.x; //posição x
+			ModelMatrix[3][1] = particlesList[teste].current_position.y; //posição y
+			ModelMatrix[3][2] = particlesList[teste].current_position.z; //posição z
 
 			if (particlesList[teste].teardrop)
 				glUniform3f(particleColor, 1.0f, 0.0f, 0.0f);
@@ -604,7 +604,7 @@ int main(void)
 
 
 			// Draw the triangles !
-			/*if (!particles[teste].wall){*/
+			/*if (!particles[teste].rigidBody){*/
 			glDrawElements(
 				GL_TRIANGLES,        // mode
 				indices.size(),      // count
