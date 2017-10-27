@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{0EC57C79-43A2-3AF6-8FA2-3EDE1B2117AF}</ProjectGuid>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{9DE1F31A-E75B-3AED-A9D8-8FE6AB348A7F}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <Platform>Win32</Platform>
     <ProjectName>INSTALL</ProjectName>
@@ -63,7 +63,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>F:\Downloads\Dev\CG\OpenFlex\external\AntTweakBar-1.16\include;F:\Downloads\Dev\CG\OpenFlex\external\glfw-3.0.3\include\GLFW;F:\Downloads\Dev\CG\OpenFlex\external\glm-0.9.4.0;F:\Downloads\Dev\CG\OpenFlex\external\glew-1.9.0\include;F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\include;F:\Downloads\Dev\CG\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\AntTweakBar-1.16\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glfw-3.0.3\include\GLFW;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glm-0.9.4.0;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glew-1.9.0\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -85,7 +85,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>F:\Downloads\Dev\CG\OpenFlex\external\AntTweakBar-1.16\include;F:\Downloads\Dev\CG\OpenFlex\external\glfw-3.0.3\include\GLFW;F:\Downloads\Dev\CG\OpenFlex\external\glm-0.9.4.0;F:\Downloads\Dev\CG\OpenFlex\external\glew-1.9.0\include;F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\include;F:\Downloads\Dev\CG\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\AntTweakBar-1.16\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glfw-3.0.3\include\GLFW;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glm-0.9.4.0;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glew-1.9.0\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -107,7 +107,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>F:\Downloads\Dev\CG\OpenFlex\external\AntTweakBar-1.16\include;F:\Downloads\Dev\CG\OpenFlex\external\glfw-3.0.3\include\GLFW;F:\Downloads\Dev\CG\OpenFlex\external\glm-0.9.4.0;F:\Downloads\Dev\CG\OpenFlex\external\glew-1.9.0\include;F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\include;F:\Downloads\Dev\CG\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\AntTweakBar-1.16\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glfw-3.0.3\include\GLFW;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glm-0.9.4.0;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glew-1.9.0\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -129,7 +129,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>F:\Downloads\Dev\CG\OpenFlex\external\AntTweakBar-1.16\include;F:\Downloads\Dev\CG\OpenFlex\external\glfw-3.0.3\include\GLFW;F:\Downloads\Dev\CG\OpenFlex\external\glm-0.9.4.0;F:\Downloads\Dev\CG\OpenFlex\external\glew-1.9.0\include;F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\include;F:\Downloads\Dev\CG\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\AntTweakBar-1.16\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glfw-3.0.3\include\GLFW;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glm-0.9.4.0;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glew-1.9.0\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -150,7 +150,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\bc632a626ecbc7375b948e3fdf0119b4\INSTALL_force.rule">
+    <CustomBuild Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\fbf885e4565aaeed94738591d8a44e12\INSTALL_force.rule">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
 cd .
@@ -161,8 +161,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/bc632a626ecbc7375b948e3fdf0119b4/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\INSTALL_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeFiles/fbf885e4565aaeed94738591d8a44e12/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\INSTALL_force</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
@@ -174,8 +174,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/bc632a626ecbc7375b948e3fdf0119b4/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\INSTALL_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeFiles/fbf885e4565aaeed94738591d8a44e12/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\INSTALL_force</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
@@ -187,8 +187,8 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/bc632a626ecbc7375b948e3fdf0119b4/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\INSTALL_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeFiles/fbf885e4565aaeed94738591d8a44e12/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\INSTALL_force</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
       <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'"> </Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
@@ -200,18 +200,18 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/bc632a626ecbc7375b948e3fdf0119b4/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\INSTALL_force</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeFiles/fbf885e4565aaeed94738591d8a44e12/INSTALL_force.rule;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\INSTALL_force</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="F:\Downloads\Dev\CG\OpenFlex\ZERO_CHECK.vcxproj">
-      <Project>{F4CC51FE-9958-3774-91F5-96C16036093F}</Project>
+    <ProjectReference Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\ZERO_CHECK.vcxproj">
+      <Project>{1D6BC048-A7FE-31BA-A26D-6CCF8FE73D26}</Project>
       <Name>ZERO_CHECK</Name>
     </ProjectReference>
-    <ProjectReference Include="F:\Downloads\Dev\CG\OpenFlex\ALL_BUILD.vcxproj">
-      <Project>{F121DFCC-5CED-35BD-AC1D-4C0F76135C2C}</Project>
+    <ProjectReference Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\ALL_BUILD.vcxproj">
+      <Project>{45A0A4EF-8EA7-3810-BE32-E4949112DD2B}</Project>
       <Name>ALL_BUILD</Name>
     </ProjectReference>
   </ItemGroup>

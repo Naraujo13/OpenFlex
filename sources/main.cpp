@@ -6,6 +6,7 @@
 #include <time.h>
 #include <omp.h>
 #include <pbf.hpp>
+#include <CL\cl.hpp>
 
 #define PI 3.1415f
 #define EPSILON 600.0f

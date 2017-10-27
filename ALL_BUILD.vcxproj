@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F121DFCC-5CED-35BD-AC1D-4C0F76135C2C}</ProjectGuid>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <ProjectGuid>{45A0A4EF-8EA7-3810-BE32-E4949112DD2B}</ProjectGuid>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
     <Keyword>Win32Proj</Keyword>
     <Platform>Win32</Platform>
     <ProjectName>ALL_BUILD</ProjectName>
@@ -63,7 +63,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>F:\Downloads\Dev\CG\OpenFlex\external\AntTweakBar-1.16\include;F:\Downloads\Dev\CG\OpenFlex\external\glfw-3.0.3\include\GLFW;F:\Downloads\Dev\CG\OpenFlex\external\glm-0.9.4.0;F:\Downloads\Dev\CG\OpenFlex\external\glew-1.9.0\include;F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\include;F:\Downloads\Dev\CG\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\AntTweakBar-1.16\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glfw-3.0.3\include\GLFW;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glm-0.9.4.0;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glew-1.9.0\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -73,7 +73,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>F:\Downloads\Dev\CG\OpenFlex\external\AntTweakBar-1.16\include;F:\Downloads\Dev\CG\OpenFlex\external\glfw-3.0.3\include\GLFW;F:\Downloads\Dev\CG\OpenFlex\external\glm-0.9.4.0;F:\Downloads\Dev\CG\OpenFlex\external\glew-1.9.0\include;F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\include;F:\Downloads\Dev\CG\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\AntTweakBar-1.16\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glfw-3.0.3\include\GLFW;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glm-0.9.4.0;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glew-1.9.0\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -83,7 +83,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>F:\Downloads\Dev\CG\OpenFlex\external\AntTweakBar-1.16\include;F:\Downloads\Dev\CG\OpenFlex\external\glfw-3.0.3\include\GLFW;F:\Downloads\Dev\CG\OpenFlex\external\glm-0.9.4.0;F:\Downloads\Dev\CG\OpenFlex\external\glew-1.9.0\include;F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\include;F:\Downloads\Dev\CG\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\AntTweakBar-1.16\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glfw-3.0.3\include\GLFW;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glm-0.9.4.0;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glew-1.9.0\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -93,7 +93,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">
     <Midl>
-      <AdditionalIncludeDirectories>F:\Downloads\Dev\CG\OpenFlex\external\AntTweakBar-1.16\include;F:\Downloads\Dev\CG\OpenFlex\external\glfw-3.0.3\include\GLFW;F:\Downloads\Dev\CG\OpenFlex\external\glm-0.9.4.0;F:\Downloads\Dev\CG\OpenFlex\external\glew-1.9.0\include;F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\include;F:\Downloads\Dev\CG\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\AntTweakBar-1.16\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glfw-3.0.3\include\GLFW;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glm-0.9.4.0;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glew-1.9.0\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\include;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
       <HeaderFileName>%(Filename).h</HeaderFileName>
       <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
@@ -102,10 +102,10 @@
     </Midl>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <CustomBuild Include="F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt">
-      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule F:/Downloads/Dev/CG/OpenFlex/CMakeLists.txt</Message>
+    <CustomBuild Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HF:/Downloads/Dev/CG/OpenFlex -BF:/Downloads/Dev/CG/OpenFlex --check-stamp-file F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -HC:/Users/nicol/Downloads/Dev/TCC/OpenFlex -BC:/Users/nicol/Downloads/Dev/TCC/OpenFlex --check-stamp-file C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -113,12 +113,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">F:/Downloads/Dev/CG/OpenFlex/CMakeLists.txt;F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeCCompiler.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeLists.txt;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeSystemSpecificInitialize.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeCCompiler.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindPackageMessage.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule F:/Downloads/Dev/CG/OpenFlex/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Building Custom Rule C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HF:/Downloads/Dev/CG/OpenFlex -BF:/Downloads/Dev/CG/OpenFlex --check-stamp-file F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -HC:/Users/nicol/Downloads/Dev/TCC/OpenFlex -BC:/Users/nicol/Downloads/Dev/TCC/OpenFlex --check-stamp-file C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -126,12 +126,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">F:/Downloads/Dev/CG/OpenFlex/CMakeLists.txt;F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeCCompiler.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeLists.txt;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeSystemSpecificInitialize.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeCCompiler.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindPackageMessage.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule F:/Downloads/Dev/CG/OpenFlex/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">Building Custom Rule C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HF:/Downloads/Dev/CG/OpenFlex -BF:/Downloads/Dev/CG/OpenFlex --check-stamp-file F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -HC:/Users/nicol/Downloads/Dev/TCC/OpenFlex -BC:/Users/nicol/Downloads/Dev/TCC/OpenFlex --check-stamp-file C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -139,12 +139,12 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">F:/Downloads/Dev/CG/OpenFlex/CMakeLists.txt;F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeCCompiler.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeLists.txt;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeSystemSpecificInitialize.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeCCompiler.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindPackageMessage.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|Win32'">false</LinkObjects>
-      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule F:/Downloads/Dev/CG/OpenFlex/CMakeLists.txt</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">Building Custom Rule C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeLists.txt</Message>
       <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -HF:/Downloads/Dev/CG/OpenFlex -BF:/Downloads/Dev/CG/OpenFlex --check-stamp-file F:/Downloads/Dev/CG/OpenFlex/CMakeFiles/generate.stamp
+"C:\Program Files\CMake\bin\cmake.exe" -HC:/Users/nicol/Downloads/Dev/TCC/OpenFlex -BC:/Users/nicol/Downloads/Dev/TCC/OpenFlex --check-stamp-file C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeFiles/generate.stamp
 if %errorlevel% neq 0 goto :cmEnd
 :cmEnd
 endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
@@ -152,40 +152,40 @@ endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
 exit /b %1
 :cmDone
 if %errorlevel% neq 0 goto :VCEnd</Command>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">F:/Downloads/Dev/CG/OpenFlex/CMakeLists.txt;F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInitialize.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeCCompiler.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\3.9.2\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.9\Modules\FindPackageMessage.cmake;F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">F:\Downloads\Dev\CG\OpenFlex\CMakeFiles\generate.stamp</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/CMakeLists.txt;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeSystem.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeSystemSpecificInitialize.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeCCompiler.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeCXXCompiler.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeSystemSpecificInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeGenericSystem.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\WindowsPaths.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC-C.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\3.10.0-rc3\CMakeRCCompiler.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeRCInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCXXInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeLanguageInformation.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Compiler\MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Compiler\CMakeCommonCompilerMacros.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC-CXX.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\Platform\Windows-MSVC.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\CMakeCommonLanguageInclude.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindOpenGL.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.10\Modules\FindPackageMessage.cmake;C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeFiles\generate.stamp</Outputs>
       <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|Win32'">false</LinkObjects>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="F:\Downloads\Dev\CG\OpenFlex\ZERO_CHECK.vcxproj">
-      <Project>{F4CC51FE-9958-3774-91F5-96C16036093F}</Project>
+    <ProjectReference Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\ZERO_CHECK.vcxproj">
+      <Project>{1D6BC048-A7FE-31BA-A26D-6CCF8FE73D26}</Project>
       <Name>ZERO_CHECK</Name>
     </ProjectReference>
-    <ProjectReference Include="F:\Downloads\Dev\CG\OpenFlex\external\ANTTWEAKBAR_116_OGLCORE_GLFW.vcxproj">
-      <Project>{A445DF9B-1A51-30E4-B751-4EF6EA79C867}</Project>
+    <ProjectReference Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\ANTTWEAKBAR_116_OGLCORE_GLFW.vcxproj">
+      <Project>{6D28653E-EBC3-3040-A6FA-28ED33E2B985}</Project>
       <Name>ANTTWEAKBAR_116_OGLCORE_GLFW</Name>
     </ProjectReference>
-    <ProjectReference Include="F:\Downloads\Dev\CG\OpenFlex\CG_UFFS.vcxproj">
-      <Project>{2D6226D1-420C-31F2-B36A-49904DA25E0D}</Project>
+    <ProjectReference Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CG_UFFS.vcxproj">
+      <Project>{692BAE95-EEFF-3431-9436-39C23FFE0524}</Project>
       <Name>CG_UFFS</Name>
     </ProjectReference>
-    <ProjectReference Include="F:\Downloads\Dev\CG\OpenFlex\external\GLEW_190.vcxproj">
-      <Project>{E7C2746E-68FF-325A-8952-DE3165F6F06D}</Project>
+    <ProjectReference Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\GLEW_190.vcxproj">
+      <Project>{AD9AE6AF-C3AA-3096-B639-E7964E63DB80}</Project>
       <Name>GLEW_190</Name>
     </ProjectReference>
-    <ProjectReference Include="F:\Downloads\Dev\CG\OpenFlex\external\glfw-3.0.3\src\GLFW_303.vcxproj">
-      <Project>{C07A568C-8C64-3CB9-AABE-B0B3E331F491}</Project>
+    <ProjectReference Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\glfw-3.0.3\src\GLFW_303.vcxproj">
+      <Project>{CE32A7E4-B0B3-3153-A956-61B0972D7645}</Project>
       <Name>GLFW_303</Name>
     </ProjectReference>
-    <ProjectReference Include="F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\code\assimp.vcxproj">
-      <Project>{E630E214-FFB8-3F97-AB07-B828AB2E3DA2}</Project>
+    <ProjectReference Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\code\assimp.vcxproj">
+      <Project>{D4D5BA8D-5986-3C42-9D91-104EBBE7B4AF}</Project>
       <Name>assimp</Name>
     </ProjectReference>
-    <ProjectReference Include="F:\Downloads\Dev\CG\OpenFlex\external\assimp-3.0.1270\contrib\zlib\zlib.vcxproj">
-      <Project>{AD7265E7-BA65-39CC-ADE8-12DFCBDF9BD6}</Project>
+    <ProjectReference Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\external\assimp-3.0.1270\contrib\zlib\zlib.vcxproj">
+      <Project>{1B11CBC2-36AA-308E-A715-1F5680DCE6B5}</Project>
       <Name>zlib</Name>
     </ProjectReference>
   </ItemGroup>

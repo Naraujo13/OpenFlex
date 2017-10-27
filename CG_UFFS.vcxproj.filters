@@ -1,34 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\controls.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\controls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\objloader.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\quaternion_utils.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\objloader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\shader.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\quaternion_utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\tangentspace.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\text2D.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\tangentspace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\texture.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\text2D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\vboindexer.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="F:\Downloads\Dev\CG\OpenFlex\sources\glerror.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\vboindexer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sources\main.cpp">
+    <ClCompile Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\sources\glerror.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sources\Particle.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sources\pbf.cpp">
@@ -36,43 +39,46 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="F:\Downloads\Dev\CG\OpenFlex\include\controls.hpp">
+    <ClInclude Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include\controls.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Downloads\Dev\CG\OpenFlex\include\objloader.hpp">
+    <ClInclude Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include\objloader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Downloads\Dev\CG\OpenFlex\include\quaternion_utils.hpp">
+    <ClInclude Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include\quaternion_utils.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Downloads\Dev\CG\OpenFlex\include\shader.hpp">
+    <ClInclude Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include\shader.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Downloads\Dev\CG\OpenFlex\include\tangentspace.hpp">
+    <ClInclude Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include\tangentspace.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Downloads\Dev\CG\OpenFlex\include\text2D.hpp">
+    <ClInclude Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include\text2D.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Downloads\Dev\CG\OpenFlex\include\texture.hpp">
+    <ClInclude Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include\texture.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Downloads\Dev\CG\OpenFlex\include\vboindexer.hpp">
+    <ClInclude Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include\vboindexer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="F:\Downloads\Dev\CG\OpenFlex\include\glerror.hpp">
+    <ClInclude Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\include\glerror.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Particle.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="F:\Downloads\Dev\CG\OpenFlex\CMakeLists.txt" />
+    <CustomBuild Include="C:\Users\nicol\Downloads\Dev\TCC\OpenFlex\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
-      <UniqueIdentifier>{0398E5E0-2DB6-3A37-8847-91A2A4DB9487}</UniqueIdentifier>
+      <UniqueIdentifier>{71C6BD84-E07A-3285-BF3C-5E3F54171180}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files">
-      <UniqueIdentifier>{0EF62947-D7F8-3374-9125-0690FA6CF0FB}</UniqueIdentifier>
+      <UniqueIdentifier>{29A71480-19BC-3973-AAD6-F75FC6776765}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-# Install script for directory: F:/Downloads/Dev/CG/OpenFlex
+# Install script for directory: C:/Users/nicol/Downloads/Dev/TCC/OpenFlex
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -27,9 +27,14 @@ if(NOT CMAKE_INSTALL_COMPONENT)
   endif()
 endif()
 
+# Is this installation the result of a crosscompile?
+if(NOT DEFINED CMAKE_CROSSCOMPILING)
+  set(CMAKE_CROSSCOMPILING "FALSE")
+endif()
+
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("F:/Downloads/Dev/CG/OpenFlex/external/cmake_install.cmake")
+  include("C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/external/cmake_install.cmake")
 
 endif()
 
@@ -41,5 +46,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "F:/Downloads/Dev/CG/OpenFlex/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "C:/Users/nicol/Downloads/Dev/TCC/OpenFlex/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")
