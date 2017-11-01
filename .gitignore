@@ -18,3 +18,14 @@ external
 /
 Debug
 /Release
+ALL_BUILD\.vcxproj
+ALL_BUILD\.vcxproj\.filters
+CG_UFFS\.sln
+CG_UFFS\.vcxproj
+CG_UFFS\.vcxproj\.filters
+CMakeFiles
+INSTALL\.vcxproj
+INSTALL\.vcxproj\.filters
+ZERO_CHECK\.vcxproj
+ZERO_CHECK\.vcxproj\.filters
+cmake_install.cmake
