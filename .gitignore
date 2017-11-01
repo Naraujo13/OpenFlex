@@ -1,12 +1,20 @@
 
-\.vs/
+\.vs
+/
 
-CG_UFFS\.dir/
+CG_UFFS\.dir
+/
 
-CG_UFFS\.tlog/
+CG_UFFS\.tlog
+/
 
-Debug/
+Debug
+/
 
-Win32/
+Win32
+/
 
-external/
+external
+/
+Debug
+/Release
