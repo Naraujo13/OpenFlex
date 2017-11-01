@@ -26,6 +26,7 @@ using namespace std;
 #include "pbf.hpp"
 
 Hash hash_table;
+SpatialHash spatial_hash;
 
 std::vector<Particle> particlesList;
 std::vector< Particle > predict_p;
@@ -36,8 +37,8 @@ float g_ymax = 2;
 float g_ymin = 0;
 float g_zmax = 2;
 float g_zmin = 0;
-float h_sphere = 0.05;
-float g_h = 0.12;
+float particle_size = 0.05;
+float g_h = 0.10;
 float POW_H_9 = (g_h*g_h*g_h*g_h*g_h*g_h*g_h*g_h*g_h); // h^9
 float POW_H_6 = (g_h*g_h*g_h*g_h*g_h*g_h); // h^6
 										   //float rigidBody = 10;
@@ -1030,6 +1031,16 @@ int ComputeHash(int &grid_x, int &grid_y, int &grid_z)
 	return grid;
 }
 
+int newComputeHash(int &grid_x, int &grid_y, int &grid_z,int& num_cells_row)
+{
+	int grid = std::floor(
+		grid_x + 
+		(grid_y * num_cells_row) +
+		(grid_z * num_cells_row * num_cells_row));
+
+	return grid;
+}
+
 //------------------------------------------------------------------------------
 void BuildHashTable(std::vector<Particle> &p_list, Hash &hash_table)
 {
@@ -1043,6 +1054,7 @@ void BuildHashTable(std::vector<Particle> &p_list, Hash &hash_table)
 
 	hash_table.clear();
 
+	#pragma omp parallel for
 	for (int i = 0; i < num_particles; i++)
 	{
 		grid_x = floor(p_list[i].current_position[0] / cell_size);
@@ -1055,6 +1067,42 @@ void BuildHashTable(std::vector<Particle> &p_list, Hash &hash_table)
 		/*printf("Grid:\n");*/
 
 	}
+}
+
+
+void newBuildHashTable(std::vector<Particle> &p_list, SpatialHash &hash_table)
+{
+	//Number of particles
+	int num_particles = p_list.size();
+	
+	//Define tamanho das células
+	float cell_size = particle_size;
+	
+	//Gets dimensions
+	int xDiff, yDiff, zDiff;
+	xDiff = (g_xmax - g_xmin);
+	yDiff = (g_ymax - g_ymin);
+	zDiff = (g_zmax - g_zmin);
+
+	//Debug
+	//std::cout << "Tamanho do espaço: " << xDiff << ", " << yDiff << ", " << zDiff << std::endl;
+
+	
+	//Construct Hash
+	hash_table.reconstruct(glm::vec3(xDiff, yDiff, zDiff), cell_size);
+ 
+	//Grid Id's
+	int grid_id_x;
+	int grid_id_y;
+	int grid_id_z;
+
+	//For each particle
+	#pragma omp parallel for
+	for (int i = 0; i < num_particles; i++)
+	{
+		hash_table.insert(p_list[i].current_position, i);
+	}
+	
 }
 
 //------------------------------------------------------------------------------
@@ -1160,6 +1208,87 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 					}
 				}
 			}
+		}
+	}
+}
+
+
+void newSetUpNeighborsLists(std::vector<Particle> &p_list, SpatialHash &hash_table)
+{
+	#pragma omp parallel
+	{
+		//Número de partículas
+		int num_particles = p_list.size();
+
+		//Define tamanho das células
+		float cell_size = particle_size;	
+		float num_cell = (g_xmax - g_xmin) / cell_size;
+
+		int x_id;
+		int y_id;
+		int z_id;
+
+		
+		#pragma omp parallel for nowait
+		//For all particles
+		for (int i = 0; i < num_particles; i++) {
+
+
+			//Calculates min-max grid index based on current particle position and neighbour range
+			//glm::vec3 p_pos = hash_table.hashFunction(p_list[i].current_position);
+			glm::vec3 grid_min = hash_table.hashFunction(p_list[i].current_position - glm::vec3(g_h));
+			glm::vec3 grid_max = hash_table.hashFunction(p_list[i].current_position + glm::vec3(g_h));
+
+			//std::cout << "Posicao da particula: " << p_list[i].current_position.x << ", " << p_list[i].current_position.y << ", " << p_list[i].current_position.z << std::endl;
+			//std::cout << "Center/Particle: " << p_pos.x << ", " << p_pos.y << ", " << p_pos.z << std::endl;
+			//std::cout << "Grid_min: " << grid_min.x << ", " << grid_min.y << ", " << grid_min.z << std::endl;
+			//std::cout << "Grid_max: " << grid_max.x << ", " << grid_max.y << ", " << grid_max.z << std::endl;
+
+			//Iterate on Z
+			#pragma omp parallel for nowait
+			for (z_id = grid_min.z; z_id <= grid_max.z; z_id++) {
+				//Iterate on Y
+				#pragma omp parallel for nowait
+				for (y_id = grid_min.y; y_id <= grid_max.y; y_id++) {
+					//Iterate on X
+					#pragma omp parallel for nowait
+					for (x_id = grid_min.x; x_id <= grid_max.x; x_id++) {
+
+						std::vector<int> neighbours = hash_table.getCell(glm::vec3(x_id, y_id, z_id));
+
+						#pragma omp parallel for nowait
+						for (int neighbour : neighbours) {
+							//If current particle and current neighbour are rigidBody
+							if (p_list[i].isRigidBody && p_list[neighbour].isRigidBody)
+								p_list[i].rigidBodyNeighbours.push_back(neighbour);	//Push neigbhour to rigidBody vector
+
+																						//If current particle not rigidBody, but neighbour is
+							if (!p_list[i].isRigidBody && p_list[neighbour].isRigidBody) {
+								p_list[i].rigidBodyNeighbours.push_back(neighbour);	//Push neighbour to rigidBody vector
+
+								//If particle is closer to rigidBody than wall_h factor
+								if (glm::length(p_list[i].current_position - p_list[neighbour].current_position) < wall_h)
+									p_list[i].isCollidingWithRigidBody = true;	//Set isCollidingWithRigidBody constant to true
+
+							}
+
+							//If current particle is rigidBody, and neighbour is isCollidingWithRigidBody
+							if (p_list[i].isRigidBody && p_list[neighbour].isCollidingWithRigidBody)
+								p_list[i].rigidBodyNeighbours.push_back(neighbour);	//Push neighbour to rigidBody vector
+
+							//If both particles are not rigidBody
+							if (!p_list[i].isRigidBody && !p_list[neighbour].isRigidBody)
+								p_list[i].notRigidBodyNeighbours.push_back(neighbour);	//Push to all vector
+
+							//Push to neighbors vector
+							p_list[i].allNeighbours.push_back(neighbour);
+						}
+					}
+				}
+			}
+
+			//std::cout << "Neighbours " << p_list[i].allNeighbours.size() << "\n";
+			//getchar();
 		}
 	}
 }

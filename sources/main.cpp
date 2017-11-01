@@ -67,6 +67,7 @@ void WindowSizeCallBack(GLFWwindow *pWindow, int nWidth, int nHeight) {
 
 typedef std::unordered_multimap< int, int > Hash;
 extern Hash hash_table;
+extern SpatialHash spatial_hash;
 
 extern std::vector<Particle> particlesList;
 extern std::vector< Particle > predict_p;
@@ -77,7 +78,7 @@ extern float g_ymax;
 extern float g_ymin;
 extern float g_zmax;
 extern float g_zmin;
-extern float h_sphere;
+extern float particle_size;
 extern float g_h;
 extern float POW_H_9; // h^9
 extern float POW_H_6; // h^6
@@ -149,11 +150,21 @@ void Algorithm() {
 	}
 
 	//timeb4 = glfwGetTime();
+	//newBuildHashTable(predict_p, spatial_hash);
 	BuildHashTable(predict_p, hash_table);
 	//std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
-	//timeb4 = glfwGetTime();
+	
+	
+	timeb4 = glfwGetTime();
+	//newSetUpNeighborsLists(predict_p, spatial_hash);
 	SetUpNeighborsLists(predict_p, hash_table);
-	//std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+	//std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl << std::endl;
+	
+	//for (int i = 0; i < npart; i++) {
+	//	std::cout << "Particula " << i << " -> " << predict_p[i].allNeighbours.size() << " vizinhos\n";
+	//	getchar();
+	//}
+	
 
 	int iter = 0;
 
@@ -181,8 +192,13 @@ void Algorithm() {
 
 		}
 
+		//std::cout << "before dp\n";
+
 		//Calculate delta P for prediction
 		CalculateDp(predict_p);
+
+
+		//std::cout << "before collision\n";
 
 		//Collision Detection and Response
 		CollisionDetectionResponse(predict_p);
@@ -305,7 +321,7 @@ int main(void)
 	TwAddVarRW(g_pToolBar, "g_xmax", TW_TYPE_FLOAT, &g_xmax, " label='position x of wall' min=-40 max=40 step=0.01 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
 	/*TwAddVarRW(g_pToolBar, "g_k", TW_TYPE_FLOAT, &g_k, " label='k for scorr' min=-13 max=13 step=0.0001 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
 	TwAddVarRW(g_pToolBar, "g_dq", TW_TYPE_FLOAT, &g_dq, " label='dq for scorr' min=-13 max=13 step=0.01 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");*/
-	TwAddVarRW(g_pToolBar, "h_sphere", TW_TYPE_FLOAT, &h_sphere, " label='h_sphere' min=0 max=5 step=0.01 keyIncr=h keyDecr=H help='Rotation speed (turns/second)' ");
+	TwAddVarRW(g_pToolBar, "particle_size", TW_TYPE_FLOAT, &particle_size, " label='particle_size' min=0 max=5 step=0.01 keyIncr=h keyDecr=H help='Rotation speed (turns/second)' ");
 	TwAddVarRW(g_pToolBar, "viscosityC", TW_TYPE_FLOAT, &viscosityC, " label='viscosityC' min=0 max=1 step=0.0001 keyIncr=h keyDecr=H help='Rotation speed (turns/second)' ");
 	TwAddVarRW(g_pToolBar, "vorticityEps", TW_TYPE_FLOAT, &vorticityEps, " label='vorticityEps' min=-13 max=13 step=0.00001 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
 	TwAddVarRW(g_pToolBar, "gota", TW_TYPE_FLOAT, &gota, " label='gota' min=0 max=2 step=1 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
@@ -571,9 +587,9 @@ int main(void)
 
 
 		glm::mat4 ModelMatrix = glm::mat4(1.0f); //Usar posição aleatória
-		ModelMatrix[0][0] = h_sphere; //Escala do modelo (x)
-		ModelMatrix[1][1] = h_sphere; //Escala do modelo (y)
-		ModelMatrix[2][2] = h_sphere; //Escala do modelo (z)
+		ModelMatrix[0][0] = particle_size; //Escala do modelo (x)
+		ModelMatrix[1][1] = particle_size; //Escala do modelo (y)
+		ModelMatrix[2][2] = particle_size; //Escala do modelo (z)
 		
 		//double timeb4 = glfwGetTime();
 		Algorithm();
@@ -586,14 +602,14 @@ int main(void)
 		//timeb4 = glfwGetTime();
 
 		/* -- Draw particles -- */
-		for (int teste = 0; teste < particlesList.size(); teste++) {
+		for (int index = 0; index < particlesList.size(); index++) {			
+
 			//for
+			ModelMatrix[3][0] = particlesList[index].current_position.x; //posição x
+			ModelMatrix[3][1] = particlesList[index].current_position.y; //posição y
+			ModelMatrix[3][2] = particlesList[index].current_position.z; //posição z
 
-			ModelMatrix[3][0] = particlesList[teste].current_position.x; //posição x
-			ModelMatrix[3][1] = particlesList[teste].current_position.y; //posição y
-			ModelMatrix[3][2] = particlesList[teste].current_position.z; //posição z
-
-			if (particlesList[teste].teardrop)
+			if (particlesList[index].teardrop)
 				glUniform3f(particleColor, 1.0f, 0.0f, 0.0f);
 
 			glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
@@ -605,7 +621,7 @@ int main(void)
 
 
 			// Draw the triangles !
-			/*if (!particles[teste].rigidBody){*/
+			/*if (!particles[index].rigidBody){*/
 			glDrawElements(
 				GL_TRIANGLES,        // mode
 				indices.size(),      // count

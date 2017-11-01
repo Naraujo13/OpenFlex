@@ -1,32 +1,12 @@
-# Prerequisites
-*.d
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+\.vs/
 
-# Precompiled Headers
-*.gch
-*.pch
+CG_UFFS\.dir/
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+CG_UFFS\.tlog/
 
-# Fortran module files
-*.mod
-*.smod
+Debug/
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+Win32/
 
-# Executables
-*.exe
-*.out
-*.app
+external/

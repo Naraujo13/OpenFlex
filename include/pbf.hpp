@@ -40,6 +40,7 @@ using namespace std;
 
 typedef std::unordered_multimap< int, int > Hash;
 
+
 class ParticleOld
 {
 public:
@@ -94,4 +95,7 @@ void movewallz(std::vector<Particle> &p_list);
 void movewallx(std::vector<Particle> &p_list);
 void movewally(std::vector<Particle> &p_list);
 
+
+void newBuildHashTable(std::vector<Particle> &p_list, SpatialHash &hash_table);
+void newSetUpNeighborsLists(std::vector<Particle> &p_list, SpatialHash &hash_table);
 #endif

@@ -152,3 +152,114 @@ glm::vec3 wSpiky(glm::vec3 &r, float &h) {
 	return r * -coeff;
 }
 */
+
+
+/* --- Spatial Hash --- */
+
+//Clean
+void SpatialHash::cleanHash() {
+	this->cells.clear(); 
+}
+
+void SpatialHash::buildHash(glm::vec3 dim, float cellSize) {
+	
+
+
+	this->cellSize = cellSize;
+	glm::vec3 size;
+	size.x = ceil(dim.x / cellSize);
+	size.y = ceil(dim.y / cellSize);
+	size.z = ceil(dim.z / cellSize);
+	this->dim = size;
+
+	//Debug
+	//std::cout << "\tTamanho de uma célula: " << cellSize << std::endl;
+	//std::cout << "\tTamanho em células da spatial hash: " << this->dim.x << ", " << this->dim.y << ", " << this->dim.z << std::endl;
+	//getchar();
+
+	#pragma omp parallel for
+	for (int x = 0; x < dim.x; x++) {
+		#pragma omp parallel for
+		for (int y = 0; y < dim.y; y++) {
+			#pragma omp parallel for
+			for (int z = 0; z < dim.z; z++) {
+				cells.insert(spatialCell::value_type(glm::vec3(x, y, z), particleVector()));
+			}
+		}
+	}
+}
+
+//Construtor
+SpatialHash::SpatialHash() {}
+
+SpatialHash::SpatialHash(glm::vec3 dim, float cellSize) {
+	this->cellSize = cellSize;
+	glm::vec3 size;
+	size.x = ceil(dim.x / cellSize);
+	size.y = ceil(dim.y / cellSize);
+	size.z = ceil(dim.z / cellSize);
+	this->dim = size;
+	buildHash(this->dim, cellSize);
+}
+
+void SpatialHash::reconstruct() {
+	this->cleanHash();
+	this->buildHash(this->dim, this->cellSize);
+}
+
+void SpatialHash::reconstruct(glm::vec3 dim, float cellSize) {
+	this->cleanHash();
+	this->buildHash(dim, cellSize);
+}
+
+//Hash
+glm::vec3 SpatialHash::hashFunction(glm::vec3 particlePosition) {
+
+	//Grid Id's
+	int grid_id_x;
+	int grid_id_y;
+	int grid_id_z;
+
+	//Get cell x
+	grid_id_x = (floor(particlePosition.x / this->cellSize));
+
+	//Get cell y
+	grid_id_y = (floor(particlePosition.y / this->cellSize));
+
+	//Get cell z
+	grid_id_z = (floor(particlePosition.z / this->cellSize));
+
+	//Debug
+	//std::cout << "\t\tHashing: (" << particlePosition.x << ", " << particlePosition.y << ", " << particlePosition.z << ") -> (";
+	//std::cout << grid_id_x << ", " << grid_id_y << ", " << grid_id_z << ")" << std::endl;
+	//getchar();
+
+	return glm::vec3(grid_id_x, grid_id_y, grid_id_z);
+
+}
+
+//Insert
+bool SpatialHash::insert(glm::vec3 particlePos, int particleIndex) {
+
+	//std::cout << "\tGetting hash value...\n";
+	glm::vec3 index = this->hashFunction(particlePos);
+
+	//std::cout << "\tInserting at (" << index.x << ", " << index.y << ", " << index.z << ")\n";
+	
+	//std::cout << "\tVector size before: " << this->cells[index].size() << "\n"; 
+		
+	this->cells[index].push_back(particleVector::value_type(particleIndex));
+	
+	//std::cout << "\tVector size after: " << this->cells[index].size() << "\n";
+
+	//getchar();
+	
+
+	return true;
+}
+
+//Get cell
+std::vector<int> SpatialHash::getCell(glm::vec3 particlePosition) {
+	//glm::vec3 index = hashFunction(particlePosition);
+	return this->cells[particlePosition];
+}
