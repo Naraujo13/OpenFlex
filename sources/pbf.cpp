@@ -63,7 +63,7 @@ float wallLightx = 1;
 float wallLighty = 1;
 float wallLightz = 1;
 int GRID_RESOLUTION = 20;
-float adhesioncoeff = 0.5;
+float adhesioncoeff = 0.0;
 float cohesioncoeff = 0.1;
 float move_wallz = 0;
 float move_wallx = 0;
@@ -1215,6 +1215,17 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 
 void newSetUpNeighborsLists(std::vector<Particle> &p_list, SpatialHash &hash_table)
 {
+
+//	for (auto cell = hash_table.getCells().begin(); cell != hash_table.getCells().end(); cell++) {
+//		std::cout << "start\n";
+//		if (cell != null) {
+//			std::cout << "\tCélula ("
+//				<< (*cell).first.x << " ," << (*cell).first.y << ", " << (*cell).first.z;
+//			std::cout << ") has " << (*cell).second.size() << std::endl;
+//		}
+//		std::cout << "end\n";
+//	}
+
 	#pragma omp parallel
 	{
 		//Número de partículas
@@ -1287,7 +1298,7 @@ void newSetUpNeighborsLists(std::vector<Particle> &p_list, SpatialHash &hash_tab
 				}
 			}
 
-			//std::cout << "Neighbours " << p_list[i].allNeighbours.size() << "\n";
+			std::cout << "Neighbours for particle " << i << ": " << p_list[i].allNeighbours.size() << "\n";
 			//getchar();
 		}
 	}

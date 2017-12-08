@@ -124,7 +124,7 @@ void Algorithm() {
 	double timeb4 = glfwGetTime();
 
 	gravity.y = gravity_y;
-	
+
 	if (gota == 1) {
 		hose();
 		gota = 2;
@@ -149,28 +149,29 @@ void Algorithm() {
 		predict_p[i].teardrop = false;*/
 	}
 
-	//timeb4 = glfwGetTime();
+	timeb4 = glfwGetTime();
 	//newBuildHashTable(predict_p, spatial_hash);
 	BuildHashTable(predict_p, hash_table);
 	//std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
-	
-	
+
+
 	timeb4 = glfwGetTime();
 	//newSetUpNeighborsLists(predict_p, spatial_hash);
 	SetUpNeighborsLists(predict_p, hash_table);
 	//std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl << std::endl;
-	
+
 	//for (int i = 0; i < npart; i++) {
-	//	std::cout << "Particula " << i << " -> " << predict_p[i].allNeighbours.size() << " vizinhos\n";
+		//std::cout << "Particula " << i << " -> " << predict_p[i].allNeighbours.size() << " vizinhos\n";
 	//	getchar();
 	//}
+	
 	
 
 	int iter = 0;
 
 	//Solver Iterations
 	while (iter < ITER) {	
-
+		//std::cout << "Iter " << iter << std::endl;
 		//For all particles -> density estimations
 		#pragma omp parallel for
 		for (int i = 0; i < npart; i++) {
@@ -254,9 +255,169 @@ void Algorithm() {
 	particlesList = predict_p;
 }
 
+std::string GetPlatformName(cl_platform_id id)
+{
+	size_t size = 0;
+	clGetPlatformInfo(id, CL_PLATFORM_NAME, 0, nullptr, &size);
+
+	std::string result;
+	result.resize(size);
+	clGetPlatformInfo(id, CL_PLATFORM_NAME, size,
+		const_cast<char*> (result.data()), nullptr);
+
+	return result;
+}
+
+std::string GetDeviceName(cl_device_id id)
+{
+	size_t size = 0;
+	clGetDeviceInfo(id, CL_DEVICE_NAME, 0, nullptr, &size);
+
+	std::string result;
+	result.resize(size);
+	clGetDeviceInfo(id, CL_DEVICE_NAME, size,
+		const_cast<char*> (result.data()), nullptr);
+
+	return result;
+}
+
+void CheckError(cl_int error)
+{
+	if (error != CL_SUCCESS) {
+		std::cerr << "OpenCL call failed with error " << error << std::endl;
+		std::exit(1);
+	}
+}
+
+const char *kernelChar = "\n" \
+"__kernel void duplica(__global float* in, __global float* out)\n" \
+"{\n" \
+"int temp = in[0];\n" \
+"out[0] = temp + temp\n;" \
+"}\n";
 
 int main(void)
 {
+	//----------- OpenCL -------------
+
+	//Get Number of Platforms
+	cl_uint platformIdCount = 0;
+	clGetPlatformIDs(0, nullptr, &platformIdCount);
+	if (platformIdCount == 0) {
+		std::cerr << "No OpenCL platform found" << std::endl;
+		return 1;
+	}
+	else
+		std::cout << "Found " << platformIdCount << " platform(s)" << std::endl;
+	
+	//Get Platforms
+	std::vector<cl_platform_id> platformIds(platformIdCount);
+	clGetPlatformIDs (platformIdCount, platformIds.data(), nullptr);
+	for (cl_uint i = 0; i < platformIdCount; ++i)
+		std::cout << "\t (" << (i + 1) << ") : " << GetPlatformName(platformIds[i]) << std::endl;
+	
+
+	//Get Number of Devices
+	cl_uint deviceIdCount = 0;
+	clGetDeviceIDs(platformIds[0], CL_DEVICE_TYPE_ALL, 0, nullptr, &deviceIdCount);
+	if (deviceIdCount == 0) {
+		std::cerr << "No OpenCL devices found" << std::endl;
+		return 1;
+	}
+	else 
+		std::cout << "Found " << deviceIdCount << " device(s)" << std::endl;
+	
+	//Get Devices
+	std::vector<cl_device_id> deviceIds(deviceIdCount);
+	clGetDeviceIDs(platformIds[0], CL_DEVICE_TYPE_ALL, deviceIdCount, deviceIds.data(), nullptr);
+	for (cl_uint i = 0; i < deviceIdCount; ++i)
+		std::cout << "\t (" << (i + 1) << ") : " << GetDeviceName(deviceIds[i]) << std::endl;
+
+
+	//Creates context properties based on first device
+	const cl_context_properties contextProperties[] =
+	{
+		CL_CONTEXT_PLATFORM,
+		reinterpret_cast<cl_context_properties> (platformIds[0]),
+		0, 0
+	};
+
+	//Creates variable to error string
+	cl_int errorCode = 0;
+
+	cl_context context = clCreateContext(
+		contextProperties, deviceIdCount,
+		deviceIds.data(), nullptr,
+		nullptr, &errorCode);
+	CheckError(errorCode);
+
+	//Alocates vector and buffer
+	float *h_input = (float *) malloc(sizeof(float) * 2);
+	float *h_output = (float *)malloc(sizeof(float) * 2);
+	h_input[0] = 2;
+	h_input[1] = 3;
+	h_output[0] = 0;
+	h_output[1] = 0;
+	cl_mem d_input = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 2, h_input, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_output = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 2, h_input, &errorCode);
+	CheckError(errorCode);
+
+	// Create a command commands
+	cl_command_queue queue = clCreateCommandQueue(context, deviceIds[1], 0, &errorCode);
+	CheckError(errorCode);
+
+	//Creates Program
+	cl_program program = clCreateProgramWithSource(
+		context, 1, (const char **)& kernelChar, NULL, &errorCode
+	);
+	CheckError(errorCode);
+
+	// Build the program executable
+	errorCode = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+	CheckError(errorCode);
+
+	//Creates Kernel 
+	cl_kernel kernel = clCreateKernel(program, "duplica", &errorCode);
+	CheckError(errorCode);
+
+	//Set Kernel Args
+	clSetKernelArg(kernel, 0, sizeof(cl_mem), &d_input);
+	clSetKernelArg(kernel, 1, sizeof(cl_mem), &d_output);
+
+	//Enqueues for execution
+	const size_t globalWorkSize[] = { 2, 0, 0 };
+	CheckError(clEnqueueNDRangeKernel(
+		queue, 
+		kernel,
+		1, 
+		nullptr,
+		globalWorkSize,
+		nullptr,
+		0, 
+		nullptr,
+		nullptr
+	));
+
+	std::cout << "In before: (1) " << h_input[0] << "\t(2) " << h_input[1] << std::endl;
+	std::cout << "Out before: (1) " << h_output[0] << "\t(2) " << h_output[1] << std::endl;
+
+	//Gets results back
+	clEnqueueReadBuffer(
+		queue,		//Command Queue
+		d_output, //Device source
+		CL_TRUE, //Blocking?
+		0,		//Offset in bytes from start of array
+		sizeof(float) * 2, //Buffer 
+		h_output,	//Host target
+		0,	//Num of events to be executed before this command -> 0 == doesnt wait
+		NULL, //Event List to be executed before this command -> NULL == doesnt wait
+		NULL //Object Event to be returned that identify this command that can be used to query event status or queue a wait
+
+	);
+
+	std::cout << "In after: (1) " << h_input[0] << "\t(2) " << h_input[1] << std::endl;
+	std::cout << "Out after: (1) " << h_output[0] << "\t(2) " << h_output[1] << std::endl;
 
 	int nUseMouse = 0;
 	InitParticleList();

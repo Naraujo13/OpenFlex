@@ -29,3 +29,8 @@ INSTALL\.vcxproj\.filters
 ZERO_CHECK\.vcxproj
 ZERO_CHECK\.vcxproj\.filters
 cmake_install.cmake
+CG_UFFS171114\.vspx
+
+ALL_BUILD\.vcxproj\.user
+
+CG_UFFS\.psess

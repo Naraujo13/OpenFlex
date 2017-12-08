@@ -159,6 +159,7 @@ glm::vec3 wSpiky(glm::vec3 &r, float &h) {
 //Clean
 void SpatialHash::cleanHash() {
 	this->cells.clear(); 
+	std::cout << "\t\t" << "Hash cleaned. Size: " << cells.size() << std::endl;
 }
 
 void SpatialHash::buildHash(glm::vec3 dim, float cellSize) {
