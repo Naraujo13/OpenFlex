@@ -52,19 +52,6 @@ void WindowSizeCallBack(GLFWwindow *pWindow, int nWidth, int nHeight) {
 	TwWindowSize(g_nWidth, g_nHeight);
 }
 
-//struct Particle
-//{
-//	glm::vec2 pos; 					// position
-//	glm::vec2 vel; 					// velocity
-//	float m; 						// mass
-//	glm::vec2 dp;					// Delta p, to be used during the particle projection
-//	float lambda;					// particle lambda
-//	float rho;						// density at the particle
-//	float C;						// density constraint for the particle
-//	std::vector< unsigned int > n;	// neighbor particles' indexes
-//	float hash;						// the hash for the particle
-//};
-
 typedef std::unordered_multimap< int, int > Hash;
 extern Hash hash_table;
 extern SpatialHash spatial_hash;
@@ -284,17 +271,43 @@ std::string GetDeviceName(cl_device_id id)
 void CheckError(cl_int error)
 {
 	if (error != CL_SUCCESS) {
-		std::cerr << "OpenCL call failed with error " << error << std::endl;
+		switch (error) {
+		case CL_INVALID_PROGRAM:
+			std::cerr << "OpenCL Error: " << error << " - program is not a valid program object" << std::endl;
+			break;
+		case CL_INVALID_VALUE:
+			std::cerr << "OpenCL Error: " << error << " - device list and num_devices or  pfn_notify and user data incompatible" << std::endl;
+			break;
+		case CL_INVALID_DEVICE:
+			std::cerr << "OpenCL Error: " << error << " - device in device_list not associated with program" << std::endl;
+			break;
+		case CL_INVALID_BINARY:
+			std::cerr << "OpenCL Error: " << error << " - program doesnt have valid binary associated" << std::endl;
+			break;
+		case CL_INVALID_BUILD_OPTIONS:
+			std::cerr << "OpenCL Error: " << error << " - build options associated are invalid" << std::endl;
+			break;
+		case CL_INVALID_OPERATION:
+			std::cerr << "OpenCL Error: " << error << " - previous build not finished or kernel objects are attached to program" << std::endl;
+			break;
+		case CL_COMPILER_NOT_AVAILABLE:
+			std::cerr << "OpenCL Error: " << error << " - cimpiler not available" << std::endl;
+		case CL_BUILD_PROGRAM_FAILURE:
+			std::cerr << "OpenCL Error: " << error << " - build error, couldnt finish clbuildprogram" << std::endl;
+			break;
+		case CL_OUT_OF_RESOURCES:
+			std::cerr << "OpenCL Error: " << error << " - failure to allocate resources on the device" << std::endl;
+			break;
+		case CL_OUT_OF_HOST_MEMORY:
+			std::cerr << "OpenCL Error: " << error << " - failure toallocate resources on the host" << std::endl;
+			break;
+		default:
+			std::cerr << "OpenCL call failed with error " << error << std::endl;
+			break;
+		}
 		std::exit(1);
 	}
 }
-
-const char *kernelChar = "\n" \
-"__kernel void duplica(__global float* in, __global float* out)\n" \
-"{\n" \
-"int temp = in[0];\n" \
-"out[0] = temp + temp\n;" \
-"}\n";
 
 int hashKernel(glm::vec3 maxDim, glm::vec3 numBins, glm::vec3 binSize, glm::vec3 pos){
 
@@ -365,6 +378,54 @@ int hashKernel(glm::vec3 maxDim, glm::vec3 numBins, glm::vec3 binSize, glm::vec3
 
 }
 
+char* readKernelFromFile(char* fileName, int errorCode) {
+	FILE *fp;
+	char *source_str;
+	size_t source_size, program_size;
+
+	fp = fopen(fileName, "rb");
+	if (!fp) {
+		printf("Failed to load kernel\n");
+		errorCode = 1;
+		return nullptr;
+	}
+
+	fseek(fp, 0, SEEK_END);
+	program_size = ftell(fp);
+	rewind(fp);
+	source_str = (char*)malloc(program_size + 1);
+	source_str[program_size] = '\0';
+	fread(source_str, sizeof(char), program_size, fp);
+	fclose(fp);
+
+	errorCode = 0;
+
+	for (int i = 0; i < program_size; i++) {
+		printf("%c", source_str[i]);
+	}
+	printf("\n");
+
+	return source_str;
+}
+
+void logProgramBuild(cl_program program, cl_device_id device_id) {
+	//------------------Getting log
+	printf("\n----------\nStarting Program Build log...\n");
+	// Determine the size of the log
+	size_t log_size;
+	clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+
+	// Allocate memory for the log
+	char *log = (char *)malloc(log_size);
+
+	// Get the log
+	clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+
+	// Print the log
+	printf("%s\n\n--------\n\n", log);
+	//-----------------------
+}
+
 int main(void)
 {
 	//----------- OpenCL -------------
@@ -432,44 +493,125 @@ int main(void)
 	cl_mem d_output = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 2, h_input, &errorCode);
 	CheckError(errorCode);
 
+	//--------- Testing hash kernel
+	//Allocation
+	float* h_in_max_size = (float*)malloc(sizeof(float) * 3);
+	float* h_in_num_bins = (float*)malloc(sizeof(float) * 3);
+	float* h_in_bin_size = (float*)malloc(sizeof(float) * 3);
+	float* h_in_pos = (float*)malloc(sizeof(float) * 3);
+
+	int *h_hash_output = (int *) malloc(sizeof(int));
+	
+	//Values
+	h_in_max_size[0] = 25;
+	h_in_max_size[1] = 25;
+	h_in_max_size[2] = 25;
+
+	h_in_num_bins[0] = 5;
+	h_in_num_bins[1] = 5;
+	h_in_num_bins[2] = 5;
+
+	h_in_bin_size[0] = 10;
+	h_in_bin_size[1] = 10;
+	h_in_bin_size[2] = 10;
+
+	h_in_pos[0] = 24;
+	h_in_pos[1] = -24;
+	h_in_pos[2] = -24;
+
+	h_hash_output[0] = 0;
+
+	//Copy to device
+	cl_mem d_in_max_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_max_size, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_in_num_bins = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_num_bins, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_in_bin_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_bin_size, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_in_pos = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_pos, &errorCode);
+	CheckError(errorCode);
+
+	cl_mem d_hash_output = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int), h_hash_output, &errorCode);
+	CheckError(errorCode);
+	//-----------------------
+
 	// Create a command commands
 	cl_command_queue queue = clCreateCommandQueue(context, deviceIds[1], 0, &errorCode);
 	CheckError(errorCode);
 
 	//Creates Program
+	char *duplicaKernelChar = readKernelFromFile("sources/kernel_duplica.cl", errorCode);
+	if (errorCode != 0)
+		std::cout << "Error reading Kernel duplica" << std::endl;
+	char *hashKernelChar = readKernelFromFile("sources/kernel_hash.cl", errorCode);
+	if (errorCode != 0)
+		std::cout << "Error reading Kernel hash" << std::endl;
+
 	cl_program program = clCreateProgramWithSource(
-		context, 1, (const char **)& kernelChar, NULL, &errorCode
+		context, 1, (const char **)& duplicaKernelChar, NULL, &errorCode
+	);
+	CheckError(errorCode);
+	cl_program hashProgram = clCreateProgramWithSource(
+		context, 1, (const char **)& hashKernelChar, NULL, &errorCode
 	);
 	CheckError(errorCode);
 
 	// Build the program executable
 	errorCode = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
+	logProgramBuild(program, deviceIds[0]);
+	CheckError(errorCode);
+	errorCode = clBuildProgram(hashProgram, 0, NULL, NULL, NULL, NULL);
+	logProgramBuild(hashProgram, deviceIds[0]);
 	CheckError(errorCode);
 
 	//Creates Kernel 
 	cl_kernel kernel = clCreateKernel(program, "duplica", &errorCode);
+	CheckError(errorCode);
+	cl_kernel hashKernel = clCreateKernel(hashProgram, "hashFunction", &errorCode);
 	CheckError(errorCode);
 
 	//Set Kernel Args
 	clSetKernelArg(kernel, 0, sizeof(cl_mem), &d_input);
 	clSetKernelArg(kernel, 1, sizeof(cl_mem), &d_output);
 
+	clSetKernelArg(hashKernel, 0, sizeof(cl_mem), &d_in_max_size);
+	clSetKernelArg(hashKernel, 1, sizeof(cl_mem), &d_in_num_bins);
+	clSetKernelArg(hashKernel, 2, sizeof(cl_mem), &d_in_bin_size);
+	clSetKernelArg(hashKernel, 3, sizeof(cl_mem), &d_in_pos);
+	clSetKernelArg(hashKernel, 4, sizeof(cl_mem), &d_hash_output);
+
 	//Enqueues for execution
 	const size_t globalWorkSize[] = { 2, 0, 0 };
-	CheckError(clEnqueueNDRangeKernel(
-		queue, 
-		kernel,
-		1, 
-		nullptr,
-		globalWorkSize,
-		nullptr,
-		0, 
-		nullptr,
-		nullptr
-	));
+	errorCode = clEnqueueNDRangeKernel(
+		queue, //CommandQueue
+		kernel,	//Kernel
+		1, //Work Dimension ?
+		nullptr, //Work Offset
+		globalWorkSize, //Global Work Size
+		nullptr, //Local Work Size
+		0, //Num of events to be executed before this command -> 0 == doesnt wait
+		nullptr, //Event List to be executed before this command -> NULL == doesnt wait
+		nullptr //Object Event to be returned that identify this command that can be used to query event status or queue a wait
+	);
+	CheckError(errorCode);
 
-	std::cout << "In before: (1) " << h_input[0] << "\t(2) " << h_input[1] << std::endl;
-	std::cout << "Out before: (1) " << h_output[0] << "\t(2) " << h_output[1] << std::endl;
+	const size_t globalWorkSize2[] = { 1, 0, 0 };
+	errorCode = clEnqueueNDRangeKernel(
+		queue, //CommandQueue
+		hashKernel,	//Kernel
+		1, //Work Dimension ?
+		nullptr, //Work Offset
+		globalWorkSize2, //Global Work Size
+		nullptr, //Local Work Size
+		0, //Num of events to be executed before this command -> 0 == doesnt wait
+		nullptr, //Event List to be executed before this command -> NULL == doesnt wait
+		nullptr //Object Event to be returned that identify this command that can be used to query event status or queue a wait
+	);
+
+
+	//std::cout << "In before: (1) " << h_input[0] << "\t(2) " << h_input[1] << std::endl;
+	//std::cout << "Out before: (1) " << h_output[0] << "\t(2) " << h_output[1] << std::endl;
+	std::cout << "Before: " << *h_hash_output << std::endl;
 
 	//Gets results back
 	clEnqueueReadBuffer(
@@ -482,26 +624,35 @@ int main(void)
 		0,	//Num of events to be executed before this command -> 0 == doesnt wait
 		NULL, //Event List to be executed before this command -> NULL == doesnt wait
 		NULL //Object Event to be returned that identify this command that can be used to query event status or queue a wait
-
 	);
 
-	std::cout << "In after: (1) " << h_input[0] << "\t(2) " << h_input[1] << std::endl;
-	std::cout << "Out after: (1) " << h_output[0] << "\t(2) " << h_output[1] << std::endl;
+	clEnqueueReadBuffer(
+		queue,		//Command Queue
+		d_hash_output, //Device source
+		CL_TRUE, //Blocking?
+		0,		//Offset in bytes from start of array
+		sizeof(int), //Buffer 
+		h_hash_output,	//Host target
+		0,	//Num of events to be executed before this command -> 0 == doesnt wait
+		NULL, //Event List to be executed before this command -> NULL == doesnt wait
+		NULL //Object Event to be returned that identify this command that can be used to query event status or queue a wait
+	);
 
 
-	//Testing hash kernel
-	glm::vec3 maxDim (25, 25, 25);
-	glm::vec3 numBins(5, 5, 5);
-	glm::vec3 binSize(10, 10, 10);
+	//std::cout << "In after: (1) " << h_input[0] << "\t(2) " << h_input[1] << std::endl;
+	//std::cout << "Out after: (1) " << h_output[0] << "\t(2) " << h_output[1] << std::endl;
+	std::cout << "After: " << *h_hash_output << std::endl;
 
 
-	hashKernel(maxDim, numBins, binSize, glm::vec3(20, 20, 20));
 
-	hashKernel(maxDim, numBins, binSize, glm::vec3(20,20,20));
 
-	hashKernel(maxDim, numBins, binSize, glm::vec3(24, 24, -24));
+	//hashKernel(maxDim, numBins, binSize, glm::vec3(20, 20, 20));
 
-	hashKernel(maxDim, numBins, binSize, glm::vec3(24, -24, -24));
+	//hashKernel(maxDim, numBins, binSize, glm::vec3(20,20,20));
+
+	//hashKernel(maxDim, numBins, binSize, glm::vec3(24, 24, -24));
+
+	//hashKernel(maxDim, numBins, binSize, glm::vec3(24, -24, -24));
 
 	getchar();
 
