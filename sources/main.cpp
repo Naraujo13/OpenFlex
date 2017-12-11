@@ -495,12 +495,14 @@ int main(void)
 
 	//--------- Testing hash kernel
 	//Allocation
-	float* h_in_max_size = (float*)malloc(sizeof(float) * 3);
-	float* h_in_num_bins = (float*)malloc(sizeof(float) * 3);
-	float* h_in_bin_size = (float*)malloc(sizeof(float) * 3);
-	float* h_in_pos = (float*)malloc(sizeof(float) * 3);
+	int input_dim = 3;
+	int particle_list_size = 3;
+	float* h_in_max_size = (float*)malloc(sizeof(float) * input_dim);
+	float* h_in_num_bins = (float*)malloc(sizeof(float) * input_dim);
+	float* h_in_bin_size = (float*)malloc(sizeof(float) * input_dim);
+	float* h_in_pos = (float*)malloc(sizeof(float) * input_dim * particle_list_size);
 
-	int *h_hash_output = (int *) malloc(sizeof(int));
+	int *h_hash_output = (int *) malloc(sizeof(int) * particle_list_size);
 	
 	//Values
 	h_in_max_size[0] = 25;
@@ -519,19 +521,29 @@ int main(void)
 	h_in_pos[1] = -24;
 	h_in_pos[2] = -24;
 
+	h_in_pos[3] = 24;
+	h_in_pos[4] = 24;
+	h_in_pos[5] = -24;
+
+	h_in_pos[6] = 24;
+	h_in_pos[7] = -24;
+	h_in_pos[8] = 24;
+	
 	h_hash_output[0] = 0;
+	h_hash_output[1] = 0;
+	h_hash_output[2] = 0;
 
 	//Copy to device
-	cl_mem d_in_max_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_max_size, &errorCode);
+	cl_mem d_in_max_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, h_in_max_size, &errorCode);
 	CheckError(errorCode);
-	cl_mem d_in_num_bins = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_num_bins, &errorCode);
+	cl_mem d_in_num_bins = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, h_in_num_bins, &errorCode);
 	CheckError(errorCode);
-	cl_mem d_in_bin_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_bin_size, &errorCode);
+	cl_mem d_in_bin_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, h_in_bin_size, &errorCode);
 	CheckError(errorCode);
-	cl_mem d_in_pos = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_pos, &errorCode);
+	cl_mem d_in_pos = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim * particle_list_size, h_in_pos, &errorCode);
 	CheckError(errorCode);
 
-	cl_mem d_hash_output = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int), h_hash_output, &errorCode);
+	cl_mem d_hash_output = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int) * particle_list_size, h_hash_output, &errorCode);
 	CheckError(errorCode);
 	//-----------------------
 
@@ -581,7 +593,7 @@ int main(void)
 	clSetKernelArg(hashKernel, 4, sizeof(cl_mem), &d_hash_output);
 
 	//Enqueues for execution
-	const size_t globalWorkSize[] = { 2, 0, 0 };
+	const size_t globalWorkSize[] = { 1, 0, 0 };
 	errorCode = clEnqueueNDRangeKernel(
 		queue, //CommandQueue
 		kernel,	//Kernel
@@ -595,7 +607,7 @@ int main(void)
 	);
 	CheckError(errorCode);
 
-	const size_t globalWorkSize2[] = { 1, 0, 0 };
+	const size_t globalWorkSize2[] = { particle_list_size, 0, 0 };
 	errorCode = clEnqueueNDRangeKernel(
 		queue, //CommandQueue
 		hashKernel,	//Kernel
@@ -608,10 +620,7 @@ int main(void)
 		nullptr //Object Event to be returned that identify this command that can be used to query event status or queue a wait
 	);
 
-
-	//std::cout << "In before: (1) " << h_input[0] << "\t(2) " << h_input[1] << std::endl;
-	//std::cout << "Out before: (1) " << h_output[0] << "\t(2) " << h_output[1] << std::endl;
-	std::cout << "Before: " << *h_hash_output << std::endl;
+	std::cout << "Before: " << h_hash_output[0] << " - " << h_hash_output[1] << " - " << h_hash_output[2] << std::endl;
 
 	//Gets results back
 	clEnqueueReadBuffer(
@@ -631,17 +640,14 @@ int main(void)
 		d_hash_output, //Device source
 		CL_TRUE, //Blocking?
 		0,		//Offset in bytes from start of array
-		sizeof(int), //Buffer 
+		sizeof(int) * particle_list_size, //Buffer 
 		h_hash_output,	//Host target
 		0,	//Num of events to be executed before this command -> 0 == doesnt wait
 		NULL, //Event List to be executed before this command -> NULL == doesnt wait
 		NULL //Object Event to be returned that identify this command that can be used to query event status or queue a wait
 	);
 
-
-	//std::cout << "In after: (1) " << h_input[0] << "\t(2) " << h_input[1] << std::endl;
-	//std::cout << "Out after: (1) " << h_output[0] << "\t(2) " << h_output[1] << std::endl;
-	std::cout << "After: " << *h_hash_output << std::endl;
+	std::cout << "After: " << h_hash_output[0] << " - " << h_hash_output[1] << " - " << h_hash_output[2] << std::endl;
 
 
 

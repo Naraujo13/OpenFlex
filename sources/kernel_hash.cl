@@ -1,13 +1,15 @@
 
 __kernel void hashFunction(__global float* maxDim, __global float* numBins, __global float* binSize, __global float* pos, __global int* hash) {
 
+	int index = get_local_id(0) * 3;
+
 	float maxDimX = maxDim[0];
 	float maxDimY = maxDim[1];
 	float maxDimZ = maxDim[2];
 
-	float x = pos[0];
-	float y = pos[1];
-	float z = pos[2];
+	float x = pos[index];
+	float y = pos[index + 1];
+	float z = pos[index + 2];
 
 	if (x >= maxDimX)
 		x = maxDimX - 1;
@@ -33,15 +35,18 @@ __kernel void hashFunction(__global float* maxDim, __global float* numBins, __gl
 	z = (int)(z / binSize[2]);
 
 	int hashValue = 0;
+	int temp = numBins[0];
 
 	hashValue += x;
 
-	hashValue += (y * numBins[0]);
+	hashValue += (y * temp);
 
-	hashValue += (z * (numBins[0] * numBins[1]));
+	temp *= numBins[1];
+	temp *= z;
+	hashValue += temp;
 
-	*hash = hashValue;
+	hash[get_local_id(0)] = hashValue;
 
-	printf("\tHash: %d\n", hashValue);
+	printf("\tHash %d: %d\n", get_local_id(0), hashValue);
 
 }
