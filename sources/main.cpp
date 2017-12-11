@@ -428,9 +428,109 @@ void logProgramBuild(cl_program program, cl_device_id device_id) {
 	//-----------------------
 }
 
+int* buildHash(cl_device_id deviceId, cl_context context, cl_command_queue queue, int errorCode) {
+
+	//Reads Kernel From File
+	char *hashKernelChar = readKernelFromFile("sources/kernel_hash.cl", errorCode);
+	CheckError(errorCode);
+
+	//CreatesProgram
+	cl_program hashProgram = clCreateProgramWithSource(
+		context, 1, (const char **)& hashKernelChar, NULL, &errorCode
+	);
+	CheckError(errorCode);
+
+	//Build Program Executable
+	errorCode = clBuildProgram(hashProgram, 0, NULL, NULL, NULL, NULL);
+	logProgramBuild(hashProgram, deviceId);
+	CheckError(errorCode);
+
+	//Creates Kernel
+	cl_kernel hashKernel = clCreateKernel(hashProgram, "hashFunction", &errorCode);
+	CheckError(errorCode);
+
+
+	//Allocation of parameters
+	int particle_list_size = particleStructList.size();
+	glm::vec3 h_in_max_size_vec3(g_xmax, g_ymax, g_zmax);
+	float* h_in_num_bins = (float*)malloc(sizeof(float) * 3);
+	float* h_in_bin_size = (float*)malloc(sizeof(float) * 3);
+	ParticleStruct* h_in_particles = (ParticleStruct*)particleStructList.data();
+	int *h_out_hash = (int *)malloc(sizeof(int) * particle_list_size);
+
+	//Values of parameters
+	h_in_num_bins[0] = ceil(g_xmax * 2 / particle_size);
+	h_in_num_bins[1] = ceil(g_ymax * 2 / particle_size);
+	h_in_num_bins[2] = ceil(g_zmax * 2 / particle_size);
+	std::cout << "NumBins: (" << h_in_num_bins[0] << ", " << h_in_num_bins[1] << ", " << h_in_num_bins[2] << ")\n";
+
+	h_in_bin_size[0] = particle_size;
+	h_in_bin_size[1] = particle_size;
+	h_in_bin_size[2] = particle_size;
+
+	//Copy parameters to device memory
+	cl_mem d_in_max_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, &h_in_max_size_vec3, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_in_num_bins = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_num_bins, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_in_bin_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_bin_size, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_in_particles = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(ParticleStruct) * particle_list_size, h_in_particles, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_out_hash = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int) * particle_list_size, h_out_hash, &errorCode);
+	CheckError(errorCode);
+
+	//Set Kernel Args
+	clSetKernelArg(hashKernel, 0, sizeof(cl_mem), &d_in_max_size);
+	clSetKernelArg(hashKernel, 1, sizeof(cl_mem), &d_in_num_bins);
+	clSetKernelArg(hashKernel, 2, sizeof(cl_mem), &d_in_bin_size);
+	clSetKernelArg(hashKernel, 3, sizeof(cl_mem), &d_in_particles);
+	clSetKernelArg(hashKernel, 4, sizeof(cl_mem), &d_out_hash);
+
+	//Enqueues Kernel for Execution
+	const size_t globalWorkSize2[] = { particle_list_size, 0, 0 };
+	errorCode = clEnqueueNDRangeKernel(
+		queue, //CommandQueue
+		hashKernel,	//Kernel
+		1, //Work Dimension ?
+		nullptr, //Work Offset
+		globalWorkSize2, //Global Work Size
+		nullptr, //Local Work Size
+		0, //Num of events to be executed before this command -> 0 == doesnt wait
+		nullptr, //Event List to be executed before this command -> NULL == doesnt wait
+		nullptr //Object Event to be returned that identify this command that can be used to query event status or queue a wait
+	);
+
+	//Gets Results back, from device to host
+	clEnqueueReadBuffer(
+		queue,		//Command Queue
+		d_out_hash, //Device source
+		CL_TRUE, //Blocking?
+		0,		//Offset in bytes from start of array
+		sizeof(int) * particle_list_size, //Buffer 
+		h_out_hash,	//Host target
+		0,	//Num of events to be executed before this command -> 0 == doesnt wait
+		NULL, //Event List to be executed before this command -> NULL == doesnt wait
+		NULL //Object Event to be returned that identify this command that can be used to query event status or queue a wait
+	);
+
+	return h_out_hash;
+}
+
+void printHash(int* hash) {
+
+	std::cout << std::endl << "---------------------" << std::endl;
+	std::cout << "Hash Values : \n";
+	for (int i = 0; i < particleStructList.size(); i++) {
+		std::cout << "(" << particleStructList[i].current_position.x << ", " << particleStructList[i].current_position.y
+			<< ", " << particleStructList[i].current_position.z << ") -> " << hash[i] << std::endl;
+	}
+	std::cout << "---------------------" << std::endl;
+}
+
 int main(void)
 {
-	//----------- OpenCL -------------
+	//----------- OpenCL Setup -------------
 
 	InitParticleStructList();
 	cubeStruct();
@@ -470,6 +570,8 @@ int main(void)
 	for (cl_uint i = 0; i < deviceIdCount; ++i)
 		std::cout << "\t (" << (i + 1) << ") : " << GetDeviceName(deviceIds[i]) << std::endl;
 
+	//Creates variable to error string
+	cl_int errorCode = 0;
 
 	//Creates context properties based on first device
 	const cl_context_properties contextProperties[] =
@@ -479,180 +581,23 @@ int main(void)
 		0, 0
 	};
 
-	//Creates variable to error string
-	cl_int errorCode = 0;
-
+	//Crates Context
 	cl_context context = clCreateContext(
 		contextProperties, deviceIdCount,
 		deviceIds.data(), nullptr,
 		nullptr, &errorCode);
 	CheckError(errorCode);
 
-	//Alocates vector and buffer
-	float *h_input = (float *) malloc(sizeof(float) * 2);
-	float *h_output = (float *)malloc(sizeof(float) * 2);
-	h_input[0] = 2;
-	h_input[1] = 3;
-	h_output[0] = 0;
-	h_output[1] = 0;
-	cl_mem d_input = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 2, h_input, &errorCode);
-	CheckError(errorCode);
-	cl_mem d_output = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 2, h_input, &errorCode);
-	CheckError(errorCode);
-
-	//--------- Testing hash kernel
-	//Allocation
-	int input_dim = 3;
-	int particle_list_size = particleStructList.size();
-
-	glm::vec3 h_in_max_size_vec3(g_xmax, g_ymax, g_zmax);
-	float* h_in_num_bins = (float*)malloc(sizeof(float) * input_dim);
-	float* h_in_bin_size = (float*)malloc(sizeof(float) * input_dim);
-	float* h_in_pos = (float*)malloc(sizeof(float) * input_dim * particle_list_size);
-	ParticleStruct* h_in_pos_struct = (ParticleStruct*) particleStructList.data();
-
-	int *h_hash_output = (int *) malloc(sizeof(int) * particle_list_size);
-	
-	//Values
-
-	h_in_num_bins[0] = ceil(g_xmax*2/particle_size);
-	h_in_num_bins[1] = ceil(g_ymax*2/particle_size);
-	h_in_num_bins[2] = ceil(g_zmax*2/particle_size);
-	std::cout << "NumBins: (" << h_in_num_bins[0] << ", " << h_in_num_bins[1] << ", " << h_in_num_bins[2] << ")\n";
-
-	h_in_bin_size[0] = particle_size;
-	h_in_bin_size[1] = particle_size;
-	h_in_bin_size[2] = particle_size;
-	
-	h_hash_output[0] = 0;
-	h_hash_output[1] = 0;
-	h_hash_output[2] = 0;
-
-	//Copy to device
-	cl_mem d_in_max_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, &h_in_max_size_vec3, &errorCode);
-	CheckError(errorCode);
-	cl_mem d_in_num_bins = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, h_in_num_bins, &errorCode);
-	CheckError(errorCode);
-	cl_mem d_in_bin_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, h_in_bin_size, &errorCode);
-	CheckError(errorCode);
-	cl_mem d_in_pos = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(ParticleStruct) * particle_list_size, h_in_pos_struct, &errorCode);
-	CheckError(errorCode);
-
-	cl_mem d_hash_output = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int) * particle_list_size, h_hash_output, &errorCode);
-	CheckError(errorCode);
-	//-----------------------
-
 	// Create a command commands
 	cl_command_queue queue = clCreateCommandQueue(context, deviceIds[1], 0, &errorCode);
 	CheckError(errorCode);
 
-	//Creates Program
-	char *duplicaKernelChar = readKernelFromFile("sources/kernel_duplica.cl", errorCode);
-	if (errorCode != 0)
-		std::cout << "Error reading Kernel duplica" << std::endl;
-	char *hashKernelChar = readKernelFromFile("sources/kernel_hash.cl", errorCode);
-	if (errorCode != 0)
-		std::cout << "Error reading Kernel hash" << std::endl;
+	//--------------------------------------
 
-	cl_program program = clCreateProgramWithSource(
-		context, 1, (const char **)& duplicaKernelChar, NULL, &errorCode
-	);
-	CheckError(errorCode);
-	cl_program hashProgram = clCreateProgramWithSource(
-		context, 1, (const char **)& hashKernelChar, NULL, &errorCode
-	);
-	CheckError(errorCode);
-
-	// Build the program executable
-	errorCode = clBuildProgram(program, 0, NULL, NULL, NULL, NULL);
-	logProgramBuild(program, deviceIds[0]);
-	CheckError(errorCode);
-	errorCode = clBuildProgram(hashProgram, 0, NULL, NULL, NULL, NULL);
-	logProgramBuild(hashProgram, deviceIds[0]);
-	CheckError(errorCode);
-
-	//Creates Kernel 
-	cl_kernel kernel = clCreateKernel(program, "duplica", &errorCode);
-	CheckError(errorCode);
-	cl_kernel hashKernel = clCreateKernel(hashProgram, "hashFunction", &errorCode);
-	CheckError(errorCode);
-
-	//Set Kernel Args
-	clSetKernelArg(kernel, 0, sizeof(cl_mem), &d_input);
-	clSetKernelArg(kernel, 1, sizeof(cl_mem), &d_output);
-
-	clSetKernelArg(hashKernel, 0, sizeof(cl_mem), &d_in_max_size);
-	clSetKernelArg(hashKernel, 1, sizeof(cl_mem), &d_in_num_bins);
-	clSetKernelArg(hashKernel, 2, sizeof(cl_mem), &d_in_bin_size);
-	clSetKernelArg(hashKernel, 3, sizeof(cl_mem), &d_in_pos);
-	clSetKernelArg(hashKernel, 4, sizeof(cl_mem), &d_hash_output);
-
-	//Enqueues for execution
-	const size_t globalWorkSize[] = { 1, 0, 0 };
-	errorCode = clEnqueueNDRangeKernel(
-		queue, //CommandQueue
-		kernel,	//Kernel
-		1, //Work Dimension ?
-		nullptr, //Work Offset
-		globalWorkSize, //Global Work Size
-		nullptr, //Local Work Size
-		0, //Num of events to be executed before this command -> 0 == doesnt wait
-		nullptr, //Event List to be executed before this command -> NULL == doesnt wait
-		nullptr //Object Event to be returned that identify this command that can be used to query event status or queue a wait
-	);
-	CheckError(errorCode);
-
-	const size_t globalWorkSize2[] = { particle_list_size, 0, 0 };
-	errorCode = clEnqueueNDRangeKernel(
-		queue, //CommandQueue
-		hashKernel,	//Kernel
-		1, //Work Dimension ?
-		nullptr, //Work Offset
-		globalWorkSize2, //Global Work Size
-		nullptr, //Local Work Size
-		0, //Num of events to be executed before this command -> 0 == doesnt wait
-		nullptr, //Event List to be executed before this command -> NULL == doesnt wait
-		nullptr //Object Event to be returned that identify this command that can be used to query event status or queue a wait
-	);
-
-	std::cout << "Before: " << h_hash_output[0] << " - " << h_hash_output[1] << " - " << h_hash_output[2] << std::endl;
-
-	//Gets results back
-	clEnqueueReadBuffer(
-		queue,		//Command Queue
-		d_output, //Device source
-		CL_TRUE, //Blocking?
-		0,		//Offset in bytes from start of array
-		sizeof(float) * 2, //Buffer 
-		h_output,	//Host target
-		0,	//Num of events to be executed before this command -> 0 == doesnt wait
-		NULL, //Event List to be executed before this command -> NULL == doesnt wait
-		NULL //Object Event to be returned that identify this command that can be used to query event status or queue a wait
-	);
-
-	clEnqueueReadBuffer(
-		queue,		//Command Queue
-		d_hash_output, //Device source
-		CL_TRUE, //Blocking?
-		0,		//Offset in bytes from start of array
-		sizeof(int) * particle_list_size, //Buffer 
-		h_hash_output,	//Host target
-		0,	//Num of events to be executed before this command -> 0 == doesnt wait
-		NULL, //Event List to be executed before this command -> NULL == doesnt wait
-		NULL //Object Event to be returned that identify this command that can be used to query event status or queue a wait
-	);
-
-	std::cout << "After: " << h_hash_output[0] << " - " << h_hash_output[1] << " - " << h_hash_output[2] << std::endl;
-	std::cout << "\n---------------\nHash Values:\n";
-	for (int i = 0; i < particleStructList.size(); i++) {
-		std::cout << "(" << particleStructList[i].current_position.x << ", " << particleStructList[i].current_position.y 
-			<< ", " << particleStructList[i].current_position.z << ") -> " << h_hash_output[i] << "\n";
-	}
-	std::cout << "----------------\n";
-
-
+	//Hash
+	int* hash = buildHash(deviceIds[0], context, queue, errorCode);
+	printHash(hash);
 	getchar();
-
 
 	int nUseMouse = 0;
 	InitParticleList();
