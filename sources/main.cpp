@@ -296,6 +296,75 @@ const char *kernelChar = "\n" \
 "out[0] = temp + temp\n;" \
 "}\n";
 
+int hashKernel(glm::vec3 maxDim, glm::vec3 numBins, glm::vec3 binSize, glm::vec3 pos){
+
+
+	std::cout << std::endl << std::endl << "-----------------------------------------------" << std::endl;
+
+	//Copy values to local for faster processing
+	float maxDimX = maxDim.x;
+	float maxDimY = maxDim.y;
+	float maxDimZ = maxDim.z;
+
+	float x = pos.x;
+	float y = pos.y;
+	float z = pos.z;
+
+	//Check for values out of range
+	if (x >= maxDimX)
+		x = maxDimX-1;
+	else if (x <= -maxDimX)
+		x = -maxDimX+1;
+
+	if (y >= maxDimY)
+		y = maxDimY-1;
+	else if (y <= -maxDimY)
+		y = -maxDimY+1;
+	
+	if (z >= maxDimZ)
+		z = maxDimZ-1;
+	else if (z <= -maxDimZ)
+		z = -maxDimZ+1;
+
+	//Normalization with (0,0,0) being the top left point of screen
+	x = x + (maxDimX);
+	y = -(y - (maxDimY));
+	z = -(z - (maxDimZ));
+	std::cout << "After Normalization: (" << x << ", " << y << ", " << z << ")" << std::endl;
+	
+	
+	//Normalize to bin coordinates
+	x = floor(x / binSize.x);
+	y = floor(y / binSize.y);
+	z = floor(z / binSize.z);
+	std::cout << "In Bin Coordinates: (" << x << ", " << y << ", " << z << ")" << std::endl;
+
+	//Calculate Hash Value based on bin coordinates
+	int hashValue = 0;
+
+	//Sums X Bin Value
+	hashValue += x;
+
+	//Sums Bins Columns
+	hashValue += (y * numBins.y);
+
+	//Deslocamento para z
+	hashValue += (z * (numBins.x * numBins.y));
+
+
+	std::cout << "-----------------------------------------------" << std::endl;
+	std::cout << "Max Value (+-): (" << maxDimX << ", " << maxDimY << ", " << maxDimZ << ")" << std::endl;
+	std::cout << "Bin Size: (" << binSize.x << ", " << binSize.y << ", " << binSize.z << ")" << std::endl;
+	std::cout << "Number of Bins: (" << numBins.x << ", " << numBins.y << ", " << numBins.z << ")" << std::endl;
+
+	std::cout << "(" << pos.x << ", " << pos.y << ", " << pos.z << ") - " << hashValue << std::endl;
+	std::cout << "-----------------------------------------------" << std::endl;
+
+	return hashValue;
+
+
+}
+
 int main(void)
 {
 	//----------- OpenCL -------------
@@ -418,6 +487,24 @@ int main(void)
 
 	std::cout << "In after: (1) " << h_input[0] << "\t(2) " << h_input[1] << std::endl;
 	std::cout << "Out after: (1) " << h_output[0] << "\t(2) " << h_output[1] << std::endl;
+
+
+	//Testing hash kernel
+	glm::vec3 maxDim (25, 25, 25);
+	glm::vec3 numBins(5, 5, 5);
+	glm::vec3 binSize(10, 10, 10);
+
+
+	hashKernel(maxDim, numBins, binSize, glm::vec3(20, 20, 20));
+
+	hashKernel(maxDim, numBins, binSize, glm::vec3(20,20,20));
+
+	hashKernel(maxDim, numBins, binSize, glm::vec3(24, 24, -24));
+
+	hashKernel(maxDim, numBins, binSize, glm::vec3(24, -24, -24));
+
+	getchar();
+
 
 	int nUseMouse = 0;
 	InitParticleList();
