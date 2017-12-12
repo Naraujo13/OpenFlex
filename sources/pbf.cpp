@@ -28,6 +28,9 @@ using namespace std;
 Hash hash_table;
 SpatialHash spatial_hash;
 
+
+std::vector<ParticleStruct> particleStructList;
+std::vector<ParticleStruct> predictedStructList;
 std::vector<Particle> particlesList;
 std::vector< Particle > predict_p;
 //std::vector<float> g_grid;
@@ -78,34 +81,6 @@ float solid = 1;
 
 glm::vec3 positions;
 glm::vec3 direction;
-
-//bool render = false;
-//int npart = PARTICLE_COUNT_X*PARTICLE_COUNT_Y*PARTICLE_COUNT_Z;
-
-//glm::vec3 fext = glm::vec3(0.0, -9.8, 0.0);
-
-
-//void initializeParticles () {
-//	particles.reserve(NPART);
-//	srand((unsigned int) 1);
-//
-//	for (int i = 0 ; i < NPART ; i++){
-//		Particle p;
-//		p.position.x = (float)rand()/(float)(RAND_MAX/g_xmax);
-//		p.position.y = (float)rand()/(float)(RAND_MAX/g_ymax);
-//		p.position.z = (float)rand()/(float)(RAND_MAX/g_zmax);;
-//
-//		p.velocity = glm::vec3(0.0f);
-//		p.mass = 1;
-//		p.delta_p = glm::vec3(0.0f);
-//		p.rho = 0.0;
-//		p.C = 1;
-//		p.predicted_position = glm::vec3(0.0f);
-//		p.lambda = 0.0f;
-//		
-//		particles.push_back(p);
-//	}
-//};
 
 void InitParticleList()
 {
@@ -169,6 +144,81 @@ void InitParticleList()
 	}
 
 	predict_p = particlesList;
+}
+
+void InitParticleStructList()
+{
+	particleStructList.clear();
+	//start positioning particles at some distance from the left and bottom walls
+	float x_ini_pos = g_xmax / 2 - boundary;
+	float y_ini_pos = g_ymin + boundary;
+	float z_ini_pos = g_zmax / 2 - boundary;
+
+	// deltas for particle distribution
+	float d_x = 0.056f;
+	float d_y = 0.056f;
+	float d_z = 0.056f;
+
+	printf("Number of particles in the simulation: %i.\n", PARTICLE_COUNT_X*PARTICLE_COUNT_Y*PARTICLE_COUNT_Z);
+
+	float x_pos = x_ini_pos;
+	/*particles.reserve(PARTICLE_COUNT_X*PARTICLE_COUNT_Y*PARTICLE_COUNT_Z);*/
+	#pragma omp parallel for
+	for (unsigned int x = 0; x < PARTICLE_COUNT_X; x++)
+	{
+		float y_pos = y_ini_pos;
+		#pragma omp parallel for
+		for (unsigned int y = 0; y < PARTICLE_COUNT_Y; y++)
+		{
+			float z_pos = z_ini_pos;
+			#pragma omp parallel for
+			for (unsigned int z = 0; z < PARTICLE_COUNT_Z; z++)
+			{
+				ParticleStruct p;
+
+				float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+				//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
+
+
+				p.current_position.x = x_pos + r;
+				p.current_position.y = y_pos + r;
+				p.current_position.z = z_pos + r;
+
+				p.velocity.x = 0;
+				p.velocity.y = 0;
+				p.velocity.z = 0;
+
+				p.mass = 1;
+
+				p.delta_p.x = 0;
+				p.delta_p.y = 0;
+				p.delta_p.z = 0;
+
+				p.rho = 0.0;
+				p.C = 1;
+
+				p.predicted_position.x = 0;
+				p.predicted_position.y = 0;
+				p.predicted_position.z = 0;
+				
+				p.teardrop = false;
+				p.isRigidBody = false;
+				p.isCollidingWithRigidBody = false;
+				p.pencil = false;
+				p.lambda = 0.0f;
+				p.phase = 0.0f;
+
+				particleStructList.push_back(p);
+
+				z_pos += d_z;
+			}
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	predictedStructList = particleStructList;
 }
 
 void teardrop()
@@ -479,6 +529,316 @@ void wall()
 	predict_p = particlesList;
 }
 
+void wallStruct()
+{
+	//start positioning particles at some distance from the left and bottom walls
+	float x_ini_pos = 0.8;
+	float y_ini_pos = 0;
+	float z_ini_pos = 0.2;
+
+	// deltas for particle distribution
+	float d_x = 0.03f;
+	float d_y = 0.03f;
+	float d_z = 0.03f;
+	float limitx = 20;
+	float limity = 20;
+
+	float x_pos = x_ini_pos;
+	float z_pos = z_ini_pos;
+	#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+		#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			ParticleStruct p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
+			
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity.x = 0;
+			p.velocity.y = 0;
+			p.velocity.z = 0;
+
+			p.mass = masswall;
+
+			p.delta_p.x = 0;
+			p.delta_p.y = 0;
+			p.delta_p.z = 0;
+
+			p.rho = 0.0;
+			p.C = 0;
+
+			p.predicted_position.x = 0;
+			p.predicted_position.y = 0;
+			p.predicted_position.z = 0;
+
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particleStructList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	//2
+	x_pos = x_ini_pos;
+	z_pos = z_pos + -0.1;
+	#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+		#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			ParticleStruct p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
+
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity.x = 0;
+			p.velocity.y = 0;
+			p.velocity.z = 0;
+
+			p.mass = masswall;
+
+			p.delta_p.x = 0;
+			p.delta_p.y = 0;
+			p.delta_p.z = 0;
+
+			p.rho = 0.0;
+			p.C = 0;
+
+			p.predicted_position.x = 0;
+			p.predicted_position.y = 0;
+			p.predicted_position.z = 0;
+
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particleStructList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	//3
+	x_pos = x_ini_pos;
+	z_pos = z_pos + 0.1;
+	#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+		#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			ParticleStruct p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity.x = 0;
+			p.velocity.y = 0;
+			p.velocity.z = 0;
+
+			p.mass = masswall;
+
+			p.delta_p.x = 0;
+			p.delta_p.y = 0;
+			p.delta_p.z = 0;
+
+			p.rho = 0.0;
+			p.C = 0;
+
+			p.predicted_position.x = 0;
+			p.predicted_position.y = 0;
+			p.predicted_position.z = 0;
+
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particleStructList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	//4
+	x_pos = x_ini_pos;
+	z_pos = z_pos + 0.1;
+	#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+		#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			ParticleStruct p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity.x = 0;
+			p.velocity.y = 0;
+			p.velocity.z = 0;
+
+			p.mass = masswall;
+
+			p.delta_p.x = 0;
+			p.delta_p.y = 0;
+			p.delta_p.z = 0;
+
+			p.rho = 0.0;
+			p.C = 0;
+
+			p.predicted_position.x = 0;
+			p.predicted_position.y = 0;
+			p.predicted_position.z = 0;
+
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particleStructList.push_back(p);
+			y_pos += d_y;
+
+		}
+		x_pos += d_x;
+	}
+
+	//5
+	x_pos = x_ini_pos;
+	z_pos = z_pos + 0.1;
+	#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+		#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			ParticleStruct p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity.x = 0;
+			p.velocity.y = 0;
+			p.velocity.z = 0;
+
+			p.mass = masswall;
+
+			p.delta_p.x = 0;
+			p.delta_p.y = 0;
+			p.delta_p.z = 0;
+
+			p.rho = 0.0;
+			p.C = 0;
+
+			p.predicted_position.x = 0;
+			p.predicted_position.y = 0;
+			p.predicted_position.z = 0;
+
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particleStructList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	//6
+	x_pos = x_ini_pos;
+	z_pos = z_pos + 0.1;
+	#pragma omp parallel for
+	for (unsigned int x = 0; x < limitx; x++)
+	{
+		float y_pos = y_ini_pos;
+		#pragma omp parallel for
+		for (unsigned int y = 0; y < limity; y++)
+		{
+			ParticleStruct p;
+
+			float r = (static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) / 100.0f;
+
+			//float v = ((static_cast <float> (rand()) / static_cast <float> (RAND_MAX)) -0.5f) / 100.0f;
+
+
+			p.current_position.x = x_pos;
+			p.current_position.y = y_pos;
+			p.current_position.z = z_pos;
+
+			p.velocity.x = 0;
+			p.velocity.y = 0;
+			p.velocity.z = 0;
+
+			p.mass = masswall;
+
+			p.delta_p.x = 0;
+			p.delta_p.y = 0;
+			p.delta_p.z = 0;
+
+			p.rho = 0.0;
+			p.C = 0;
+
+			p.predicted_position.x = 0;
+			p.predicted_position.y = 0;
+			p.predicted_position.z = 0;
+
+			p.isRigidBody = true;
+			p.teardrop = true;
+			p.isCollidingWithRigidBody = false;
+			p.lambda = 0.0f;
+			p.phase = 1.0f;
+
+			particleStructList.push_back(p);
+			y_pos += d_y;
+		}
+		x_pos += d_x;
+	}
+
+	printf("Number of particles in the simulation: %i.\n", particleStructList.size());
+
+	predictedStructList = particleStructList;
+}
+
 void wall3()
 {
 	//start positioning particles at some distance from the left and bottom walls
@@ -595,6 +955,13 @@ void wall2()
 }
 
 void cube()
+{
+	wall();
+	//wall2();
+	//wall3();
+}
+
+void cubeStruct()
 {
 	wall();
 	//wall2();

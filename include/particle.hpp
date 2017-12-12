@@ -25,9 +25,26 @@ using namespace glm;
 #include <objloader.hpp>
 #include <vboindexer.hpp>
 #include <glerror.hpp>
+#include<CL\cl.hpp>
 
 
 #define PI 3.1415f
+
+typedef struct ParticleStruct {
+	cl_float3 current_position;
+	cl_float3 predicted_position;
+	cl_float3 velocity;
+	cl_float3 delta_p;
+	cl_float mass;
+	cl_float lambda;
+	cl_float rho;
+	cl_float C;
+	cl_float phase;
+	cl_float teardrop;
+	cl_float isRigidBody;
+	cl_float pencil;
+	cl_float isCollidingWithRigidBody;
+};
 
 class Particle
 {

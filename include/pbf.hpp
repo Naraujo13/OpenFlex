@@ -66,11 +66,14 @@ public:
 };
 
 void InitParticleList();
+void InitParticleStructList();
 void teardrop();
 void rigidBody();
 void wall3();
 void wall2();
+void wallStruct();
 void cube();
+void cubeStruct();
 void hose();
 float wPoly6(glm::vec3 &r, float &h);
 glm::vec3 wSpiky(glm::vec3 &r, float &h);

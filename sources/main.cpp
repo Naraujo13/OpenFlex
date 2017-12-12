@@ -58,6 +58,8 @@ extern SpatialHash spatial_hash;
 
 extern std::vector<Particle> particlesList;
 extern std::vector< Particle > predict_p;
+extern std::vector<ParticleStruct> particleStructList;
+extern std::vector< ParticleStruct > predictedStructList;
 //std::vector<float> g_grid;
 extern float g_xmax;
 extern float g_xmin;
@@ -430,6 +432,11 @@ int main(void)
 {
 	//----------- OpenCL -------------
 
+	InitParticleStructList();
+	cubeStruct();
+	std::cout << "Struct Particles: " << particleStructList.size() << std::endl;
+
+
 	//Get Number of Platforms
 	cl_uint platformIdCount = 0;
 	clGetPlatformIDs(0, nullptr, &platformIdCount);
@@ -496,51 +503,39 @@ int main(void)
 	//--------- Testing hash kernel
 	//Allocation
 	int input_dim = 3;
-	int particle_list_size = 3;
-	float* h_in_max_size = (float*)malloc(sizeof(float) * input_dim);
+	int particle_list_size = particleStructList.size();
+
+	glm::vec3 h_in_max_size_vec3(g_xmax, g_ymax, g_zmax);
 	float* h_in_num_bins = (float*)malloc(sizeof(float) * input_dim);
 	float* h_in_bin_size = (float*)malloc(sizeof(float) * input_dim);
 	float* h_in_pos = (float*)malloc(sizeof(float) * input_dim * particle_list_size);
+	ParticleStruct* h_in_pos_struct = (ParticleStruct*) particleStructList.data();
 
 	int *h_hash_output = (int *) malloc(sizeof(int) * particle_list_size);
 	
 	//Values
-	h_in_max_size[0] = 25;
-	h_in_max_size[1] = 25;
-	h_in_max_size[2] = 25;
 
-	h_in_num_bins[0] = 5;
-	h_in_num_bins[1] = 5;
-	h_in_num_bins[2] = 5;
+	h_in_num_bins[0] = ceil(g_xmax*2/particle_size);
+	h_in_num_bins[1] = ceil(g_ymax*2/particle_size);
+	h_in_num_bins[2] = ceil(g_zmax*2/particle_size);
+	std::cout << "NumBins: (" << h_in_num_bins[0] << ", " << h_in_num_bins[1] << ", " << h_in_num_bins[2] << ")\n";
 
-	h_in_bin_size[0] = 10;
-	h_in_bin_size[1] = 10;
-	h_in_bin_size[2] = 10;
-
-	h_in_pos[0] = 24;
-	h_in_pos[1] = -24;
-	h_in_pos[2] = -24;
-
-	h_in_pos[3] = 24;
-	h_in_pos[4] = 24;
-	h_in_pos[5] = -24;
-
-	h_in_pos[6] = 24;
-	h_in_pos[7] = -24;
-	h_in_pos[8] = 24;
+	h_in_bin_size[0] = particle_size;
+	h_in_bin_size[1] = particle_size;
+	h_in_bin_size[2] = particle_size;
 	
 	h_hash_output[0] = 0;
 	h_hash_output[1] = 0;
 	h_hash_output[2] = 0;
 
 	//Copy to device
-	cl_mem d_in_max_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, h_in_max_size, &errorCode);
+	cl_mem d_in_max_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, &h_in_max_size_vec3, &errorCode);
 	CheckError(errorCode);
 	cl_mem d_in_num_bins = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, h_in_num_bins, &errorCode);
 	CheckError(errorCode);
 	cl_mem d_in_bin_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim, h_in_bin_size, &errorCode);
 	CheckError(errorCode);
-	cl_mem d_in_pos = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * input_dim * particle_list_size, h_in_pos, &errorCode);
+	cl_mem d_in_pos = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(ParticleStruct) * particle_list_size, h_in_pos_struct, &errorCode);
 	CheckError(errorCode);
 
 	cl_mem d_hash_output = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int) * particle_list_size, h_hash_output, &errorCode);
@@ -648,17 +643,13 @@ int main(void)
 	);
 
 	std::cout << "After: " << h_hash_output[0] << " - " << h_hash_output[1] << " - " << h_hash_output[2] << std::endl;
+	std::cout << "\n---------------\nHash Values:\n";
+	for (int i = 0; i < particleStructList.size(); i++) {
+		std::cout << "(" << particleStructList[i].current_position.x << ", " << particleStructList[i].current_position.y 
+			<< ", " << particleStructList[i].current_position.z << ") -> " << h_hash_output[i] << "\n";
+	}
+	std::cout << "----------------\n";
 
-
-
-
-	//hashKernel(maxDim, numBins, binSize, glm::vec3(20, 20, 20));
-
-	//hashKernel(maxDim, numBins, binSize, glm::vec3(20,20,20));
-
-	//hashKernel(maxDim, numBins, binSize, glm::vec3(24, 24, -24));
-
-	//hashKernel(maxDim, numBins, binSize, glm::vec3(24, -24, -24));
 
 	getchar();
 
