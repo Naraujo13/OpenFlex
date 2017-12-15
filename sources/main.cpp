@@ -110,10 +110,10 @@ extern float wall_h;
 extern glm::vec3 positions;
 extern glm::vec3 direction;
 
-/*Método que utiliza o QuickSort para ordenar um vetor de entrada
- *Esquerda é o value inicial, a partir de onde deseja-se iniciar a ordenação
- *Direita é o value final, onde deseja-se encerrar a ordenação
- *O(nlogn) como caso médio e O(n^2) para pior caso (bem raro) */
+/*Mï¿½todo que utiliza o QuickSort para ordenar um vetor de entrada
+ *Esquerda ï¿½ o value inicial, a partir de onde deseja-se iniciar a ordenaï¿½ï¿½o
+ *Direita ï¿½ o value final, onde deseja-se encerrar a ordenaï¿½ï¿½o
+ *O(nlogn) como caso mï¿½dio e O(n^2) para pior caso (bem raro) */
  void quickSort(cl_int* value, ParticleStruct* particles, int start, int end){
     int i, j, x, y;
     i = start;
@@ -182,13 +182,13 @@ void Algorithm() {
 	timeb4 = glfwGetTime();
 	//newBuildHashTable(predict_p, spatial_hash);
 	BuildHashTable(predict_p, hash_table);
-	std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+	//std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 
 
 	timeb4 = glfwGetTime();
 	//newSetUpNeighborsLists(predict_p, spatial_hash);
 	SetUpNeighborsLists(predict_p, hash_table);
-	std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl << std::endl;
+	//std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl << std::endl;
 
 	//for (int i = 0; i < npart; i++) {
 		//std::cout << "Particula " << i << " -> " << predict_p[i].allNeighbours.size() << " vizinhos\n";
@@ -1016,7 +1016,7 @@ int main(void)
 		/* -------------------------------- */
 
 
-		glm::mat4 ModelMatrix = glm::mat4(1.0f); //Usar posição aleatória
+		glm::mat4 ModelMatrix = glm::mat4(1.0f); //Usar posiï¿½ï¿½o aleatï¿½ria
 		ModelMatrix[0][0] = particle_size; //Escala do modelo (x)
 		ModelMatrix[1][1] = particle_size; //Escala do modelo (y)
 		ModelMatrix[2][2] = particle_size; //Escala do modelo (z)
@@ -1035,9 +1035,9 @@ int main(void)
 		for (int index = 0; index < particlesList.size(); index++) {			
 
 			//for
-			ModelMatrix[3][0] = particlesList[index].current_position.x; //posição x
-			ModelMatrix[3][1] = particlesList[index].current_position.y; //posição y
-			ModelMatrix[3][2] = particlesList[index].current_position.z; //posição z
+			ModelMatrix[3][0] = particlesList[index].current_position.x; //posiï¿½ï¿½o x
+			ModelMatrix[3][1] = particlesList[index].current_position.y; //posiï¿½ï¿½o y
+			ModelMatrix[3][2] = particlesList[index].current_position.z; //posiï¿½ï¿½o z
 
 			if (particlesList[index].teardrop)
 				glUniform3f(particleColor, 1.0f, 0.0f, 0.0f);
@@ -1117,8 +1117,8 @@ int main(void)
 		glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
 
 
-		//Prepara modelmatriz que será usada para as paredes da sala
-		ModelMatrix = glm::mat4(1.0f); //Usar posição aleatória
+		//Prepara modelmatriz que serï¿½ usada para as paredes da sala
+		ModelMatrix = glm::mat4(1.0f); //Usar posiï¿½ï¿½o aleatï¿½ria
 		ModelMatrix[0][0] = wallscalex * (g_ymax / 2); //Escala do modelo (x)
 		ModelMatrix[1][1] = wallscaley * (g_ymax / 2); //Escala do modelo (y)
 		ModelMatrix[2][2] = wallscalez * (g_ymax / 2); //Escala do modelo (z)
@@ -1126,9 +1126,9 @@ int main(void)
 		
 		/* -- Draw Back Wall -- */
 
-		ModelMatrix[3][0] = g_xmin; //posição x
-		ModelMatrix[3][1] = g_ymin;//posição y
-		ModelMatrix[3][2] = g_zmin;//posição z
+		ModelMatrix[3][0] = g_xmin; //posiï¿½ï¿½o x
+		ModelMatrix[3][1] = g_ymin;//posiï¿½ï¿½o y
+		ModelMatrix[3][2] = g_zmin;//posiï¿½ï¿½o z
 
 		ModelMatrix = glm::rotate(ModelMatrix, rotatex, glm::vec3(1, 0, 0));
 		ModelMatrix = glm::rotate(ModelMatrix, rotatey, glm::vec3(0, 1, 0));
@@ -1157,9 +1157,9 @@ int main(void)
 
 		/* -- Draw Left Wall -- */
 
-		ModelMatrix[3][0] = g_xmin; //posição x
-		ModelMatrix[3][1] = g_ymin;//posição y
-		ModelMatrix[3][2] = g_zmin;//posição z
+		ModelMatrix[3][0] = g_xmin; //posiï¿½ï¿½o x
+		ModelMatrix[3][1] = g_ymin;//posiï¿½ï¿½o y
+		ModelMatrix[3][2] = g_zmin;//posiï¿½ï¿½o z
 
 		ModelMatrix = glm::rotate(ModelMatrix, 90.0f, glm::vec3(1, 0, 0));
 		ModelMatrix = glm::rotate(ModelMatrix, 0.0f, glm::vec3(0, 1, 0));
@@ -1188,9 +1188,9 @@ int main(void)
 
 		/* -- Draw Left Wall -- */
 
-		ModelMatrix[3][0] = g_xmin; //posição x
-		ModelMatrix[3][1] = g_ymin;//posição y
-		ModelMatrix[3][2] = g_zmin;//posição z
+		ModelMatrix[3][0] = g_xmin; //posiï¿½ï¿½o x
+		ModelMatrix[3][1] = g_ymin;//posiï¿½ï¿½o y
+		ModelMatrix[3][2] = g_zmin;//posiï¿½ï¿½o z
 
 		ModelMatrix = glm::rotate(ModelMatrix, -90.0f, glm::vec3(1, 0, 0));
 		ModelMatrix = glm::rotate(ModelMatrix, -90.0f, glm::vec3(0, 1, 0));
@@ -1218,9 +1218,9 @@ int main(void)
 
 		/* -- Draw Right Wall -- */
 
-		ModelMatrix[3][0] = g_xmax; //posição x
-		ModelMatrix[3][1] = g_ymin;//posição y
-		ModelMatrix[3][2] = g_zmin;//posição z
+		ModelMatrix[3][0] = g_xmax; //posiï¿½ï¿½o x
+		ModelMatrix[3][1] = g_ymin;//posiï¿½ï¿½o y
+		ModelMatrix[3][2] = g_zmin;//posiï¿½ï¿½o z
 
 		ModelMatrix = glm::rotate(ModelMatrix, rotatex, glm::vec3(1, 0, 0));
 		ModelMatrix = glm::rotate(ModelMatrix, 0.0f, glm::vec3(0, 1, 0));
