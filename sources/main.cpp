@@ -5,20 +5,6 @@
 #include <iostream>
 #include <time.h>
 #include <omp.h>
-#include <pbf.hpp>
-
-#define __CL_ENABLE_EXCEPTIONS
-#include <CL\cl.hpp>
-
-#define PI 3.1415f
-#define EPSILON 600.0f
-#define ITER 2
-//#define REST 6378.0f
-#define DT 0.0083f
-#define PARTICLE_COUNT_X 10
-#define PARTICLE_COUNT_Y 2
-#define PARTICLE_COUNT_Z 10
-
 
 // Include GLEW
 #include <GL/glew.h>
@@ -46,6 +32,24 @@ using namespace glm;
 #include <vboindexer.hpp>
 #include <glerror.hpp>
 
+//Includes OpenCL
+#define __CL_ENABLE_EXCEPTIONS
+#include <CL\cl.hpp>
+
+//Project Includes
+#include <pbf.hpp>
+
+//Constant definition
+#define PI 3.1415f
+#define EPSILON 600.0f
+#define SOLVER_ITERATIONS_PER_FRAME 2
+//#define REST 6378.0f
+#define DT 0.0083f
+#define PARTICLE_COUNT_X 10
+#define PARTICLE_COUNT_Y 2
+#define PARTICLE_COUNT_Z 10
+
+//Windowsize callback
 void WindowSizeCallBack(GLFWwindow *pWindow, int nWidth, int nHeight) {
 
 	g_nWidth = nWidth;
@@ -54,14 +58,21 @@ void WindowSizeCallBack(GLFWwindow *pWindow, int nWidth, int nHeight) {
 	TwWindowSize(g_nWidth, g_nHeight);
 }
 
+//Legacy hash_table used for neighbor mapping
 typedef std::unordered_multimap< int, int > Hash;
 extern Hash hash_table;
 
+//Legacy Particle list
 extern std::vector<Particle> particlesList;
+
+//Legacy Predicted particle list
 extern std::vector< Particle > predict_p;
+
+//Porting Particle and Prediction
 extern std::vector<ParticleStruct> particleStructList;
 extern std::vector< ParticleStruct > predictedStructList;
-//std::vector<float> g_grid;
+
+//Extern variables
 extern float g_xmax;
 extern float g_xmin;
 extern float g_ymax;
@@ -109,10 +120,12 @@ extern float wall_h;
 extern glm::vec3 positions;
 extern glm::vec3 direction;
 
-/*M�todo que utiliza o QuickSort para ordenar um vetor de entrada
- *Esquerda � o value inicial, a partir de onde deseja-se iniciar a ordena��o
- *Direita � o value final, onde deseja-se encerrar a ordena��o
- *O(nlogn) como caso m�dio e O(n^2) para pior caso (bem raro) */
+/*Sequential quicksort for Particle hash
+ *Average case O(nlogn) and worst case O(n²)
+ *value: spatial hash values
+ *particles: particles info 
+ *start: initial index for quicksort
+ *end: last index for quicksort */
  void quickSort(cl_int* value, ParticleStruct* particles, int start, int end){
     int i, j, x, y;
     i = start;
@@ -148,62 +161,52 @@ extern glm::vec3 direction;
     }
 }
 
-void Algorithm() {
-
-	double timeb4 = glfwGetTime();
+void unifiedSolver() {
 
 	gravity.y = gravity_y;
 
+	//Turns hose (new particles) on and off
 	if (gota == 1) {
 		hose();
 		gota = 2;
 	}
 
+	//Resets particle position to initial state
 	if (resetParticles == 1) {
 		particlesList.clear();
 		predict_p.clear();
 		cube();
 	}
 
-	int npart = particlesList.size();
+	//Gets number of particles
+	int numParticles = particlesList.size();
 
 	//Apply forces to non-rigidBody and not colliding with rigidBody
 	#pragma omp parallel for
-	for (int i = 0; i < npart; i++) {
+	for (int i = 0; i < numParticles; i++) {
 		if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
 			predict_p[i].velocity = particlesList[i].velocity + DT * gravity;
 			predict_p[i].current_position = particlesList[i].current_position + DT * predict_p[i].velocity;
 		}
-		/*else
-		predict_p[i].teardrop = false;*/
 	}
 
-	timeb4 = glfwGetTime();
-	//newBuildHashTable(predict_p, spatial_hash);
+	/* Builds hashtable and neighor lists. This is a legacy method.	
+	 * It is clearly suboptimal and is being entirely redesigned in
+	 * the opencl branch. It is kept on the master branch for stability
+	 * reasons. The opencl method changes the entire base structure (for
+	 * the sake of vectorization) and consequentially break some parts of
+	 * the legacy physics calculations that were not ported yet.
+	*/
 	BuildHashTable(predict_p, hash_table);
-	//std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
-
-
-	timeb4 = glfwGetTime();
-	//newSetUpNeighborsLists(predict_p, spatial_hash);
 	SetUpNeighborsLists(predict_p, hash_table);
-	//std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl << std::endl;
-
-	//for (int i = 0; i < npart; i++) {
-		//std::cout << "Particula " << i << " -> " << predict_p[i].allNeighbours.size() << " vizinhos\n";
-	//	getchar();
-	//}
 	
-	
+	int solverIterations = 0;
 
-	int iter = 0;
-
-	//Solver Iterations
-	while (iter < ITER) {	
-		//std::cout << "Iter " << iter << std::endl;
+	//Solver solverIterations
+	while (solverIterations < SOLVER_ITERATIONS_PER_FRAME) {	
 		//For all particles -> density estimations
 		#pragma omp parallel for
-		for (int i = 0; i < npart; i++) {
+		for (int i = 0; i < numParticles; i++) {
 
 			//If particle isnt rigidBody or colliding with rigidBody
 			if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
@@ -214,41 +217,35 @@ void Algorithm() {
 				//Sets density constraint
 				predict_p[i].C = predict_p[i].rho / REST - 1;
 
-				//?
+				//Nabla Sum - this section needs physics calc revision
 				float sumNabla = NablaCSquaredSumFunction(predict_p[i], predict_p);
 				predict_p[i].lambda = -predict_p[i].C / (sumNabla + EPSILON);
 
 			}
-
 		}
-
-		//std::cout << "before dp\n";
 
 		//Calculate delta P for prediction
 		CalculateDp(predict_p);
-
-
-		//std::cout << "before collision\n";
 
 		//Collision Detection and Response
 		CollisionDetectionResponse(predict_p);
 		
 		//For each particle
 		#pragma omp parallel for
-		for (int i = 0; i < npart; i++) {
+		for (int i = 0; i < numParticles; i++) {
 			//If particle isnt rigidBody or colliding with rigidBody
 			if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody)
 				//Predict new particle position
 				predict_p[i].current_position = predict_p[i].current_position + predict_p[i].delta_p;
 		}
 
-		iter++;
+		solverIterations++;
 	}
 
 
 	//For each particle
 	#pragma omp parallel for
-	for (int i = 0; i < npart; i++) {
+	for (int i = 0; i < numParticles; i++) {
 		
 		//If particle isnt rigidBody or colliding with rigidBody
 		if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
@@ -284,6 +281,9 @@ void Algorithm() {
 	particlesList = predict_p;
 }
 
+/* -- OpenCL -- */
+
+//Gets Platform name by id
 std::string GetPlatformName(cl_platform_id id)
 {
 	size_t size = 0;
@@ -297,6 +297,7 @@ std::string GetPlatformName(cl_platform_id id)
 	return result;
 }
 
+//Gets Devioce name by id
 std::string GetDeviceName(cl_device_id id)
 {
 	size_t size = 0;
@@ -310,6 +311,7 @@ std::string GetDeviceName(cl_device_id id)
 	return result;
 }
 
+//Checks for erros and returns verbose message
 void CheckError(cl_int error)
 {
 	if (error != CL_SUCCESS) {
@@ -351,6 +353,7 @@ void CheckError(cl_int error)
 	}
 }
 
+//Read kernel from file, returning pointer to buffer
 char* readKernelFromFile(char* fileName, int errorCode) {
 	FILE *fp;
 	char *source_str;
@@ -381,6 +384,7 @@ char* readKernelFromFile(char* fileName, int errorCode) {
 	return source_str;
 }
 
+//Logs program build for better debug
 void logProgramBuild(cl_program program, cl_device_id device_id) {
 	//------------------Getting log
 	printf("\n----------\nStarting Program Build log...\n");
@@ -399,6 +403,7 @@ void logProgramBuild(cl_program program, cl_device_id device_id) {
 	//-----------------------
 }
 
+//Builds hash table with kernel_hash.cl
 cl_int* buildHash(cl_device_id deviceId, cl_context context, cl_command_queue queue, int errorCode) {
 
 	//Reads Kernel From File
@@ -495,6 +500,7 @@ cl_int* buildHash(cl_device_id deviceId, cl_context context, cl_command_queue qu
 	return h_out_hash;
 }
 
+//Gets boundaries of solrted bins - ON PROGRESS
 cl_int* getBoundaries(cl_device_id deviceId, cl_context context, cl_command_queue queue, cl_int *hash, cl_int *numKeys, cl_int *numBins, int errorCode) {
 	
 	std::cout << "Num Bins: " << *numBins << "\tNum Keys: " << *numKeys << std::endl;
@@ -583,6 +589,7 @@ cl_int* getBoundaries(cl_device_id deviceId, cl_context context, cl_command_queu
 	return h_binBoundaries;
 }
 
+//Prints hash values for debug
 void printHash(int* hash) {
 
 	std::cout << std::endl << "---------------------" << std::endl;
@@ -594,6 +601,7 @@ void printHash(int* hash) {
 	std::cout << "---------------------" << std::endl;
 }
 
+//Print bins boundaries for debug
 void printBinBoundaries(int* binBoundaries, int numBins) {
 
 	std::cout << std::endl << "---------------------" << std::endl;
@@ -695,9 +703,6 @@ int main(void)
 	TwAddVarRW(g_pToolBar, "masswall", TW_TYPE_FLOAT, &masswall, " label='masswall' min=0 max=50 step=0.01 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
 	TwAddVarRW(g_pToolBar, "wall_h", TW_TYPE_FLOAT, &wall_h, " label='wall_h' min=0 max=1 step=0.001 keyIncr=r keyDecr=R help='Rotation speed (turns/second)' ");
 
-
-
-
 	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(g_pWindow, GLFW_STICKY_KEYS, GL_TRUE);
 	glfwSetCursorPos(g_pWindow, g_nWidth / 2, g_nHeight / 2);
@@ -788,11 +793,6 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, wallelementbuffer);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, wall_indices.size() * sizeof(unsigned short), &wall_indices[0], GL_STATIC_DRAW);
 
-	/*GLuint uvbuffer;
-	glGenBuffers(1, &uvbuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, uvbuffer);
-	glBufferData(GL_ARRAY_BUFFER, indexed_uvs.size() * sizeof(glm::vec2), &indexed_uvs[0], GL_STATIC_DRAW);*/
-
 	// Get a handle for our "LightPosition" uniform
 	glUseProgram(standardProgramID);
 
@@ -807,7 +807,6 @@ int main(void)
 		check_gl_error();
 
 		/* -- Keyboard Controls -- */
-
 		//Lock/Unlock Mouse (Right Mouse Button)
 		if (glfwGetMouseButton(g_pWindow, GLFW_MOUSE_BUTTON_RIGHT) != GLFW_PRESS)
 			nUseMouse = 0;
@@ -820,28 +819,13 @@ int main(void)
 		else
 			resetParticles = 1;
 
-		//??????? (R)
+		//Turns hjose on and off
 		if (glfwGetKey(g_pWindow, GLFW_KEY_R) == GLFW_PRESS)
 			gota = 1;
 		else
 			gota = 0;
 		
 		/* ----------------------- */
-
-		
-		/*if (glfwGetKey(g_pWindow, GLFW_KEY_R) != GLFW_PRESS)
-		render = false;
-		else
-		render = true;*/
-
-		/*if (render) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		}
-		else
-		glDisable(GL_BLEND);*/
-		
-		
 	
 		//FPS measure
 		double currentTime = glfwGetTime();
@@ -853,7 +837,6 @@ int main(void)
 			lastTime += 1.0;
 		}
 
-
 		// Clear the screen
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -863,7 +846,6 @@ int main(void)
 		glm::mat4 ViewMatrix = getViewMatrix();
 
 		/* -- Shader -- */
-
 		GLuint MatrixID = glGetUniformLocation(standardProgramID, "MVP");
 		glm::mat4 MVP = ProjectionMatrix * ViewMatrix;
 		glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
@@ -881,12 +863,6 @@ int main(void)
 		glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
 
 		/* ------------ */
-
-		// Bind our texture in Texture Unit 0
-		//glActiveTexture(GL_TEXTURE0);
-		//glBindTexture(GL_TEXTURE_2D, Texture);
-		//// Set our "myTextureSampler" sampler to user Texture Unit 0
-		//glUniform1i(TextureID, 0);
 
 
 		/* -- OpenGL Calls -- */
@@ -940,15 +916,11 @@ int main(void)
 		ModelMatrix[1][1] = particle_size; //Escala do modelo (y)
 		ModelMatrix[2][2] = particle_size; //Escala do modelo (z)
 		
-		//double timeb4 = glfwGetTime();
-		Algorithm();
-		//std::cout << "Time on algorithm: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+		unifiedSolver();
 
 		//Render
 		GLuint particleColor = glGetUniformLocation(standardProgramID, "particleColor");
 		glUniform3f(particleColor, 0.0f, 0.5f, 0.9f);
-		
-		//timeb4 = glfwGetTime();
 
 		/* -- Draw particles -- */
 		for (int index = 0; index < particlesList.size(); index++) {			
@@ -970,21 +942,16 @@ int main(void)
 
 
 			// Draw the triangles !
-			/*if (!particles[index].rigidBody){*/
 			glDrawElements(
 				GL_TRIANGLES,        // mode
 				indices.size(),      // count
 				GL_UNSIGNED_SHORT,   // type
 				(void*)0             // element array buffer offset
 			);
-			//}
-			//endfor
+			
 		}
-		//std::cout << "Time particles loop: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
-
 
 		/* ------ Room ------- */
-
 		glUseProgram(wallProgramID);
 
 		GLuint wallLightID = glGetUniformLocation(wallProgramID, "LightPosition_worldspace");
@@ -1074,7 +1041,7 @@ int main(void)
 
 
 
-		/* -- Draw Left Wall -- */
+		/* -- Draw Front Wall -- */
 
 		ModelMatrix[3][0] = g_xmin; //posi��o x
 		ModelMatrix[3][1] = g_ymin;//posi��o y
@@ -1164,10 +1131,8 @@ int main(void)
 		/* ----------------- */
 
 
-
-
 		glDisableVertexAttribArray(0);
-		// glDisableVertexAttribArray(1); Canal das texturas
+		//glDisableVertexAttribArray(1); 
 		glDisableVertexAttribArray(2);
 
 		// Draw tweak bars
@@ -1176,10 +1141,6 @@ int main(void)
 		// Swap buffers
 		glfwSwapBuffers(g_pWindow);
 		glfwPollEvents();
-
-		/*double currentTimeNeigh = glfwGetTime();
-		printf("%f tempo depois de entrar no for \n", double(currentTimeNeigh));*/
-
 
 	} // Check if the ESC key was pressed or the window was closed
 	while (glfwGetKey(g_pWindow, GLFW_KEY_ESCAPE) != GLFW_PRESS &&
