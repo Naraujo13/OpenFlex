@@ -1,32 +1,6 @@
 #include "particle.hpp"
 
-/* -- Variables -- */
-/*
-//Defines
-//Stating number of particles
-#define PARTICLE_COUNT_X 10
-#define PARTICLE_COUNT_Y 2
-#define PARTICLE_COUNT_Z 10
-
-//Particles
-std::vector<Particle> particlesList;
-
-//????
-std::vector< Particle > predictionList;
-
-//Cell boundaries
-#define g_xmax 2
-#define g_xmin 0
-#define g_ymax 2
-#define g_ymin 0
-#define g_zmax 2
-#define g_zmin 0
-
-//Wall boundary
-#define boundary 0.03f
-*/
 /* -- Particle Functions -- */
-
 //Construtor
 Particle::Particle() {}
 
