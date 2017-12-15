@@ -56,7 +56,6 @@ void WindowSizeCallBack(GLFWwindow *pWindow, int nWidth, int nHeight) {
 
 typedef std::unordered_multimap< int, int > Hash;
 extern Hash hash_table;
-extern SpatialHash spatial_hash;
 
 extern std::vector<Particle> particlesList;
 extern std::vector< Particle > predict_p;

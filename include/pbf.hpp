@@ -44,8 +44,8 @@ typedef std::unordered_multimap< int, int > Hash;
 class ParticleOld
 {
 public:
-	glm::vec3 current_position;		  // Posição Inicial
-	glm::vec3 predicted_position;  // Posição Prevista durante o passo
+	glm::vec3 current_position;		  // Posiï¿½ï¿½o Inicial
+	glm::vec3 predicted_position;  // Posiï¿½ï¿½o Prevista durante o passo
 	glm::vec3 velocity;
 	glm::vec3 delta_p;
 	float mass;
@@ -98,7 +98,4 @@ void movewallz(std::vector<Particle> &p_list);
 void movewallx(std::vector<Particle> &p_list);
 void movewally(std::vector<Particle> &p_list);
 
-
-void newBuildHashTable(std::vector<Particle> &p_list, SpatialHash &hash_table);
-void newSetUpNeighborsLists(std::vector<Particle> &p_list, SpatialHash &hash_table);
 #endif

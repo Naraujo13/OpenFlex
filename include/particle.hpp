@@ -76,8 +76,8 @@ public:
 		);
 	
 	//Vec3
-	glm::vec3 current_position;			//Posição Atual
-	glm::vec3 predicted_position;		//Posição Prevista para passo
+	glm::vec3 current_position;			//Posiï¿½ï¿½o Atual
+	glm::vec3 predicted_position;		//Posiï¿½ï¿½o Prevista para passo
 	glm::vec3 velocity;
 	glm::vec3 delta_p;
 	
@@ -103,62 +103,6 @@ public:
 	std::vector<unsigned int> allNeighbours;			//All neighbours
 	std::vector<unsigned int> rigidBodyNeighbours;		//Neighbours that are rigid body
 	std::vector<unsigned int> notRigidBodyNeighbours;	//Neighbours that are NOT rigid body
-
-};
-
-struct Vec3Comparator {
-	size_t operator()(const glm::vec3& v)const {
-		return std::hash<float>()(v.x) ^ std::hash<float>()(v.y) ^ std::hash<float>()(v.z);
-	}
-	
-	bool operator()(const glm::vec3& v1, glm::vec3& v2)const {
-		return glm::all(glm::lessThan(v1, v2));
-	}
-};
-
-typedef std::vector<int> particleVector;
-typedef std::unordered_map<glm::vec3, particleVector, Vec3Comparator> spatialCell;
-
-
-class SpatialHash
-{
-
-private:
-	
-	//Variables
-	glm::vec3  dim;
-	float cellSize;
-	spatialCell cells;
-
-	//Clean Hash
-	void cleanHash();
-	
-	//Build Hash
-	void buildHash(glm::vec3, float cellSize);
-
-public:
-
-	//Hashing
-	glm::vec3 hashFunction(glm::vec3 particlePosition);
-
-
-	//Constructor
-	SpatialHash::SpatialHash();
-	SpatialHash::SpatialHash(glm::vec3 dim, float cellSize);
-
-	//Rebuild
-	void reconstruct();
-	void reconstruct(glm::vec3, float cellSize);
-
-	//Insert
-	bool insert(glm::vec3 particlePos, int particleIndex);
-
-	//Get Cell
-	std::vector<int> getCell(glm::vec3 index);
-
-	spatialCell getCells() {
-		return cells;
-	}
 
 };
 
