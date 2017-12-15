@@ -12,12 +12,13 @@ typedef struct ParticleStruct {
 	float isRigidBody;
 	float pencil;
 	float isCollidingWithRigidBody;
+	int hash;
 };
 
 __kernel void hashFunction(__global float* maxDim, __global float* numBins, __global float* binSize, __global struct ParticleStruct* pos, __global int* hash) {
 
 	//printf("%.0f, %.0f, %.0f\n", maxDim[0], maxDim[1], maxDim[2]);
-	
+
 	int index = get_local_id(0);
 
 	float maxDimX = maxDim[0];
@@ -50,7 +51,6 @@ __kernel void hashFunction(__global float* maxDim, __global float* numBins, __gl
 	x = (int)(x / binSize[0]);
 	y = (int)(y / binSize[1]);
 	z = (int)(z / binSize[2]);
-	printf("In Bin Coordinates: (%f, %f, %f)\n", x, y, z);
 
 	int hashValue = 0;
 	int temp = numBins[0];
@@ -64,6 +64,7 @@ __kernel void hashFunction(__global float* maxDim, __global float* numBins, __gl
 	hashValue += temp;
 
 	hash[index] = hashValue;
+	pos[index].hash = hashValue;
 
 	printf("\tHash %d: %d\n", index, hashValue);
 

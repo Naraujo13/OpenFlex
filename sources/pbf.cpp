@@ -1441,7 +1441,7 @@ void newBuildHashTable(std::vector<Particle> &p_list, SpatialHash &hash_table)
 {
 	//Number of particles
 	int num_particles = p_list.size();
-	
+
 	//Define tamanho das células
 	float cell_size = particle_size;
 	
@@ -1575,6 +1575,7 @@ void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table)
 					}
 				}
 			}
+
 		}
 	}
 }

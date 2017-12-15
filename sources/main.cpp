@@ -6,6 +6,8 @@
 #include <time.h>
 #include <omp.h>
 #include <pbf.hpp>
+
+#define __CL_ENABLE_EXCEPTIONS
 #include <CL\cl.hpp>
 
 #define PI 3.1415f
@@ -108,6 +110,45 @@ extern float wall_h;
 extern glm::vec3 positions;
 extern glm::vec3 direction;
 
+/*Método que utiliza o QuickSort para ordenar um vetor de entrada
+ *Esquerda é o value inicial, a partir de onde deseja-se iniciar a ordenação
+ *Direita é o value final, onde deseja-se encerrar a ordenação
+ *O(nlogn) como caso médio e O(n^2) para pior caso (bem raro) */
+ void quickSort(cl_int* value, ParticleStruct* particles, int start, int end){
+    int i, j, x, y;
+    i = start;
+    j = end;
+    x = value[(start + end) / 2];
+ 
+    while(i <= j)    {
+        while(value[i] < x && i < end){
+            i++;
+        }
+        while(value[j] > x && j > start){
+            j--;
+        }
+        if(i <= j){
+            y = value[i];
+			ParticleStruct temp = particles[i];
+
+			particles[i] = particles[j];
+			value[i] = value[j];
+            
+			particles[j] = temp;
+			value[j] = y;
+
+            i++;
+            j--;
+        }
+    }
+    if(j > start){
+        quickSort(value, particles, start, j);
+    }
+    if(i < end){
+        quickSort(value, particles,  i, end);
+    }
+}
+
 void Algorithm() {
 
 	double timeb4 = glfwGetTime();
@@ -141,13 +182,13 @@ void Algorithm() {
 	timeb4 = glfwGetTime();
 	//newBuildHashTable(predict_p, spatial_hash);
 	BuildHashTable(predict_p, hash_table);
-	//std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
+	std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
 
 
 	timeb4 = glfwGetTime();
 	//newSetUpNeighborsLists(predict_p, spatial_hash);
 	SetUpNeighborsLists(predict_p, hash_table);
-	//std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl << std::endl;
+	std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl << std::endl;
 
 	//for (int i = 0; i < npart; i++) {
 		//std::cout << "Particula " << i << " -> " << predict_p[i].allNeighbours.size() << " vizinhos\n";
@@ -311,75 +352,6 @@ void CheckError(cl_int error)
 	}
 }
 
-int hashKernel(glm::vec3 maxDim, glm::vec3 numBins, glm::vec3 binSize, glm::vec3 pos){
-
-
-	std::cout << std::endl << std::endl << "-----------------------------------------------" << std::endl;
-
-	//Copy values to local for faster processing
-	float maxDimX = maxDim.x;
-	float maxDimY = maxDim.y;
-	float maxDimZ = maxDim.z;
-
-	float x = pos.x;
-	float y = pos.y;
-	float z = pos.z;
-
-	//Check for values out of range
-	if (x >= maxDimX)
-		x = maxDimX-1;
-	else if (x <= -maxDimX)
-		x = -maxDimX+1;
-
-	if (y >= maxDimY)
-		y = maxDimY-1;
-	else if (y <= -maxDimY)
-		y = -maxDimY+1;
-	
-	if (z >= maxDimZ)
-		z = maxDimZ-1;
-	else if (z <= -maxDimZ)
-		z = -maxDimZ+1;
-
-	//Normalization with (0,0,0) being the top left point of screen
-	x = x + (maxDimX);
-	y = -(y - (maxDimY));
-	z = -(z - (maxDimZ));
-	std::cout << "After Normalization: (" << x << ", " << y << ", " << z << ")" << std::endl;
-	
-	
-	//Normalize to bin coordinates
-	x = floor(x / binSize.x);
-	y = floor(y / binSize.y);
-	z = floor(z / binSize.z);
-	std::cout << "In Bin Coordinates: (" << x << ", " << y << ", " << z << ")" << std::endl;
-
-	//Calculate Hash Value based on bin coordinates
-	int hashValue = 0;
-
-	//Sums X Bin Value
-	hashValue += x;
-
-	//Sums Bins Columns
-	hashValue += (y * numBins.y);
-
-	//Deslocamento para z
-	hashValue += (z * (numBins.x * numBins.y));
-
-
-	std::cout << "-----------------------------------------------" << std::endl;
-	std::cout << "Max Value (+-): (" << maxDimX << ", " << maxDimY << ", " << maxDimZ << ")" << std::endl;
-	std::cout << "Bin Size: (" << binSize.x << ", " << binSize.y << ", " << binSize.z << ")" << std::endl;
-	std::cout << "Number of Bins: (" << numBins.x << ", " << numBins.y << ", " << numBins.z << ")" << std::endl;
-
-	std::cout << "(" << pos.x << ", " << pos.y << ", " << pos.z << ") - " << hashValue << std::endl;
-	std::cout << "-----------------------------------------------" << std::endl;
-
-	return hashValue;
-
-
-}
-
 char* readKernelFromFile(char* fileName, int errorCode) {
 	FILE *fp;
 	char *source_str;
@@ -428,7 +400,7 @@ void logProgramBuild(cl_program program, cl_device_id device_id) {
 	//-----------------------
 }
 
-int* buildHash(cl_device_id deviceId, cl_context context, cl_command_queue queue, int errorCode) {
+cl_int* buildHash(cl_device_id deviceId, cl_context context, cl_command_queue queue, int errorCode) {
 
 	//Reads Kernel From File
 	char *hashKernelChar = readKernelFromFile("sources/kernel_hash.cl", errorCode);
@@ -459,14 +431,14 @@ int* buildHash(cl_device_id deviceId, cl_context context, cl_command_queue queue
 	int *h_out_hash = (int *)malloc(sizeof(int) * particle_list_size);
 
 	//Values of parameters
-	h_in_num_bins[0] = ceil(g_xmax * 2 / particle_size);
-	h_in_num_bins[1] = ceil(g_ymax * 2 / particle_size);
-	h_in_num_bins[2] = ceil(g_zmax * 2 / particle_size);
+	h_in_num_bins[0] = ceil(g_xmax * 2 / g_h);
+	h_in_num_bins[1] = ceil(g_ymax * 2 / g_h);
+	h_in_num_bins[2] = ceil(g_zmax * 2 / g_h);
 	std::cout << "NumBins: (" << h_in_num_bins[0] << ", " << h_in_num_bins[1] << ", " << h_in_num_bins[2] << ")\n";
 
-	h_in_bin_size[0] = particle_size;
-	h_in_bin_size[1] = particle_size;
-	h_in_bin_size[2] = particle_size;
+	h_in_bin_size[0] = g_h;
+	h_in_bin_size[1] = g_h;
+	h_in_bin_size[2] = g_h;
 
 	//Copy parameters to device memory
 	cl_mem d_in_max_size = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, &h_in_max_size_vec3, &errorCode);
@@ -514,7 +486,102 @@ int* buildHash(cl_device_id deviceId, cl_context context, cl_command_queue queue
 		NULL //Object Event to be returned that identify this command that can be used to query event status or queue a wait
 	);
 
+	clReleaseMemObject(d_in_max_size);
+	clReleaseMemObject(d_in_num_bins);
+	clReleaseMemObject(d_in_bin_size);
+	clReleaseMemObject(d_in_particles);
+	clReleaseMemObject(d_out_hash);
+
+
 	return h_out_hash;
+}
+
+cl_int* getBoundaries(cl_device_id deviceId, cl_context context, cl_command_queue queue, cl_int *hash, cl_int *numKeys, cl_int *numBins, int errorCode) {
+	
+	std::cout << "Num Bins: " << *numBins << "\tNum Keys: " << *numKeys << std::endl;
+
+	//Reads Kernel From File
+	char *boundariesKernelChar = readKernelFromFile("sources/kernel_find_boundaries.cl", errorCode);
+	CheckError(errorCode);
+
+	//CreatesProgram
+	cl_program boundariesProgram = clCreateProgramWithSource(
+		context, 1, (const char **)& boundariesKernelChar, NULL, &errorCode
+	);
+	CheckError(errorCode);
+
+	//Build Program Executable
+	errorCode = clBuildProgram(boundariesProgram, 0, NULL, NULL, NULL, NULL);
+	logProgramBuild(boundariesProgram, deviceId);
+	CheckError(errorCode);
+
+	//Creates Kernel
+	cl_kernel boundariesKernel = clCreateKernel(boundariesProgram, "findBoundaries", &errorCode);
+	CheckError(errorCode);
+
+	//Allocation of parameters
+	int *h_binBoundaries = (int*)malloc(sizeof(int)* *numBins);
+	for (int i = 0; i < *numBins; i++) {
+		h_binBoundaries[i] = *numBins;
+	}
+	
+	//Copy parameters to device memory
+	std::cout << "\tStarting device memory allocation..." << std::endl;
+	cl_mem d_hash = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int) * *numKeys, &hash, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_numKeys = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int), &numKeys, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_binBoundaries = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int) * *numBins, &h_binBoundaries, &errorCode);
+	CheckError(errorCode);
+	cl_mem d_numBins = clCreateBuffer(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int), &numBins, &errorCode);
+	CheckError(errorCode);
+	std::cout << "\tFinished device memory allocation." << std::endl;
+
+	//Set Kernel Args
+	std::cout << "\tStarted setting kernel args..." << std::endl;
+	clSetKernelArg(boundariesKernel, 0, sizeof(cl_mem), &d_hash);
+	clSetKernelArg(boundariesKernel, 1, sizeof(cl_mem), &d_numKeys);
+	clSetKernelArg(boundariesKernel, 2, sizeof(cl_mem), &d_binBoundaries);
+	clSetKernelArg(boundariesKernel, 3, sizeof(cl_mem), &d_numBins);
+	std::cout << "\tFinished setting kernel args." << std::endl;
+
+	//Enqueues Kernel for Execution
+	std::cout << "\tStarted enqueuing kernel for execution..." << std::endl;
+	const size_t globalWorkSize2[] = { *numKeys, 0, 0 };
+	errorCode = clEnqueueNDRangeKernel(
+		queue, //CommandQueue
+		boundariesKernel,	//Kernel
+		1, //Work Dimension ?
+		nullptr, //Work Offset
+		globalWorkSize2, //Global Work Size
+		nullptr, //Local Work Size
+		0, //Num of events to be executed before this command -> 0 == doesnt wait
+		nullptr, //Event List to be executed before this command -> NULL == doesnt wait
+		nullptr //Object Event to be returned that identify this command that can be used to query event status or queue a wait
+	);
+	std::cout << "\tFinished enqueuing kernel for execution..." << std::endl;
+
+	//Gets Results back, from device to host
+	std::cout << "\tStarted reading output buffer..." << std::endl;
+	clEnqueueReadBuffer(
+		queue,		//Command Queue
+		d_binBoundaries, //Device source
+		CL_TRUE, //Blocking?
+		0,		//Offset in bytes from start of array
+		sizeof(int) * *numKeys, //Buffer 
+		h_binBoundaries,	//Host target
+		0,	//Num of events to be executed before this command -> 0 == doesnt wait
+		NULL, //Event List to be executed before this command -> NULL == doesnt wait
+		NULL //Object Event to be returned that identify this command that can be used to query event status or queue a wait
+	);
+	std::cout << "\tFinished reading output buffer." << std::endl;
+
+	clReleaseMemObject(d_hash);
+	clReleaseMemObject(d_numKeys);
+	clReleaseMemObject(d_binBoundaries);
+	clReleaseMemObject(d_numBins);
+	
+	return h_binBoundaries;
 }
 
 void printHash(int* hash) {
@@ -528,10 +595,21 @@ void printHash(int* hash) {
 	std::cout << "---------------------" << std::endl;
 }
 
+void printBinBoundaries(int* binBoundaries, int numBins) {
+
+	std::cout << std::endl << "---------------------" << std::endl;
+	std::cout << "Bin Boundaries : \n";
+	for (int i = 0; i < numBins; i++) {
+		std::cout << "(" << i << ") -> " << binBoundaries[i] << std::endl;
+	}
+	std::cout << "---------------------" << std::endl;
+}
+
 int main(void)
 {
 	//----------- OpenCL Setup -------------
 
+	/*
 	InitParticleStructList();
 	cubeStruct();
 	std::cout << "Struct Particles: " << particleStructList.size() << std::endl;
@@ -595,10 +673,21 @@ int main(void)
 	//--------------------------------------
 
 	//Hash
-	int* hash = buildHash(deviceIds[0], context, queue, errorCode);
-	printHash(hash);
-	getchar();
+	cl_int* hash = buildHash(deviceIds[0], context, queue, errorCode);
+	quickSort(hash, particleStructList.data(), 0, particleStructList.size());
+	//printHash(hash);
 
+
+	cl_int* numBins = (cl_int*)malloc(sizeof(cl_int));
+	*numBins = ceil(g_xmax * 2 / g_h) * ceil(g_ymax * 2 / g_h) * ceil(g_zmax * 2 / g_h);
+	cl_int* numKeys = (cl_int*)malloc(sizeof(cl_int));
+	*numKeys = particleStructList.size();
+	cl_int* binBoundaries;
+	binBoundaries = getBoundaries(deviceIds[0], context, queue, hash, numKeys, numBins, errorCode);
+	printBinBoundaries(binBoundaries, *numBins);
+	
+	getchar();
+	*/
 	int nUseMouse = 0;
 	InitParticleList();
 	cube();

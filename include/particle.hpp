@@ -31,6 +31,7 @@ using namespace glm;
 #define PI 3.1415f
 
 typedef struct ParticleStruct {
+
 	cl_float3 current_position;
 	cl_float3 predicted_position;
 	cl_float3 velocity;
@@ -44,6 +45,12 @@ typedef struct ParticleStruct {
 	cl_float isRigidBody;
 	cl_float pencil;
 	cl_float isCollidingWithRigidBody;
+	cl_int hash;
+};
+
+struct HashBlock {
+	cl_int key;
+	cl_int value;
 };
 
 class Particle
