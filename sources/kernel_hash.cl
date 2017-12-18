@@ -66,6 +66,6 @@ __kernel void hashFunction(__global float* maxDim, __global float* numBins, __gl
 	hash[index] = hashValue;
 	pos[index].hash = hashValue;
 
-	printf("\tHash %d: %d\n", index, hashValue);
+	//printf("\tHash %d: %d\n", index, hashValue);
 
 }
