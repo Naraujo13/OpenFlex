@@ -114,6 +114,7 @@ extern glm::vec3 direction;
  *Esquerda � o value inicial, a partir de onde deseja-se iniciar a ordena��o
  *Direita � o value final, onde deseja-se encerrar a ordena��o
  *O(nlogn) como caso m�dio e O(n^2) para pior caso (bem raro) */
+//TODO: VERIFICAR VETOR POR NULLPOINTER
  void quickSort(cl_int* value, ParticleStruct* particles, int start, int end){
     int i, j, x, y;
     i = start;
@@ -313,46 +314,85 @@ std::string GetDeviceName(cl_device_id id)
 
 void CheckError(cl_int error)
 {
-	if (error != CL_SUCCESS) {
-		switch (error) {
-		case CL_INVALID_PROGRAM:
-			std::cerr << "OpenCL Error: " << error << " - program is not a valid program object" << std::endl;
-			break;
-		case CL_INVALID_VALUE:
-			std::cerr << "OpenCL Error: " << error << " - device list and num_devices or  pfn_notify and user data incompatible" << std::endl;
-			break;
-		case CL_INVALID_DEVICE:
-			std::cerr << "OpenCL Error: " << error << " - device in device_list not associated with program" << std::endl;
-			break;
-		case CL_INVALID_BINARY:
-			std::cerr << "OpenCL Error: " << error << " - program doesnt have valid binary associated" << std::endl;
-			break;
-		case CL_INVALID_BUILD_OPTIONS:
-			std::cerr << "OpenCL Error: " << error << " - build options associated are invalid" << std::endl;
-			break;
-		case CL_INVALID_OPERATION:
-			std::cerr << "OpenCL Error: " << error << " - previous build not finished or kernel objects are attached to program" << std::endl;
-			break;
-		case CL_COMPILER_NOT_AVAILABLE:
-			std::cerr << "OpenCL Error: " << error << " - cimpiler not available" << std::endl;
-		case CL_BUILD_PROGRAM_FAILURE:
-			std::cerr << "OpenCL Error: " << error << " - build error, couldnt finish clbuildprogram" << std::endl;
-			break;
-		case CL_OUT_OF_RESOURCES:
-			std::cerr << "OpenCL Error: " << error << " - failure to allocate resources on the device" << std::endl;
-			break;
-		case CL_OUT_OF_HOST_MEMORY:
-			std::cerr << "OpenCL Error: " << error << " - failure toallocate resources on the host" << std::endl;
-			break;
-		default:
-			std::cerr << "OpenCL call failed with error " << error << std::endl;
-			break;
-		}
-		std::exit(1);
+	std::string errorString;
+	switch (error) {
+		// run-time and JIT compiler errors
+		case 0: errorString = "CL_SUCCESS";
+		case -1: errorString = "CL_DEVICE_NOT_FOUND";
+		case -2: errorString = "CL_DEVICE_NOT_AVAILABLE";
+		case -3: errorString = "CL_COMPILER_NOT_AVAILABLE";
+		case -4: errorString = "CL_MEM_OBJECT_ALLOCATION_FAILURE";
+		case -5: errorString = "CL_OUT_OF_RESOURCES";
+		case -6: errorString = "CL_OUT_OF_HOST_MEMORY";
+		case -7: errorString = "CL_PROFILING_INFO_NOT_AVAILABLE";
+		case -8: errorString = "CL_MEM_COPY_OVERLAP";
+		case -9: errorString = "CL_IMAGE_FORMAT_MISMATCH";
+		case -10: errorString = "CL_IMAGE_FORMAT_NOT_SUPPORTED";
+		case -11: errorString = "CL_BUILD_PROGRAM_FAILURE";
+		case -12: errorString = "CL_MAP_FAILURE";
+		case -13: errorString = "CL_MISALIGNED_SUB_BUFFER_OFFSET";
+		case -14: errorString = "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST";
+		case -15: errorString = "CL_COMPILE_PROGRAM_FAILURE";
+		case -16: errorString = "CL_LINKER_NOT_AVAILABLE";
+		case -17: errorString = "CL_LINK_PROGRAM_FAILURE";
+		case -18: errorString = "CL_DEVICE_PARTITION_FAILED";
+		case -19: errorString = "CL_KERNEL_ARG_INFO_NOT_AVAILABLE";
+
+		// compile-time errors
+		case -30: errorString = "CL_INVALID_VALUE";
+		case -31: errorString = "CL_INVALID_DEVICE_TYPE";
+		case -32: errorString = "CL_INVALID_PLATFORM";
+		case -33: errorString = "CL_INVALID_DEVICE";
+		case -34: errorString = "CL_INVALID_CONTEXT";
+		case -35: errorString = "CL_INVALID_QUEUE_PROPERTIES";
+		case -36: errorString = "CL_INVALID_COMMAND_QUEUE";
+		case -37: errorString = "CL_INVALID_HOST_PTR";
+		case -38: errorString = "CL_INVALID_MEM_OBJECT";
+		case -39: errorString = "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR";
+		case -40: errorString = "CL_INVALID_IMAGE_SIZE";
+		case -41: errorString = "CL_INVALID_SAMPLER";
+		case -42: errorString = "CL_INVALID_BINARY";
+		case -43: errorString = "CL_INVALID_BUILD_OPTIONS";
+		case -44: errorString = "CL_INVALID_PROGRAM";
+		case -45: errorString = "CL_INVALID_PROGRAM_EXECUTABLE";
+		case -46: errorString = "CL_INVALID_KERNEL_NAME";
+		case -47: errorString = "CL_INVALID_KERNEL_DEFINITION";
+		case -48: errorString = "CL_INVALID_KERNEL";
+		case -49: errorString = "CL_INVALID_ARG_INDEX";
+		case -50: errorString = "CL_INVALID_ARG_VALUE";
+		case -51: errorString = "CL_INVALID_ARG_SIZE";
+		case -52: errorString = "CL_INVALID_KERNEL_ARGS";
+		case -53: errorString = "CL_INVALID_WORK_DIMENSION";
+		case -54: errorString = "CL_INVALID_WORK_GROUP_SIZE";
+		case -55: errorString = "CL_INVALID_WORK_ITEM_SIZE";
+		case -56: errorString = "CL_INVALID_GLOBAL_OFFSET";
+		case -57: errorString = "CL_INVALID_EVENT_WAIT_LIST";
+		case -58: errorString = "CL_INVALID_EVENT";
+		case -59: errorString = "CL_INVALID_OPERATION";
+		case -60: errorString = "CL_INVALID_GL_OBJECT";
+		case -61: errorString = "CL_INVALID_BUFFER_SIZE";
+		case -62: errorString = "CL_INVALID_MIP_LEVEL";
+		case -63: errorString = "CL_INVALID_GLOBAL_WORK_SIZE";
+		case -64: errorString = "CL_INVALID_PROPERTY";
+		case -65: errorString = "CL_INVALID_IMAGE_DESCRIPTOR";
+		case -66: errorString = "CL_INVALID_COMPILER_OPTIONS";
+		case -67: errorString = "CL_INVALID_LINKER_OPTIONS";
+		case -68: errorString = "CL_INVALID_DEVICE_PARTITION_COUNT";
+
+		// extension errors
+		case -1000: errorString = "CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR";
+		case -1001: errorString = "CL_PLATFORM_NOT_FOUND_KHR";
+		case -1002: errorString = "CL_INVALID_D3D10_DEVICE_KHR";
+		case -1003: errorString = "CL_INVALID_D3D10_RESOURCE_KHR";
+		case -1004: errorString = "CL_D3D10_RESOURCE_ALREADY_ACQUIRED_KHR";
+		case -1005: errorString = "CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR";
+		default: errorString = "Unknown OpenCL error";
 	}
+	if (error > 1)
+		exit(0);
 }
 
-char* readKernelFromFile(char* fileName, int errorCode) {
+std::pair<const char*, ::size_t> readKernelFromFile(char* fileName, int errorCode) {
 	FILE *fp;
 	char *source_str;
 	size_t source_size, program_size;
@@ -360,8 +400,10 @@ char* readKernelFromFile(char* fileName, int errorCode) {
 	fp = fopen(fileName, "rb");
 	if (!fp) {
 		printf("Failed to load kernel\n");
+
+		std::pair<const char*, ::size_t> source(nullptr, 0);
 		errorCode = 1;
-		return nullptr;
+		return source;
 	}
 
 	fseek(fp, 0, SEEK_END);
@@ -370,16 +412,23 @@ char* readKernelFromFile(char* fileName, int errorCode) {
 	source_str = (char*)malloc(program_size + 1);
 	source_str[program_size] = '\0';
 	fread(source_str, sizeof(char), program_size, fp);
+	
+	fseek(fp, 0L, SEEK_END);
+	int size = ftell(fp);
 	fclose(fp);
 
 	errorCode = 0;
 
+	//Print code
+	printf("Source code (%d bytes):\n", size);
 	for (int i = 0; i < program_size; i++) {
 		printf("%c", source_str[i]);
 	}
 	printf("\n");
 
-	return source_str;
+	std::pair<const char*, ::size_t> source(source_str, size);
+
+	return source;
 }
 
 void logProgramBuild(cl_program program, cl_device_id device_id) {
@@ -400,23 +449,118 @@ void logProgramBuild(cl_program program, cl_device_id device_id) {
 	//-----------------------
 }
 
-cl_int* buildHash(cl_device_id deviceId, cl_context context, cl_command_queue queue, int errorCode) {
+cl_int* buildHash(cl::Device device, int device_id, cl::Context context, cl::CommandQueue queue, int errorCode) {
 
 	//Reads Kernel From File
-	char *hashKernelChar = readKernelFromFile("sources/kernel_hash.cl", errorCode);
+	std::cout << "Reading source from file... ";
+	cl::Program::Sources sources;
+	std::pair<const char*, ::size_t> source = readKernelFromFile("sources/kernel_hash.cl", errorCode);
 	CheckError(errorCode);
+	sources.push_back(source);
+	std::cout << "DONE" << std::endl;
 
 	//CreatesProgram
-	cl_program hashProgram = clCreateProgramWithSource(
-		context, 1, (const char **)& hashKernelChar, NULL, &errorCode
-	);
+	std::cout << "Creating program... ";
+	cl::Program program(context, sources, &errorCode);
 	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
 
 	//Build Program Executable
-	errorCode = clBuildProgram(hashProgram, 0, NULL, NULL, NULL, NULL);
-	logProgramBuild(hashProgram, deviceId);
+	std::cout << "Building program... ";
+	errorCode = program.build();
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	//Creates Kernel
+	cl::Kernel kernel(program, "hashFunction", &errorCode);
 	CheckError(errorCode);
 
+	//Allocation of parameters
+	int particle_list_size = particleStructList.size();
+	glm::vec3 h_in_max_size_vec3(g_xmax, g_ymax, g_zmax);
+	float* h_in_num_bins = (float*)malloc(sizeof(float) * 3);
+	float* h_in_bin_size = (float*)malloc(sizeof(float) * 3);
+	ParticleStruct* h_in_particles = (ParticleStruct*)particleStructList.data();
+	int *h_out_hash = (int *)malloc(sizeof(int) * particle_list_size);
+
+	//Values of parameters
+	h_in_num_bins[0] = ceil(g_xmax * 2 / g_h);
+	h_in_num_bins[1] = ceil(g_ymax * 2 / g_h);
+	h_in_num_bins[2] = ceil(g_zmax * 2 / g_h);
+	std::cout << "NumBins: (" << h_in_num_bins[0] << ", " << h_in_num_bins[1] << ", " << h_in_num_bins[2] << ")\n";
+
+	h_in_bin_size[0] = g_h;
+	h_in_bin_size[1] = g_h;
+	h_in_bin_size[2] = g_h;
+
+	//Copy parameters to device memory
+	std::cout << "Starting allocating device memory..." << std::endl;
+
+	std::cout << "\tAllocating max_size... ";
+	cl::Buffer d_in_max_size(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, &h_in_max_size_vec3, &errorCode);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	std::cout << "\tAllocating num_bins... ";
+	cl::Buffer d_in_num_bins(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_num_bins, &errorCode);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	std::cout << "\tAllocating bin_size... ";
+	cl::Buffer d_in_bin_size(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_bin_size, &errorCode);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	std::cout << "\tAllocating particles vector... ";
+	cl::Buffer d_in_particles(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(ParticleStruct) * particle_list_size, h_in_particles, &errorCode);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	std::cout << "\tAllocating hash vector... ";
+	cl::Buffer d_out_hash(context, CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR, sizeof(int) * particle_list_size, h_out_hash, &errorCode);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	//Set Kernel Args
+	std::cout << "Setting kernel args... ";
+	errorCode = kernel.setArg(0, d_in_max_size);
+	CheckError(errorCode);
+	errorCode = kernel.setArg(1, d_in_num_bins);
+	CheckError(errorCode);
+	errorCode = kernel.setArg(2, d_in_bin_size);
+	CheckError(errorCode);
+	errorCode = kernel.setArg(3, d_in_particles);
+	CheckError(errorCode);
+	errorCode = kernel.setArg(4, d_out_hash);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	//Enqueues Kernel for Execution
+	std::cout << "Enqueueing kernel to execution requisition...";
+	cl::NDRange globalWorkSize(particle_list_size);
+	errorCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, globalWorkSize, cl::NullRange);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+	
+	std::cout << "Waiting execution...";
+	errorCode = queue.finish();
+	std::cout << "DONE" << std::endl;
+
+	//Gets Results back, from device to host
+	std::cout << "Enqueueing read buffer requisition...";
+	errorCode = queue.enqueueReadBuffer(d_out_hash, CL_TRUE, 0, sizeof(int) * particle_list_size, h_out_hash);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	std::cout << "Waiting copy buffer...";
+	errorCode = queue.finish();
+	std::cout << "DONE" << std::endl;
+
+	//errorCode = clBuildProgram(hashProgram, 0, NULL, NULL, NULL, NULL);
+	//logProgramBuild(hashProgram, deviceId);
+	//CheckError(errorCode);
+
+	/*
 	//Creates Kernel
 	cl_kernel hashKernel = clCreateKernel(hashProgram, "hashFunction", &errorCode);
 	CheckError(errorCode);
@@ -494,8 +638,12 @@ cl_int* buildHash(cl_device_id deviceId, cl_context context, cl_command_queue qu
 
 
 	return h_out_hash;
+
+	*/
+	return h_out_hash;
 }
 
+/*
 cl_int* getBoundaries(cl_device_id deviceId, cl_context context, cl_command_queue queue, cl_int *hash, cl_int *numKeys, cl_int *numBins, int errorCode) {
 	
 	std::cout << "Num Bins: " << *numBins << "\tNum Keys: " << *numKeys << std::endl;
@@ -583,6 +731,8 @@ cl_int* getBoundaries(cl_device_id deviceId, cl_context context, cl_command_queu
 	
 	return h_binBoundaries;
 }
+*/
+
 
 void printHash(int* hash) {
 
@@ -607,6 +757,89 @@ void printBinBoundaries(int* binBoundaries, int numBins) {
 
 int main(void)
 {
+	InitParticleStructList();
+	cubeStruct();
+
+	int errorCode, numPlatforms = 0, numDevices = 0;
+
+	//Get platforms
+	std::vector<cl::Platform> platforms;
+	errorCode = cl::Platform::get(&platforms);
+	CheckError(errorCode);
+
+	//Get number of platforms
+	numPlatforms = platforms.size();
+	std::cout << "Number of platforms detected: " << numPlatforms << std::endl;
+
+	//Gets best device among platforms
+	int platformId = 0, deviceId = 0;
+	int currentMax = 0, chosenPlatformId = 0, chosenDeviceId = 0;
+
+	//Print Platform and devices info, choosing the appropriated device to the task
+	for(std::vector<cl::Platform>::iterator it = platforms.begin(); it != platforms.end(); ++it){
+		cl::Platform platform(*it);
+
+		std::cout << "Platform ID: " << platformId++ << std::endl;  
+		std::cout << "Platform Name: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;  
+		std::cout << "Platform Vendor: " << platform.getInfo<CL_PLATFORM_VENDOR>() << std::endl;  
+
+		std::vector<cl::Device> devices;  
+		platform.getDevices(CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_CPU, &devices);  
+
+		deviceId = 0;
+
+		for(std::vector<cl::Device>::iterator it2 = devices.begin(); it2 != devices.end(); ++it2){
+			cl::Device device(*it2);
+
+			std::cout << "\tDevice " << deviceId++ << ": " << std::endl;
+			std::cout << "\t\tDevice Name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;  
+			std::cout << "\t\tDevice Type: " << device.getInfo<CL_DEVICE_TYPE>();
+			std::cout << " (GPU: " << CL_DEVICE_TYPE_GPU << ", CPU: " << CL_DEVICE_TYPE_CPU << ")" << std::endl;  
+			std::cout << "\t\tDevice Vendor: " << device.getInfo<CL_DEVICE_VENDOR>() << std::endl;
+			std::cout << "\t\tDevice Max Compute Units: " << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << std::endl;
+			std::cout << "\t\tDevice Global Memory: " << device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << std::endl;
+
+			std::cout << "\t\tDevice Max Clock Frequency: " << device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << std::endl;
+
+			std::cout << "\t\tDevice Max Allocateable Memory: " << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << std::endl;
+			std::cout << "\t\tDevice Local Memory: " << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << std::endl;
+			std::cout << "\t\tDevice Available: " << device.getInfo< CL_DEVICE_AVAILABLE>() << std::endl;
+			
+			if (device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() > currentMax){
+				currentMax = device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>();
+				chosenPlatformId = platformId-1;
+				chosenDeviceId = deviceId-1;
+			}
+		}  
+		std::cout<< std::endl;
+	}
+	
+	//Instantiate chosen platform and chosen device
+	cl::Platform platform = platforms.at(chosenPlatformId);
+	std::vector<cl::Device> devices;
+	platform.getDevices(CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_CPU, &devices);
+
+	std::cout << "Chosen platform: " <<  platform.getInfo<CL_PLATFORM_NAME>() << "(" << chosenPlatformId << 
+	")\tChosen device: " << devices.at(chosenDeviceId).getInfo<CL_DEVICE_NAME>() << "(" << chosenDeviceId << ")" << std::endl;
+	getchar();
+
+	//Creates Context
+	std::cout << "Creating context...";
+	cl::Context context(devices, NULL, NULL, NULL, &errorCode);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	//Creates Queue
+	std::cout << "Creating command queue...";
+	cl::CommandQueue queue(context, devices.at(chosenDeviceId), 0, &errorCode);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+ 
+	//Hash
+	cl_int* hash = buildHash(devices.at(chosenDeviceId), chosenDeviceId, context, queue, errorCode);
+	quickSort(hash, particleStructList.data(), 0, particleStructList.size());
+	printHash(hash);
+
 	//----------- OpenCL Setup -------------
 
 	/*
@@ -688,6 +921,7 @@ int main(void)
 	
 	getchar();
 	*/
+
 	int nUseMouse = 0;
 	InitParticleList();
 	cube();

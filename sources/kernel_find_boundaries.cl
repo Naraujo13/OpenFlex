@@ -1,7 +1,5 @@
 __kernel void findBoundaries(__global int *hash, __global int* numKeys, __global int *binBoundaries, __global int* numBins){
 
-    printf("Eu desisto de fazer essa merda funcionar.\n");
-
 	int index = get_local_id(0);
 
     int i;

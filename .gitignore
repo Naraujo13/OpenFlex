@@ -36,3 +36,5 @@ ALL_BUILD\.vcxproj\.user
 CG_UFFS\.psess
 
 \.vscode/
+
+tcc\.code-workspace
