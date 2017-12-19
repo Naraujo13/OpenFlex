@@ -575,6 +575,10 @@ cl_int* buildHash(cl::Device device, int device_id, cl::Context context, cl::Com
 
 cl_int* getBoundaries(cl::Device device, cl::Context context, cl::CommandQueue queue, int *hash, int *numKeys, int *numBins, int errorCode) {
 	
+	SYSTEMTIME bf, aft;
+
+	cl::NDRange globalWorkSize(particleStructList.size());
+
 	std::cout << "Num Bins: " << *numBins << "\tNum Keys: " << *numKeys << std::endl;
 
 	//Reads Kernel From File
@@ -622,6 +626,8 @@ cl_int* getBoundaries(cl::Device device, cl::Context context, cl::CommandQueue q
 	
 	//Copy parameters to device memory
 	try {
+		GetSystemTime(&bf);
+
 		std::cout << "\tStarting device memory allocation..." << std::endl;
 
 		std::cout << "\tAllocating hash... ";
@@ -673,7 +679,6 @@ cl_int* getBoundaries(cl::Device device, cl::Context context, cl::CommandQueue q
 
 		//Enqueues Kernel for Execution
 		std::cout << "Enqueueing kernel to execution requisition...";
-		cl::NDRange globalWorkSize(particleStructList.size());
 		errorCode = queue.enqueueNDRangeKernel(kernel, cl::NullRange, globalWorkSize, cl::NullRange);
 		CheckError(errorCode);
 		std::cout << "DONE" << std::endl;
@@ -691,6 +696,13 @@ cl_int* getBoundaries(cl::Device device, cl::Context context, cl::CommandQueue q
 		std::cout << "Waiting copy buffer...";
 		errorCode = queue.finish();
 		std::cout << "DONE" << std::endl;
+
+		GetSystemTime(&aft);
+		double t = aft.wMilliseconds - bf.wMilliseconds;
+		if (t < 0)
+			t = 1000 + t;
+		std::cout << "Time building boundaries: " << t << std::endl;	
+
 	}
 	catch (cl::Error error) {
 
@@ -823,7 +835,6 @@ int main(void)
 	//Hash
 	cl_int* hash = buildHash(devices.at(chosenDeviceId), chosenDeviceId, context, queue, errorCode);
 	queue.finish();
-	//printHash(hash);
 	SYSTEMTIME bf, aft;
 	GetSystemTime(&bf);
 	quickSort(hash, particleStructList.data(), 0, particleStructList.size());
@@ -834,8 +845,8 @@ int main(void)
 	std::cout << "Time ordering hash: " << t << std::endl;
 	getchar();
 
-	printHash(hash);
-	getchar();
+	//printHash(hash);
+	//getchar();
 	
 	//Boundaries
 	
@@ -845,6 +856,7 @@ int main(void)
 	*numKeys = particleStructList.size();
 	cl_int* binBoundaries;
 	binBoundaries = getBoundaries(devices.at(chosenDeviceId), context, queue, hash, numKeys, numBins, errorCode);
+	getchar();
 	printBinBoundaries(binBoundaries, *numBins);
 	getchar();
 	
