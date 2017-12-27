@@ -54,15 +54,18 @@ typedef struct ParticleStruct {
 	cl_float pencil;
 	cl_float isCollidingWithRigidBody;
 	cl_int hash;
+
+	cl_float varx;
+	cl_float vary;
 };
 
-class Particle
+class ParticleClass
 {
 public:
 
-	Particle();
+	ParticleClass();
 
-	Particle(
+	ParticleClass(
 		glm::vec3 startPosition,
 		glm::vec3 predicted_position,
 		glm::vec3 velocity,
@@ -92,7 +95,7 @@ public:
 	float phase;
 
 	//?
-	float hash;		//Spatial hash position
+	float hash;		
 	float varx;
 	float vary;
 	

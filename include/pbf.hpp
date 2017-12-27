@@ -18,61 +18,30 @@ using namespace std;
 typedef std::unordered_multimap< int, int > Hash;
 
 
-class ParticleOld
-{
-public:
-	glm::vec3 current_position;		  // Posição Inicial
-	glm::vec3 predicted_position;  // Posição Prevista durante o passo
-	glm::vec3 velocity;
-	glm::vec3 delta_p;
-	float mass;
-	float lambda;
-	float rho;		//Raw density?
-	float C;		//Density constraint?
-	float hash;		//Hashing value to find neighbours
-	bool teardrop;
-	bool isRigidBody;		//Is a wall?
-	bool pencil;
-	bool isCollidingWithRigidBody;	//Near a wall?
-	std::vector<unsigned int> allNeighbours;	//All neighbours particles
-	std::vector<unsigned int> rigidBodyNeighbours;	//Neigbours particles that are wall
-	std::vector<unsigned int> notRigidBodyNeighbours;	//Neighbour particles that are not wall
-	float varx;
-	float vary;
-	float phase;
-};
-
 void InitParticleList();
-void InitParticleStructList();
 void teardrop();
 void rigidBody();
-void wall3();
-void wall2();
-void wallStruct();
 void cube();
-void cubeStruct();
 void hose();
 float wPoly6(glm::vec3 &r, float &h);
 glm::vec3 wSpiky(glm::vec3 &r, float &h);
-void DensityEstimator(std::vector<Particle> &predict_p, int &i);
-float NablaCSquaredSumFunction(Particle &p, std::vector<Particle> &predict_p);
-glm::vec3 cohesion(Particle &p, Particle &p_neighbor);
-glm::vec3 surfaceArea(Particle &p, std::vector< Particle > &p_list);
-glm::vec3 curvature(Particle &p, Particle &p_neighbor, std::vector< Particle > &p_list);
-glm::vec3 surfaceTension(Particle &p, std::vector< Particle > &p_list);
-void CalculateDp(std::vector<Particle> &predict_p);
-glm::vec3 eta(Particle &p, std::vector<Particle> &predict_p, float &vorticityMag);
-glm::vec3 VorticityConfinement(Particle &p, std::vector< Particle > &p_list);
-glm::vec3 XSPHViscosity(Particle &p, std::vector< Particle > &p_list);
-void CollisionDetectionResponse(std::vector< Particle > &p_list);
-int ComputeHash(int &grid_x, int &grid_y, int &grid_z);
-void BuildHashTable(std::vector<Particle> &p_list, Hash &hash_table);
-void SetUpNeighborsLists(std::vector<Particle> &p_list, Hash &hash_table);
-float boundaryVolume(unsigned int &i, std::vector< Particle > &p_list);
-glm::vec3 adhesion(Particle &p, std::vector< Particle > &p_list);
-glm::vec3 particleFriction(Particle &p, std::vector< Particle > &p_list, int i);
-void movewallz(std::vector<Particle> &p_list);
-void movewallx(std::vector<Particle> &p_list);
-void movewally(std::vector<Particle> &p_list);
+void DensityEstimator(std::vector<ParticleStruct> &predict_p, std::vector<int> neighborBins, int* binBoundaries, int &i);
+float NablaCSquaredSumFunction(ParticleStruct &p, std::vector<ParticleStruct> &predict_p, std::vector<int> neighborBins, int* binBoundaries);
+glm::vec3 cohesion(ParticleStruct &p, ParticleStruct &p_neighbor);
+glm::vec3 surfaceArea(ParticleStruct &p, std::vector <int> neighborBins, cl_int* binBoundaries);
+glm::vec3 curvature(ParticleStruct &p, ParticleStruct &p_neighbor, std::vector <int> neighborBins, cl_int* binBoundaries, cl_int* numBins);
+glm::vec3 surfaceTension(ParticleStruct &p, std::vector <int> neighborBins, cl_int* binBoundaries, cl_int* numBins);
+void CalculateDp(std::vector<ParticleStruct> &predict_p, cl_int* numBins, cl_int* binBoundaries);
+glm::vec3 eta(ParticleStruct &p, float &vorticityMag, std::vector<int> neighborBins, cl_int* binBoundaries);
+glm::vec3 VorticityConfinement(ParticleStruct &p, std::vector<int> neighborBins, cl_int* binBoundaries);
+glm::vec3 XSPHViscosity(ParticleStruct &p, std::vector<int> neighborBins, cl_int* binBoundaries);
+void CollisionDetectionResponse(std::vector< ParticleStruct > &p_list);
+float boundaryVolume(ParticleStruct p, std::vector<int> neighborBins, cl_int* binBoundaries);
+glm::vec3 adhesion(ParticleStruct &p, std::vector <int> neighborBins, cl_int* h_binBoundaries);
+glm::vec3 particleFriction(ParticleStruct &p, std::vector <int> neighborBins, cl_int* h_binBoundaries, int i);
+void movewallz(std::vector<ParticleStruct> &p_list);
+void movewallx(std::vector<ParticleStruct> &p_list);
+void movewally(std::vector<ParticleStruct> &p_list);
+std::vector<int> getNeighbourBins(int initialBin, cl_int* numBins, int totalBins);
 
 #endif

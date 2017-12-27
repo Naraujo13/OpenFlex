@@ -53,10 +53,8 @@ void WindowSizeCallBack(GLFWwindow *pWindow, int nWidth, int nHeight) {
 typedef std::unordered_multimap< int, int > Hash;
 extern Hash hash_table;
 
-extern std::vector<Particle> particlesList;
-extern std::vector< Particle > predict_p;
-extern std::vector<ParticleStruct> particleStructList;
-extern std::vector< ParticleStruct > predictedStructList;
+extern std::vector<ParticleStruct> particlesList;
+extern std::vector< ParticleStruct > predict_p;
 //std::vector<float> g_grid;
 extern float g_xmax;
 extern float g_xmin;
@@ -110,7 +108,7 @@ extern glm::vec3 direction;
 int errorCode;
 
 //Debug Flag
-bool debugMode = false;
+bool debugMode = true;
 
 //--File sources
 cl::Program::Sources sources;
@@ -199,11 +197,11 @@ void setupHashStructures(cl::Device device, int device_id, cl::Context context, 
 
 	//--Allocation of parameters
 	//-Hash
-	particle_list_size = particleStructList.size();
+	particle_list_size = particlesList.size();
 	h_in_max_size_vec3 = glm::vec3(g_xmax, g_ymax, g_zmax);
 	h_in_num_bins = (float*)malloc(sizeof(float) * 3);
 	h_in_bin_size = (float*)malloc(sizeof(float) * 3);
-	h_in_particles = (ParticleStruct*)particleStructList.data();
+	h_in_particles = (ParticleStruct*)particlesList.data();
 	globalWorkSize = cl::NDRange(particle_list_size);
 	//-Boundaries
 	boundariesSize = sizeof(int)* *numBins;
@@ -300,7 +298,7 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 
 	//--Allocations and initializations
 	//-Particle number
-	particle_list_size = particleStructList.size();
+	particle_list_size = particlesList.size();
 
 	//-Updates Work Size
 	globalWorkSize = cl::NDRange(particle_list_size);
@@ -389,7 +387,7 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//--Sorts hash values
-	quickSort(h_out_hash, particleStructList.data(), 0, particleStructList.size());
+	quickSort(h_out_hash, particlesList.data(), 0, particlesList.size());
 
 	//--Copy hash data to buffer
 	if (debugMode) std::cout << "Enqueueing write buffer requisition for hash...";
@@ -429,9 +427,9 @@ void printHash(int* hash) {
 
 	std::cout << std::endl << "---------------------" << std::endl;
 	std::cout << "Hash Values : \n";
-	for (int i = 0; i < particleStructList.size(); i++) {
-		std::cout << "(" << particleStructList[i].current_position.x << ", " << particleStructList[i].current_position.y
-			<< ", " << particleStructList[i].current_position.z << ") -> " << hash[i] << std::endl;
+	for (int i = 0; i < particlesList.size(); i++) {
+		std::cout << "(" << particlesList[i].current_position.x << ", " << particlesList[i].current_position.y
+			<< ", " << particlesList[i].current_position.z << ") -> " << hash[i] << std::endl;
 	}
 	std::cout << "---------------------" << std::endl;
 }
@@ -450,8 +448,10 @@ void printBinBoundaries(int* binBoundaries, int numBins) {
 	
 	}
 	std::cout << "---------------------" << std::endl;
-	std::cout << "Total size: " << particleStructList.size() << std::endl;
+	std::cout << "Total size: " << particlesList.size() << std::endl;
 }
+
+
 
 
 
@@ -463,6 +463,7 @@ void UnifiedSolver() {
 
 	gravity.y = gravity_y;
 
+	//Hose
 	if (gota == 1) {
 		hose();
 		gota = 2;
@@ -480,11 +481,14 @@ void UnifiedSolver() {
 	#pragma omp parallel for
 	for (int i = 0; i < npart; i++) {
 		if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
-			predict_p[i].velocity = particlesList[i].velocity + DT * gravity;
-			predict_p[i].current_position = particlesList[i].current_position + DT * predict_p[i].velocity;
+			predict_p[i].velocity.x = particlesList[i].velocity.x + DT * gravity.x;
+			predict_p[i].velocity.y = particlesList[i].velocity.y + DT * gravity.y;
+			predict_p[i].velocity.z = particlesList[i].velocity.z + DT * gravity.z;
+
+			predict_p[i].current_position.x = particlesList[i].current_position.x + DT * predict_p[i].velocity.x;
+			predict_p[i].current_position.y = particlesList[i].current_position.y + DT * predict_p[i].velocity.y;
+			predict_p[i].current_position.z = particlesList[i].current_position.z + DT * predict_p[i].velocity.z;
 		}
-		/*else
-		predict_p[i].teardrop = false;*/
 	}
 
 	//Hashing - OpenCL
@@ -492,54 +496,39 @@ void UnifiedSolver() {
 	buildHash(context, queue, numBins, errorCode);
 	queue.finish();
 
-	//Sequential Hashing
-	//timeb4 = glfwGetTime();
-	BuildHashTable(predict_p, hash_table);
-	//std::cout << "Time on building hash table: " << glfwGetTime() - timeb4 << " seconds" << std::endl;
-	//timeb4 = glfwGetTime();
-	SetUpNeighborsLists(predict_p, hash_table);
-	//std::cout << "Time on setting neighbours " << glfwGetTime() - timeb4 << " seconds" << std::endl << std::endl;
-
-	//for (int i = 0; i < npart; i++) {
-	//std::cout << "Particula " << i << " -> " << predict_p[i].allNeighbours.size() << " vizinhos\n";
-	//	getchar();
-	//}
-
-
+	//std::vector < std::vector <int> > neighborBins;
 
 	int iter = 0;
 
 	//Solver Iterations
 	while (iter < ITER) {
-		//std::cout << "Iter " << iter << std::endl;
-		//For all particles -> density estimations
+
+		//For all particles
 		#pragma omp parallel for
 		for (int i = 0; i < npart; i++) {
 
-			//If particle isnt rigidBody or colliding with rigidBody
+			//Get Neighbouring Bins REMOVE
+			std::vector <int> neighborBins(getNeighbourBins(predict_p[i].hash, numBins, numBins[0] * numBins[1] * numBins[2]));
+
+			//If particle is NOT rigidBody and is NOT colliding with rigidBody
 			if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
 
 				//Estimate density of current particle
-				DensityEstimator(predict_p, i);
+				DensityEstimator(predict_p, neighborBins, h_binBoundaries, i);
 
 				//Sets density constraint
 				predict_p[i].C = predict_p[i].rho / REST - 1;
 
 				//?
-				float sumNabla = NablaCSquaredSumFunction(predict_p[i], predict_p);
+				float sumNabla = NablaCSquaredSumFunction(predict_p[i], predict_p, neighborBins, h_binBoundaries);
 				predict_p[i].lambda = -predict_p[i].C / (sumNabla + EPSILON);
 
 			}
 
 		}
 
-		//std::cout << "before dp\n";
-
 		//Calculate delta P for prediction
-		CalculateDp(predict_p);
-
-
-		//std::cout << "before collision\n";
+		CalculateDp(predict_p, numBins, h_binBoundaries);
 
 		//Collision Detection and Response
 		CollisionDetectionResponse(predict_p);
@@ -550,7 +539,9 @@ void UnifiedSolver() {
 			//If particle isnt rigidBody or colliding with rigidBody
 			if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody)
 				//Predict new particle position
-				predict_p[i].current_position = predict_p[i].current_position + predict_p[i].delta_p;
+				predict_p[i].current_position.x = predict_p[i].current_position.x + predict_p[i].delta_p.x;
+				predict_p[i].current_position.y = predict_p[i].current_position.y + predict_p[i].delta_p.y;
+				predict_p[i].current_position.z = predict_p[i].current_position.z + predict_p[i].delta_p.z;
 		}
 
 		iter++;
@@ -561,30 +552,49 @@ void UnifiedSolver() {
 	#pragma omp parallel for
 	for (int i = 0; i < npart; i++) {
 
-		//If particle isnt rigidBody or colliding with rigidBody
+		//If is NOT RigidBody and is NOT colliding with rigid body
 		if (!predict_p[i].isRigidBody && !predict_p[i].isCollidingWithRigidBody) {
 
 			//Gets velocity based on original and predicted position
-			predict_p[i].velocity = (1 / DT) * (predict_p[i].current_position - particlesList[i].current_position);
+			predict_p[i].velocity.x = (1 / DT) * (predict_p[i].current_position.x - particlesList[i].current_position.x);
+			predict_p[i].velocity.y = (1 / DT) * (predict_p[i].current_position.y - particlesList[i].current_position.y);
+			predict_p[i].velocity.z = (1 / DT) * (predict_p[i].current_position.z - particlesList[i].current_position.z);
 
-			//If it has neighbours
-			if (predict_p[i].rigidBodyNeighbours.size() > 0) {
+			//Get Neighbouring Bins REMOVE
+			std::vector <int> neighborBins(getNeighbourBins(predict_p[i].hash, numBins, numBins[0]*numBins[1]*numBins[2]));
 
-				//Applies adhesion and friction factors to velocity
-				predict_p[i].velocity += adhesion(predict_p[i], predict_p);
-				predict_p[i].velocity += particleFriction(predict_p[i], predict_p, i);
-			}
+			//Applies adhesion
+			glm::vec3 adhesion(adhesion(predict_p[i], neighborBins, h_binBoundaries));
 
-			//Applies surface tension, vorticity and viscosity to velocity
-			predict_p[i].velocity += surfaceTension(predict_p[i], predict_p) * DT;
-			predict_p[i].velocity += VorticityConfinement(predict_p[i], predict_p) * DT;
-			predict_p[i].velocity += XSPHViscosity(predict_p[i], predict_p) * DT;
+			predict_p[i].velocity.x += adhesion.x;
+			predict_p[i].velocity.y += adhesion.y;
+			predict_p[i].velocity.z += adhesion.z;
+
+			//Applioes friction
+			glm::vec3 friction(particleFriction(predict_p[i], neighborBins, h_binBoundaries, i));
+			predict_p[i].velocity.x += friction.x;
+			predict_p[i].velocity.y += friction.y;
+			predict_p[i].velocity.z += friction.z;
+
+			//Applies surface tension
+			glm::vec3 tension(surfaceTension(predict_p[i], neighborBins, h_binBoundaries, numBins) * DT);
+			predict_p[i].velocity.x += tension.x;
+			predict_p[i].velocity.y += tension.y;
+			predict_p[i].velocity.z += tension.z;
+
+			//Applies Vorticity
+			glm::vec3 vorticity(VorticityConfinement(predict_p[i], neighborBins, h_binBoundaries) * DT);
+			predict_p[i].velocity.x += vorticity.x;
+			predict_p[i].velocity.y += vorticity.y;
+			predict_p[i].velocity.z += vorticity.z;
+
+			//Applies Viscosity
+			glm::vec3 viscosity(XSPHViscosity(predict_p[i], neighborBins, h_binBoundaries) * DT);
+			predict_p[i].velocity.x += viscosity.x;
+			predict_p[i].velocity.y += viscosity.y;
+			predict_p[i].velocity.z += viscosity.z;
+
 		}
-
-		//Clear neighbours
-		predict_p[i].allNeighbours.clear();
-		predict_p[i].rigidBodyNeighbours.clear();
-		predict_p[i].notRigidBodyNeighbours.clear();
 	}
 
 
@@ -599,8 +609,8 @@ void UnifiedSolver() {
 int main(void)
 {
 	
-	InitParticleStructList();
-	cubeStruct();
+	InitParticleList();
+	cube();
 
 	//----------- OpenCL Setup -------------
 
@@ -683,8 +693,6 @@ int main(void)
 	// ----------------------------------------------------------------
 
 	int nUseMouse = 0;
-	InitParticleList();
-	cube();
 
 	// Initialise GLFW
 	if (!glfwInit())

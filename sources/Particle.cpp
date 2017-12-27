@@ -3,9 +3,9 @@
 /* -- Particle Functions -- */
 
 //Construtor
-Particle::Particle() {}
+ParticleClass::ParticleClass() {}
 
-Particle::Particle(
+ParticleClass::ParticleClass(
 	glm::vec3 startPosition,
 	glm::vec3 predicted_position,
 	glm::vec3 velocity,
