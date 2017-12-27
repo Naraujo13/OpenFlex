@@ -623,12 +623,8 @@ int main(void)
 	for(std::vector<cl::Platform>::iterator it = platforms.begin(); it != platforms.end(); ++it){
 		cl::Platform platform(*it);
 
-		if (debugMode) {
-			std::cout << "Platform ID: " << platformId << std::endl;
-			std::cout << "Platform Name: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;
-			std::cout << "Platform Vendor: " << platform.getInfo<CL_PLATFORM_VENDOR>() << std::endl;
-		}
-
+		if (debugMode) printPlatformInfo(platform, platformId);
+		
 		std::vector<cl::Device> devices;  
 		platform.getDevices(CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_CPU, &devices);  
 
@@ -637,19 +633,7 @@ int main(void)
 		for(std::vector<cl::Device>::iterator it2 = devices.begin(); it2 != devices.end(); ++it2){
 			cl::Device device(*it2);
 
-			if (debugMode) {
-				std::cout << "\tDevice " << deviceId << ": " << std::endl;
-				std::cout << "\t\tDevice Name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
-				std::cout << "\t\tDevice Type: " << device.getInfo<CL_DEVICE_TYPE>();
-				std::cout << " (GPU: " << CL_DEVICE_TYPE_GPU << ", CPU: " << CL_DEVICE_TYPE_CPU << ")" << std::endl;
-				std::cout << "\t\tDevice Vendor: " << device.getInfo<CL_DEVICE_VENDOR>() << std::endl;
-				std::cout << "\t\tDevice Max Compute Units: " << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << std::endl;
-				std::cout << "\t\tDevice Global Memory: " << device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << std::endl;
-				std::cout << "\t\tDevice Max Clock Frequency: " << device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << std::endl;
-				std::cout << "\t\tDevice Max Allocateable Memory: " << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << std::endl;
-				std::cout << "\t\tDevice Local Memory: " << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << std::endl;
-				std::cout << "\t\tDevice Available: " << device.getInfo< CL_DEVICE_AVAILABLE>() << std::endl;
-			}
+			if (debugMode) printDeviceInfo(device, deviceId);
 			
 			if (device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() > currentMax){
 				currentMax = device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>();

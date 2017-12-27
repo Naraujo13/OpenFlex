@@ -16,6 +16,9 @@ std::string getPlatformName(cl_platform_id id);
 std::string getDeviceName(cl_device_id id);
 void logProgramBuild(cl_program program, cl_device_id device_id);
 
+//Helpers with C++ Wrapper
+void printPlatformInfo(cl::Platform platform, cl_int platformId);
+void printDeviceInfo(cl::Device device, cl_int deviceId);
 
 
 #endif

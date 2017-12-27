@@ -1,4 +1,4 @@
-﻿
+﻿#include <iostream>
 #include "opencl_utils.hpp"
 
 //Check Error Number and returns corresponding string error
@@ -168,5 +168,27 @@ std::string getDeviceName(cl_device_id id)
 		const_cast<char*> (result.data()), nullptr);
 
 	return result;
+}
+
+//Print all platform info, verbose way
+void printPlatformInfo(cl::Platform platform, cl_int platformId) {
+	std::cout << "Platform ID: " << platformId << std::endl;
+	std::cout << "Platform Name: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;
+	std::cout << "Platform Vendor: " << platform.getInfo<CL_PLATFORM_VENDOR>() << std::endl;
+}
+
+//Print all device info, verbose way
+void printDeviceInfo(cl::Device device, cl_int deviceId) {
+	std::cout << "\tDevice " << deviceId << ": " << std::endl;
+	std::cout << "\t\tDevice Name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+	std::cout << "\t\tDevice Type: " << device.getInfo<CL_DEVICE_TYPE>();
+	std::cout << " (GPU: " << CL_DEVICE_TYPE_GPU << ", CPU: " << CL_DEVICE_TYPE_CPU << ")" << std::endl;
+	std::cout << "\t\tDevice Vendor: " << device.getInfo<CL_DEVICE_VENDOR>() << std::endl;
+	std::cout << "\t\tDevice Max Compute Units: " << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << std::endl;
+	std::cout << "\t\tDevice Global Memory: " << device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << std::endl;
+	std::cout << "\t\tDevice Max Clock Frequency: " << device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << std::endl;
+	std::cout << "\t\tDevice Max Allocateable Memory: " << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << std::endl;
+	std::cout << "\t\tDevice Local Memory: " << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << std::endl;
+	std::cout << "\t\tDevice Available: " << device.getInfo< CL_DEVICE_AVAILABLE>() << std::endl;
 }
 
