@@ -2,16 +2,14 @@
 #define __CL_ENABLE_EXCEPTIONS
 
 // Include standard headers
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
-#include <iostream>
-#include <time.h>
-#include <omp.h>
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <vector> 
+#include <iostream> 
+#include <time.h> 
+#include <omp.h> 
 #include <pbf.hpp>
-#include <algorithm>
 
-#include <CL\cl.hpp>
 
 #define PI 3.1415f
 #define EPSILON 600.0f
@@ -22,12 +20,6 @@
 #define PARTICLE_COUNT_Y 2
 #define PARTICLE_COUNT_Z 10
 
-
-
-// Include GLEW
-#include <GL/glew.h>
-#include <unordered_map>
-#include <math.h>
 
 // Include GLFW
 #include <glfw3.h>
@@ -60,7 +52,6 @@ void WindowSizeCallBack(GLFWwindow *pWindow, int nWidth, int nHeight) {
 
 typedef std::unordered_multimap< int, int > Hash;
 extern Hash hash_table;
-extern SpatialHash spatial_hash;
 
 extern std::vector<Particle> particlesList;
 extern std::vector< Particle > predict_p;
@@ -169,243 +160,39 @@ int *h_binBoundaries;
 // -----------------------
 
 
-
-/*M�todo que utiliza o QuickSort para ordenar um vetor de entrada
- *Esquerda � o value inicial, a partir de onde deseja-se iniciar a ordena��o
- *Direita � o value final, onde deseja-se encerrar a ordena��o
- *O(nlogn) como caso m�dio e O(n^2) para pior caso (bem raro) */
-//TODO: VERIFICAR VETOR POR NULLPOINTER
- void quickSort(cl_int* value, ParticleStruct* particles, int start, int end){
-    int i, j, x, y;
-    i = start;
-    j = end;
-    x = value[(start + end) / 2];
- 
-    while(i <= j)    {
-        while(value[i] < x && i < end){
-            i++;
-        }
-        while(value[j] > x && j > start){
-            j--;
-        }
-        if(i <= j){
-            y = value[i];
-			ParticleStruct temp = particles[i];
-
-			particles[i] = particles[j];
-			value[i] = value[j];
-            
-			particles[j] = temp;
-			value[j] = y;
-
-            i++;
-            j--;
-        }
-    }
-    if(j > start){
-        quickSort(value, particles, start, j);
-    }
-    if(i < end){
-        quickSort(value, particles,  i, end);
-    }
-}
- 
-std::string GetPlatformName(cl_platform_id id)
-{
-	size_t size = 0;
-	clGetPlatformInfo(id, CL_PLATFORM_NAME, 0, nullptr, &size);
-
-	std::string result;
-	result.resize(size);
-	clGetPlatformInfo(id, CL_PLATFORM_NAME, size,
-		const_cast<char*> (result.data()), nullptr);
-
-	return result;
-}
-
-std::string GetDeviceName(cl_device_id id)
-{
-	size_t size = 0;
-	clGetDeviceInfo(id, CL_DEVICE_NAME, 0, nullptr, &size);
-
-	std::string result;
-	result.resize(size);
-	clGetDeviceInfo(id, CL_DEVICE_NAME, size,
-		const_cast<char*> (result.data()), nullptr);
-
-	return result;
-}
-
-void CheckError(cl_int error)
-{
-	std::string errorString;
-	switch (error) {
-		// run-time and JIT compiler errors
-		case 0: errorString = "CL_SUCCESS";
-		case -1: errorString = "CL_DEVICE_NOT_FOUND";
-		case -2: errorString = "CL_DEVICE_NOT_AVAILABLE";
-		case -3: errorString = "CL_COMPILER_NOT_AVAILABLE";
-		case -4: errorString = "CL_MEM_OBJECT_ALLOCATION_FAILURE";
-		case -5: errorString = "CL_OUT_OF_RESOURCES";
-		case -6: errorString = "CL_OUT_OF_HOST_MEMORY";
-		case -7: errorString = "CL_PROFILING_INFO_NOT_AVAILABLE";
-		case -8: errorString = "CL_MEM_COPY_OVERLAP";
-		case -9: errorString = "CL_IMAGE_FORMAT_MISMATCH";
-		case -10: errorString = "CL_IMAGE_FORMAT_NOT_SUPPORTED";
-		case -11: errorString = "CL_BUILD_PROGRAM_FAILURE";
-		case -12: errorString = "CL_MAP_FAILURE";
-		case -13: errorString = "CL_MISALIGNED_SUB_BUFFER_OFFSET";
-		case -14: errorString = "CL_EXEC_STATUS_ERROR_FOR_EVENTS_IN_WAIT_LIST";
-		case -15: errorString = "CL_COMPILE_PROGRAM_FAILURE";
-		case -16: errorString = "CL_LINKER_NOT_AVAILABLE";
-		case -17: errorString = "CL_LINK_PROGRAM_FAILURE";
-		case -18: errorString = "CL_DEVICE_PARTITION_FAILED";
-		case -19: errorString = "CL_KERNEL_ARG_INFO_NOT_AVAILABLE";
-
-		// compile-time errors
-		case -30: errorString = "CL_INVALID_VALUE";
-		case -31: errorString = "CL_INVALID_DEVICE_TYPE";
-		case -32: errorString = "CL_INVALID_PLATFORM";
-		case -33: errorString = "CL_INVALID_DEVICE";
-		case -34: errorString = "CL_INVALID_CONTEXT";
-		case -35: errorString = "CL_INVALID_QUEUE_PROPERTIES";
-		case -36: errorString = "CL_INVALID_COMMAND_QUEUE";
-		case -37: errorString = "CL_INVALID_HOST_PTR";
-		case -38: errorString = "CL_INVALID_MEM_OBJECT";
-		case -39: errorString = "CL_INVALID_IMAGE_FORMAT_DESCRIPTOR";
-		case -40: errorString = "CL_INVALID_IMAGE_SIZE";
-		case -41: errorString = "CL_INVALID_SAMPLER";
-		case -42: errorString = "CL_INVALID_BINARY";
-		case -43: errorString = "CL_INVALID_BUILD_OPTIONS";
-		case -44: errorString = "CL_INVALID_PROGRAM";
-		case -45: errorString = "CL_INVALID_PROGRAM_EXECUTABLE";
-		case -46: errorString = "CL_INVALID_KERNEL_NAME";
-		case -47: errorString = "CL_INVALID_KERNEL_DEFINITION";
-		case -48: errorString = "CL_INVALID_KERNEL";
-		case -49: errorString = "CL_INVALID_ARG_INDEX";
-		case -50: errorString = "CL_INVALID_ARG_VALUE";
-		case -51: errorString = "CL_INVALID_ARG_SIZE";
-		case -52: errorString = "CL_INVALID_KERNEL_ARGS";
-		case -53: errorString = "CL_INVALID_WORK_DIMENSION";
-		case -54: errorString = "CL_INVALID_WORK_GROUP_SIZE";
-		case -55: errorString = "CL_INVALID_WORK_ITEM_SIZE";
-		case -56: errorString = "CL_INVALID_GLOBAL_OFFSET";
-		case -57: errorString = "CL_INVALID_EVENT_WAIT_LIST";
-		case -58: errorString = "CL_INVALID_EVENT";
-		case -59: errorString = "CL_INVALID_OPERATION";
-		case -60: errorString = "CL_INVALID_GL_OBJECT";
-		case -61: errorString = "CL_INVALID_BUFFER_SIZE";
-		case -62: errorString = "CL_INVALID_MIP_LEVEL";
-		case -63: errorString = "CL_INVALID_GLOBAL_WORK_SIZE";
-		case -64: errorString = "CL_INVALID_PROPERTY";
-		case -65: errorString = "CL_INVALID_IMAGE_DESCRIPTOR";
-		case -66: errorString = "CL_INVALID_COMPILER_OPTIONS";
-		case -67: errorString = "CL_INVALID_LINKER_OPTIONS";
-		case -68: errorString = "CL_INVALID_DEVICE_PARTITION_COUNT";
-
-		// extension errors
-		case -1000: errorString = "CL_INVALID_GL_SHAREGROUP_REFERENCE_KHR";
-		case -1001: errorString = "CL_PLATFORM_NOT_FOUND_KHR";
-		case -1002: errorString = "CL_INVALID_D3D10_DEVICE_KHR";
-		case -1003: errorString = "CL_INVALID_D3D10_RESOURCE_KHR";
-		case -1004: errorString = "CL_D3D10_RESOURCE_ALREADY_ACQUIRED_KHR";
-		case -1005: errorString = "CL_D3D10_RESOURCE_NOT_ACQUIRED_KHR";
-		default: errorString = "Unknown OpenCL error";
-	}
-	if (error > 1)
-		exit(0);
-}
-
-std::pair<const char*, ::size_t> readKernelFromFile(char* fileName, int errorCode) {
-	FILE *fp;
-	char *source_str;
-	size_t source_size, program_size;
-
-	fp = fopen(fileName, "rb");
-	if (!fp) {
-		printf("Failed to load hashKernel\n");
-
-		std::pair<const char*, ::size_t> source(nullptr, 0);
-		errorCode = 1;
-		return source;
-	}
-
-	fseek(fp, 0, SEEK_END);
-	program_size = ftell(fp);
-	rewind(fp);
-	source_str = (char*)malloc(program_size + 1);
-	source_str[program_size] = '\0';
-	fread(source_str, sizeof(char), program_size, fp);
-	
-	fseek(fp, 0L, SEEK_END);
-	int size = ftell(fp);
-	fclose(fp);
-
-	errorCode = 0;
-
-	//Print code
-	printf("Source code (%d bytes):\n", size);
-	for (int i = 0; i < program_size; i++) {
-		printf("%c", source_str[i]);
-	}
-	printf("\n");
-
-	std::pair<const char*, ::size_t> source(source_str, size);
-
-	return source;
-}
-
-void logProgramBuild(cl_program program, cl_device_id device_id) {
-	//------------------Getting log
-	printf("\n----------\nStarting Program Build log...\n");
-	// Determine the size of the log
-	size_t log_size;
-	clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
-
-	// Allocate memory for the log
-	char *log = (char *)malloc(log_size);
-
-	// Get the log
-	clGetProgramBuildInfo(program, device_id, CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
-
-	// Print the log
-	printf("%s\n\n--------\n\n", log);
-	//-----------------------
-}
-
 void setupHashStructures(cl::Device device, int device_id, cl::Context context, cl::CommandQueue queue, int *numBins, int errorCode) {
 
 	//---SETUP
 	//Reads HashKernel From File
 	std::cout << "Reading source from hash file... ";
 	std::pair<const char*, ::size_t> source = readKernelFromFile("kernels/kernel_hash.cl", errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	sources.push_back(source);
 	std::cout << "DONE" << std::endl;
 	//Reads BoundariesKernel From File
 	std::cout << "Reading source from boundaries file... ";
 	source = readKernelFromFile("kernels/kernel_find_boundaries.cl", errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	sources.push_back(source);
 	std::cout << "DONE" << std::endl;
 
 	//CreatesProgram
 	std::cout << "Creating hashProgram... ";
 	hashProgram = cl::Program(context, sources, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	//Build Program Executable
 	std::cout << "Building hashProgram... ";
 	errorCode = hashProgram.build();
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	//Creates Kernels
 	hashKernel = cl::Kernel(hashProgram, "hashFunction", &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	boundariesKernel = cl::Kernel(hashProgram, "findBoundaries", &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 
 	//--Allocation of parameters
 	//-Hash
@@ -435,43 +222,43 @@ void setupHashStructures(cl::Device device, int device_id, cl::Context context, 
 	//-Hash
 	std::cout << "\tAllocating max_size... ";
 	d_in_max_size = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, &h_in_max_size_vec3, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "\tAllocating num_bins... ";
 	d_in_num_bins = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_num_bins, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "\tAllocating bin_size... ";
 	d_in_bin_size = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_bin_size, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "\tAllocating particles vector... ";
 	d_in_particles = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(ParticleStruct) * particle_list_size, NULL, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "\tAllocating hash vector... ";
 	d_hash = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int) * particle_list_size, NULL, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	//-Boundaries
 	std::cout << "\tAllocating numKeys... ";
 	d_numKeys = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(int), &particle_list_size, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "\tAllocating bin boundaries... ";
 	d_binBoundaries = cl::Buffer(context, CL_MEM_WRITE_ONLY, boundariesSize, NULL, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "\tAllocating numBins... ";
 	d_numBins = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(int), &numBins, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	
@@ -479,26 +266,26 @@ void setupHashStructures(cl::Device device, int device_id, cl::Context context, 
 	//-Hash
 	std::cout << "Setting hashKernel args... ";
 	errorCode = hashKernel.setArg(0, d_in_max_size);
-	CheckError(errorCode);
+	checkError(errorCode);
 	errorCode = hashKernel.setArg(1, d_in_num_bins);
-	CheckError(errorCode);
+	checkError(errorCode);
 	errorCode = hashKernel.setArg(2, d_in_bin_size);
-	CheckError(errorCode);
+	checkError(errorCode);
 	errorCode = hashKernel.setArg(3, d_in_particles);
-	CheckError(errorCode);
+	checkError(errorCode);
 	errorCode = hashKernel.setArg(4, d_hash);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 	//-Boundaries
 	std::cout << "Setting boudnariesKernel args... ";
 	errorCode = boundariesKernel.setArg(0, d_hash);
-	CheckError(errorCode);
+	checkError(errorCode);
 	errorCode = boundariesKernel.setArg(1, d_numKeys);
-	CheckError(errorCode);
+	checkError(errorCode);
 	errorCode = boundariesKernel.setArg(2, d_binBoundaries);
-	CheckError(errorCode);
+	checkError(errorCode);
 	errorCode = boundariesKernel.setArg(3, d_numBins);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 }
@@ -522,29 +309,29 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 	//-Buffers
 	std::cout << "\tAllocating particles vector... ";
 	d_in_particles = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(ParticleStruct) * particle_list_size, NULL, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "\tAllocating hash vector... ";
 	d_hash = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int) * particle_list_size, NULL, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 	
 
 	//-Bind Buffers as Kernels Args 
 	std::cout << "\tBinding particles buffer to hash kernel...";
 	errorCode = hashKernel.setArg(3, d_in_particles);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "\tBinding output hash buffer to hash kernel...";
 	errorCode = hashKernel.setArg(4, d_hash);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "\tBinding input hash buffer to boundaries kernel...";
 	errorCode = boundariesKernel.setArg(0, d_hash);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 	
 	//-Reallocate Hash
@@ -559,29 +346,29 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 	//-Hash
 	std::cout << "Enqueueing write buffer requisition for bins...";
 	errorCode = queue.enqueueWriteBuffer(d_in_particles, CL_TRUE, 0, sizeof(ParticleStruct) * particle_list_size, h_in_particles);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	//-Boundaries
 	std::cout << "Enqueueing write buffer requisition for numKeys...";
 	errorCode = queue.enqueueWriteBuffer(d_numKeys, CL_TRUE, 0, sizeof(int), &particle_list_size);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "Enqueueing write buffer requisition for numBins...";
 	errorCode = queue.enqueueWriteBuffer(d_numBins, CL_TRUE, 0, sizeof(int), &numBins);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "Enqueueing write buffer requisition for bins...";
 	errorCode = queue.enqueueWriteBuffer(d_binBoundaries, CL_TRUE, 0, boundariesSize, h_binBoundaries);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	//--Enqueues Hash Kernel for Execution
 	std::cout << "Enqueueing hashKernel to execution requisition...";
 	errorCode = queue.enqueueNDRangeKernel(hashKernel, cl::NullRange, globalWorkSize, cl::NullRange);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "Waiting execution...";
@@ -591,7 +378,7 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 	//--Gets Hash Results back
 	std::cout << "Enqueueing read buffer hash requisition...";
 	errorCode = queue.enqueueReadBuffer(d_hash, CL_TRUE, 0, sizeof(int) * particle_list_size, h_out_hash);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "Waiting copy buffer...";
@@ -604,13 +391,13 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 	//--Copy hash data to buffer
 	std::cout << "Enqueueing write buffer requisition for hash...";
 	errorCode = queue.enqueueWriteBuffer(d_hash, CL_TRUE, 0, hashSize, h_out_hash);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	//--Enqueues Boundaries Kernel for execution
 	std::cout << "Enqueueing boundariesKernel to execution requisition...";
 	errorCode = queue.enqueueNDRangeKernel(boundariesKernel, cl::NullRange, globalWorkSize, cl::NullRange);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "Waiting execution...";
@@ -620,7 +407,7 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 	//--Gets Boundaries Results
 	std::cout << "Enqueueing read buffer boundaries requisition...";
 	errorCode = queue.enqueueReadBuffer(d_binBoundaries, CL_TRUE, 0, boundariesSize, h_binBoundaries);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	std::cout << "Waiting copy buffer...";
@@ -634,7 +421,6 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 		t = 1000 + t;
 	std::cout << "Time building hash: " << t << std::endl;
 }
-
 
 void printHash(int* hash) {
 
@@ -664,63 +450,6 @@ void printBinBoundaries(int* binBoundaries, int numBins) {
 	std::cout << "Total size: " << particleStructList.size() << std::endl;
 }
 
-/* Compares two lists of ParticleStruct */
-bool compareParticleStructLists(std::vector<ParticleStruct> l1, std::vector<ParticleStruct> l2) {
-
-	struct ParticleStructCompare : public std::unary_function<ParticleStruct, bool>
-	{
-		explicit ParticleStructCompare(const ParticleStruct &baseline) : baseline(baseline) {}
-
-		bool operator() (const ParticleStruct &arg)
-		{
-			return (baseline.current_position.x == arg.current_position.x &&
-					baseline.current_position.y == arg.current_position.y &&
-					baseline.current_position.z == arg.current_position.z &&
-					baseline.hash == arg.hash);
-		}
-		ParticleStruct baseline;
-	};
-	
-
-	std::cout << "Comparing struct lists..." << std::endl;
-	if (l1.size() != l2.size()) {
-		std::cerr << "\tERROR - List size different" << std::endl;
-		return false;
-	}
-
-	for (int i = 0; i < l1.size(); i++) {
-
-		ParticleStruct p1 = l1.at(i);
-		ParticleStruct p2 = l2.at(i);
-
-
-		if (std::find_if(l2.begin(), l2.end(), ParticleStructCompare(p1)) == l2.end()) {
-			
-			std::cerr << "\tERROR - Particle at position " << i << " of list 1 is not present in list 2" << std::endl;
-
-			std::cerr << "\t\tP1("
-				<< l1.at(i).current_position.x << ", "
-				<< l1.at(i).current_position.y << ", "
-				<< l1.at(i).current_position.z << ")" << std::endl;
-
-			return false;
-
-		}
-		else if (std::find_if(l1.begin(), l1.end(), ParticleStructCompare(p2)) == l1.end()) {
-			
-			std::cerr << "\tERROR - Particle at position " << i << " of list 2 is not present in list 1" << std::endl;
-			
-			std::cerr << "\t\tP2("
-				<< l2.at(i).current_position.x << ", "
-				<< l2.at(i).current_position.y << ", "
-				<< l2.at(i).current_position.z << ")" << std::endl;
-			return false;
-
-		}
-	}
-
-	return true;
-}
 
 
 //--------- Solver
@@ -878,7 +607,7 @@ int main(void)
 	//Get platforms
 	std::vector<cl::Platform> platforms;
 	errorCode = cl::Platform::get(&platforms);
-	CheckError(errorCode);
+	checkError(errorCode);
 
 	//Get number of platforms
 	numPlatforms = platforms.size();
@@ -939,13 +668,13 @@ int main(void)
 	//Creates Context
 	std::cout << "Creating context...";
 	context = cl::Context(devices, NULL, NULL, NULL, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
 
 	//Creates Queue
 	std::cout << "Creating command queue...";
 	queue = cl::CommandQueue(context, devices.at(chosenDeviceId), 0, &errorCode);
-	CheckError(errorCode);
+	checkError(errorCode);
 	std::cout << "DONE" << std::endl;
  
 	//Hash

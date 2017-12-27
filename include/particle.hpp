@@ -1,6 +1,8 @@
 #pragma once
 #ifndef PARTICLE_HPP
+#define PARTICLE_HPP
 
+//Standard
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
@@ -9,23 +11,29 @@
 #include <omp.h>
 #include <vector>
 #include <map>
+#include <algorithm>
 #include <glm/glm.hpp>
+
 // Include GLEW
 #include <GL/glew.h>
 #include <unordered_map>
 #include <math.h>
+
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtx/perpendicular.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
+
+//Custom
 #include <shader.hpp>
 #include <texture.hpp>
 #include <controls.hpp>
 #include <objloader.hpp>
 #include <vboindexer.hpp>
 #include <glerror.hpp>
-#include<CL\cl.hpp>
+
+#include <opencl_utils.hpp>
 
 
 #define PI 3.1415f
@@ -46,11 +54,6 @@ typedef struct ParticleStruct {
 	cl_float pencil;
 	cl_float isCollidingWithRigidBody;
 	cl_int hash;
-};
-
-struct HashBlock {
-	cl_int key;
-	cl_int value;
 };
 
 class Particle
@@ -106,66 +109,13 @@ public:
 
 };
 
-struct Vec3Comparator {
-	size_t operator()(const glm::vec3& v)const {
-		return std::hash<float>()(v.x) ^ std::hash<float>()(v.y) ^ std::hash<float>()(v.z);
-	}
-	
-	bool operator()(const glm::vec3& v1, glm::vec3& v2)const {
-		return glm::all(glm::lessThan(v1, v2));
-	}
-};
-
-typedef std::vector<int> particleVector;
-typedef std::unordered_map<glm::vec3, particleVector, Vec3Comparator> spatialCell;
-
-
-class SpatialHash
-{
-
-private:
-	
-	//Variables
-	glm::vec3  dim;
-	float cellSize;
-	spatialCell cells;
-
-	//Clean Hash
-	void cleanHash();
-	
-	//Build Hash
-	void buildHash(glm::vec3, float cellSize);
-
-public:
-
-	//Hashing
-	glm::vec3 hashFunction(glm::vec3 particlePosition);
-
-
-	//Constructor
-	SpatialHash::SpatialHash();
-	SpatialHash::SpatialHash(glm::vec3 dim, float cellSize);
-
-	//Rebuild
-	void reconstruct();
-	void reconstruct(glm::vec3, float cellSize);
-
-	//Insert
-	bool insert(glm::vec3 particlePos, int particleIndex);
-
-	//Get Cell
-	std::vector<int> getCell(glm::vec3 index);
-
-	spatialCell getCells() {
-		return cells;
-	}
-
-};
-
 //Particle related functions
 
-void InitializeParticleList();
+/* Compares two lists of ParticleStruct */
+bool compareParticleStructLists(std::vector<ParticleStruct> l1, std::vector<ParticleStruct> l2);
 
+/* Sequential QuickSort method to order particle vector based on their spatial has value */
+//TODO: VERIFY NULLPOINTER ON VALUE AND PARTICLES; VERIFY MATCHING SIZE;
+void quickSort(cl_int* value, ParticleStruct* particles, int start, int end);
 
-#define PARTICLE_HPP
 #endif

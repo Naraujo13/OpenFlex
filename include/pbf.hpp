@@ -1,3 +1,4 @@
+#pragma once
 #ifndef PBF_HPP
 #define PBF_HPP
 
@@ -9,30 +10,6 @@
 #define PARTICLE_COUNT_X 10
 #define PARTICLE_COUNT_Y 2
 #define PARTICLE_COUNT_Z 10
-#include <unordered_map>
-#include <stdio.h>
-#include <stdlib.h>
-#include <vector>
-#include <iostream>
-#include <time.h>
-#include <omp.h>
-#include <vector>
-#include <glm/glm.hpp>
-// Include GLEW
-#include <GL/glew.h>
-#include <unordered_map>
-#include <math.h>
-// Include GLM
-#include <glm/glm.hpp>
-#include <glm/gtx/perpendicular.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
-#include <shader.hpp>
-#include <texture.hpp>
-#include <controls.hpp>
-#include <objloader.hpp>
-#include <vboindexer.hpp>
-#include <glerror.hpp>
 
 #include "particle.hpp"
 
@@ -98,7 +75,4 @@ void movewallz(std::vector<Particle> &p_list);
 void movewallx(std::vector<Particle> &p_list);
 void movewally(std::vector<Particle> &p_list);
 
-
-void newBuildHashTable(std::vector<Particle> &p_list, SpatialHash &hash_table);
-void newSetUpNeighborsLists(std::vector<Particle> &p_list, SpatialHash &hash_table);
 #endif
