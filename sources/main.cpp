@@ -109,6 +109,9 @@ extern glm::vec3 direction;
 //--Error Code
 int errorCode;
 
+//Debug Flag
+bool debugMode = false;
+
 //--File sources
 cl::Program::Sources sources;
 
@@ -159,34 +162,34 @@ int *h_binBoundaries;
 
 // -----------------------
 
-
+//--OpenCL Hash
 void setupHashStructures(cl::Device device, int device_id, cl::Context context, cl::CommandQueue queue, int *numBins, int errorCode) {
 
 	//---SETUP
 	//Reads HashKernel From File
-	std::cout << "Reading source from hash file... ";
+	if (debugMode) std::cout << "Reading source from hash file... ";
 	std::pair<const char*, ::size_t> source = readKernelFromFile("kernels/kernel_hash.cl", errorCode);
 	checkError(errorCode);
 	sources.push_back(source);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 	//Reads BoundariesKernel From File
-	std::cout << "Reading source from boundaries file... ";
+	if (debugMode) std::cout << "Reading source from boundaries file... ";
 	source = readKernelFromFile("kernels/kernel_find_boundaries.cl", errorCode);
 	checkError(errorCode);
 	sources.push_back(source);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//CreatesProgram
-	std::cout << "Creating hashProgram... ";
+	if (debugMode) std::cout << "Creating hashProgram... ";
 	hashProgram = cl::Program(context, sources, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//Build Program Executable
-	std::cout << "Building hashProgram... ";
+	if (debugMode) std::cout << "Building hashProgram... ";
 	errorCode = hashProgram.build();
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//Creates Kernels
 	hashKernel = cl::Kernel(hashProgram, "hashFunction", &errorCode);
@@ -211,60 +214,60 @@ void setupHashStructures(cl::Device device, int device_id, cl::Context context, 
 	h_in_num_bins[0] = ceil(g_xmax * 2 / g_h);
 	h_in_num_bins[1] = ceil(g_ymax * 2 / g_h);
 	h_in_num_bins[2] = ceil(g_zmax * 2 / g_h);
-	std::cout << "NumBins: (" << h_in_num_bins[0] << ", " << h_in_num_bins[1] << ", " << h_in_num_bins[2] << ")\n";
+	if (debugMode) std::cout << "NumBins: (" << h_in_num_bins[0] << ", " << h_in_num_bins[1] << ", " << h_in_num_bins[2] << ")\n";
 
 	h_in_bin_size[0] = g_h;
 	h_in_bin_size[1] = g_h;
 	h_in_bin_size[2] = g_h;
 
 	//--Copy parameters to device memory
-	std::cout << "Starting allocating device memory..." << std::endl;
+	if (debugMode) std::cout << "Starting allocating device memory..." << std::endl;
 	//-Hash
-	std::cout << "\tAllocating max_size... ";
+	if (debugMode) std::cout << "\tAllocating max_size... ";
 	d_in_max_size = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, &h_in_max_size_vec3, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
-
-	std::cout << "\tAllocating num_bins... ";
+	if (debugMode) std::cout << "DONE" << std::endl;
+	
+	if (debugMode) std::cout << "\tAllocating num_bins... ";
 	d_in_num_bins = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_num_bins, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "\tAllocating bin_size... ";
+	if (debugMode) std::cout << "\tAllocating bin_size... ";
 	d_in_bin_size = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(float) * 3, h_in_bin_size, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "\tAllocating particles vector... ";
+	if (debugMode) std::cout << "\tAllocating particles vector... ";
 	d_in_particles = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(ParticleStruct) * particle_list_size, NULL, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "\tAllocating hash vector... ";
+	if (debugMode) std::cout << "\tAllocating hash vector... ";
 	d_hash = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int) * particle_list_size, NULL, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//-Boundaries
-	std::cout << "\tAllocating numKeys... ";
+	if (debugMode) std::cout << "\tAllocating numKeys... ";
 	d_numKeys = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(int), &particle_list_size, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "\tAllocating bin boundaries... ";
+	if (debugMode) std::cout << "\tAllocating bin boundaries... ";
 	d_binBoundaries = cl::Buffer(context, CL_MEM_WRITE_ONLY, boundariesSize, NULL, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "\tAllocating numBins... ";
+	if (debugMode) std::cout << "\tAllocating numBins... ";
 	d_numBins = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(int), &numBins, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	
 	//--Set Kernel Args
 	//-Hash
-	std::cout << "Setting hashKernel args... ";
+	if (debugMode) std::cout << "Setting hashKernel args... ";
 	errorCode = hashKernel.setArg(0, d_in_max_size);
 	checkError(errorCode);
 	errorCode = hashKernel.setArg(1, d_in_num_bins);
@@ -275,9 +278,9 @@ void setupHashStructures(cl::Device device, int device_id, cl::Context context, 
 	checkError(errorCode);
 	errorCode = hashKernel.setArg(4, d_hash);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 	//-Boundaries
-	std::cout << "Setting boudnariesKernel args... ";
+	if (debugMode) std::cout << "Setting boudnariesKernel args... ";
 	errorCode = boundariesKernel.setArg(0, d_hash);
 	checkError(errorCode);
 	errorCode = boundariesKernel.setArg(1, d_numKeys);
@@ -286,7 +289,7 @@ void setupHashStructures(cl::Device device, int device_id, cl::Context context, 
 	checkError(errorCode);
 	errorCode = boundariesKernel.setArg(3, d_numBins);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 }
 
@@ -307,32 +310,32 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 
 
 	//-Buffers
-	std::cout << "\tAllocating particles vector... ";
+	if (debugMode) std::cout << "\tAllocating particles vector... ";
 	d_in_particles = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(ParticleStruct) * particle_list_size, NULL, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "\tAllocating hash vector... ";
+	if (debugMode) std::cout << "\tAllocating hash vector... ";
 	d_hash = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int) * particle_list_size, NULL, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 	
 
 	//-Bind Buffers as Kernels Args 
-	std::cout << "\tBinding particles buffer to hash kernel...";
+	if (debugMode) std::cout << "\tBinding particles buffer to hash kernel...";
 	errorCode = hashKernel.setArg(3, d_in_particles);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "\tBinding output hash buffer to hash kernel...";
+	if (debugMode) std::cout << "\tBinding output hash buffer to hash kernel...";
 	errorCode = hashKernel.setArg(4, d_hash);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "\tBinding input hash buffer to boundaries kernel...";
+	if (debugMode) std::cout << "\tBinding input hash buffer to boundaries kernel...";
 	errorCode = boundariesKernel.setArg(0, d_hash);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 	
 	//-Reallocate Hash
 	h_out_hash = (int *)malloc(sizeof(int) * particle_list_size);
@@ -344,82 +347,82 @@ void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int er
 
 	//--Copy Data to Buffers
 	//-Hash
-	std::cout << "Enqueueing write buffer requisition for bins...";
+	if (debugMode) std::cout << "Enqueueing write buffer requisition for bins...";
 	errorCode = queue.enqueueWriteBuffer(d_in_particles, CL_TRUE, 0, sizeof(ParticleStruct) * particle_list_size, h_in_particles);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//-Boundaries
-	std::cout << "Enqueueing write buffer requisition for numKeys...";
+	if (debugMode) std::cout << "Enqueueing write buffer requisition for numKeys...";
 	errorCode = queue.enqueueWriteBuffer(d_numKeys, CL_TRUE, 0, sizeof(int), &particle_list_size);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "Enqueueing write buffer requisition for numBins...";
+	if (debugMode) std::cout << "Enqueueing write buffer requisition for numBins...";
 	errorCode = queue.enqueueWriteBuffer(d_numBins, CL_TRUE, 0, sizeof(int), &numBins);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "Enqueueing write buffer requisition for bins...";
+	if (debugMode) std::cout << "Enqueueing write buffer requisition for bins...";
 	errorCode = queue.enqueueWriteBuffer(d_binBoundaries, CL_TRUE, 0, boundariesSize, h_binBoundaries);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//--Enqueues Hash Kernel for Execution
-	std::cout << "Enqueueing hashKernel to execution requisition...";
+	if (debugMode) std::cout << "Enqueueing hashKernel to execution requisition...";
 	errorCode = queue.enqueueNDRangeKernel(hashKernel, cl::NullRange, globalWorkSize, cl::NullRange);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "Waiting execution...";
+	if (debugMode) std::cout << "Waiting execution...";
 	errorCode = queue.finish();
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//--Gets Hash Results back
-	std::cout << "Enqueueing read buffer hash requisition...";
+	if (debugMode) std::cout << "Enqueueing read buffer hash requisition...";
 	errorCode = queue.enqueueReadBuffer(d_hash, CL_TRUE, 0, sizeof(int) * particle_list_size, h_out_hash);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "Waiting copy buffer...";
+	if (debugMode) std::cout << "Waiting copy buffer...";
 	errorCode = queue.finish();
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//--Sorts hash values
 	quickSort(h_out_hash, particleStructList.data(), 0, particleStructList.size());
 
 	//--Copy hash data to buffer
-	std::cout << "Enqueueing write buffer requisition for hash...";
+	if (debugMode) std::cout << "Enqueueing write buffer requisition for hash...";
 	errorCode = queue.enqueueWriteBuffer(d_hash, CL_TRUE, 0, hashSize, h_out_hash);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//--Enqueues Boundaries Kernel for execution
-	std::cout << "Enqueueing boundariesKernel to execution requisition...";
+	if (debugMode) std::cout << "Enqueueing boundariesKernel to execution requisition...";
 	errorCode = queue.enqueueNDRangeKernel(boundariesKernel, cl::NullRange, globalWorkSize, cl::NullRange);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "Waiting execution...";
+	if (debugMode) std::cout << "Waiting execution...";
 	errorCode = queue.finish();
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//--Gets Boundaries Results
-	std::cout << "Enqueueing read buffer boundaries requisition...";
+	if (debugMode) std::cout << "Enqueueing read buffer boundaries requisition...";
 	errorCode = queue.enqueueReadBuffer(d_binBoundaries, CL_TRUE, 0, boundariesSize, h_binBoundaries);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
-	std::cout << "Waiting copy buffer...";
+	if (debugMode) std::cout << "Waiting copy buffer...";
 	errorCode = queue.finish();
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 
 	GetSystemTime(&aft);
 	double t = aft.wMilliseconds - bf.wMilliseconds;
 	if (t < 0)
 		t = 1000 + t;
-	std::cout << "Time building hash: " << t << std::endl;
+	std::cout << "Time building hash: " << t << "ms" << std::endl;
 }
 
 void printHash(int* hash) {
@@ -595,8 +598,7 @@ void UnifiedSolver() {
 
 int main(void)
 {
-
-
+	
 	InitParticleStructList();
 	cubeStruct();
 
@@ -611,7 +613,7 @@ int main(void)
 
 	//Get number of platforms
 	numPlatforms = platforms.size();
-	std::cout << "Number of platforms detected: " << numPlatforms << std::endl;
+	if (debugMode) std::cout << "Number of platforms detected: " << numPlatforms << std::endl;
 
 	//Gets best device among platforms
 	int platformId = 0, deviceId = 0;
@@ -621,9 +623,11 @@ int main(void)
 	for(std::vector<cl::Platform>::iterator it = platforms.begin(); it != platforms.end(); ++it){
 		cl::Platform platform(*it);
 
-		std::cout << "Platform ID: " << platformId++ << std::endl;  
-		std::cout << "Platform Name: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;  
-		std::cout << "Platform Vendor: " << platform.getInfo<CL_PLATFORM_VENDOR>() << std::endl;  
+		if (debugMode) {
+			std::cout << "Platform ID: " << platformId << std::endl;
+			std::cout << "Platform Name: " << platform.getInfo<CL_PLATFORM_NAME>() << std::endl;
+			std::cout << "Platform Vendor: " << platform.getInfo<CL_PLATFORM_VENDOR>() << std::endl;
+		}
 
 		std::vector<cl::Device> devices;  
 		platform.getDevices(CL_DEVICE_TYPE_GPU | CL_DEVICE_TYPE_CPU, &devices);  
@@ -633,27 +637,29 @@ int main(void)
 		for(std::vector<cl::Device>::iterator it2 = devices.begin(); it2 != devices.end(); ++it2){
 			cl::Device device(*it2);
 
-			std::cout << "\tDevice " << deviceId++ << ": " << std::endl;
-			std::cout << "\t\tDevice Name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;  
-			std::cout << "\t\tDevice Type: " << device.getInfo<CL_DEVICE_TYPE>();
-			std::cout << " (GPU: " << CL_DEVICE_TYPE_GPU << ", CPU: " << CL_DEVICE_TYPE_CPU << ")" << std::endl;  
-			std::cout << "\t\tDevice Vendor: " << device.getInfo<CL_DEVICE_VENDOR>() << std::endl;
-			std::cout << "\t\tDevice Max Compute Units: " << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << std::endl;
-			std::cout << "\t\tDevice Global Memory: " << device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << std::endl;
-
-			std::cout << "\t\tDevice Max Clock Frequency: " << device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << std::endl;
-
-			std::cout << "\t\tDevice Max Allocateable Memory: " << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << std::endl;
-			std::cout << "\t\tDevice Local Memory: " << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << std::endl;
-			std::cout << "\t\tDevice Available: " << device.getInfo< CL_DEVICE_AVAILABLE>() << std::endl;
+			if (debugMode) {
+				std::cout << "\tDevice " << deviceId << ": " << std::endl;
+				std::cout << "\t\tDevice Name: " << device.getInfo<CL_DEVICE_NAME>() << std::endl;
+				std::cout << "\t\tDevice Type: " << device.getInfo<CL_DEVICE_TYPE>();
+				std::cout << " (GPU: " << CL_DEVICE_TYPE_GPU << ", CPU: " << CL_DEVICE_TYPE_CPU << ")" << std::endl;
+				std::cout << "\t\tDevice Vendor: " << device.getInfo<CL_DEVICE_VENDOR>() << std::endl;
+				std::cout << "\t\tDevice Max Compute Units: " << device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() << std::endl;
+				std::cout << "\t\tDevice Global Memory: " << device.getInfo<CL_DEVICE_GLOBAL_MEM_SIZE>() << std::endl;
+				std::cout << "\t\tDevice Max Clock Frequency: " << device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() << std::endl;
+				std::cout << "\t\tDevice Max Allocateable Memory: " << device.getInfo<CL_DEVICE_MAX_MEM_ALLOC_SIZE>() << std::endl;
+				std::cout << "\t\tDevice Local Memory: " << device.getInfo<CL_DEVICE_LOCAL_MEM_SIZE>() << std::endl;
+				std::cout << "\t\tDevice Available: " << device.getInfo< CL_DEVICE_AVAILABLE>() << std::endl;
+			}
 			
 			if (device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>() > currentMax){
 				currentMax = device.getInfo<CL_DEVICE_MAX_COMPUTE_UNITS>() * device.getInfo<CL_DEVICE_MAX_CLOCK_FREQUENCY>();
-				chosenPlatformId = platformId-1;
-				chosenDeviceId = deviceId-1;
+				chosenPlatformId = platformId;
+				chosenDeviceId = deviceId;
 			}
+			deviceId++;
 		}  
 		std::cout<< std::endl;
+		platformId++;
 	}
 
 	//Instantiate chosen platform and chosen device
@@ -666,26 +672,26 @@ int main(void)
 	getchar();
 
 	//Creates Context
-	std::cout << "Creating context...";
+	if (debugMode) std::cout << "Creating context...";
 	context = cl::Context(devices, NULL, NULL, NULL, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
 
 	//Creates Queue
-	std::cout << "Creating command queue...";
+	if (debugMode) std::cout << "Creating command queue...";
 	queue = cl::CommandQueue(context, devices.at(chosenDeviceId), 0, &errorCode);
 	checkError(errorCode);
-	std::cout << "DONE" << std::endl;
+	if (debugMode) std::cout << "DONE" << std::endl;
  
 	//Hash
 	numBins = (cl_int*)malloc(sizeof(cl_int));
 	*numBins = ceil(g_xmax * 2 / g_h) * ceil(g_ymax * 2 / g_h) * ceil(g_zmax * 2 / g_h);	
 
-	std::cout << "Setup:\n";
+	if (debugMode) std::cout << "Setup:\n";
 	setupHashStructures(devices.at(chosenDeviceId), chosenDeviceId, context, queue, numBins, errorCode);
 	queue.finish();
 
-	std::cout << "Execução 1:\n";
+	if (debugMode) std::cout << "Execução 1:\n";
 	buildHash(context, queue, numBins, errorCode);
 	queue.finish();
 	buildHash(context, queue, numBins, errorCode);
