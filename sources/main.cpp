@@ -9,6 +9,7 @@
 #include <time.h>
 #include <omp.h>
 #include <pbf.hpp>
+#include <algorithm>
 
 #include <CL\cl.hpp>
 
@@ -498,7 +499,7 @@ void logProgramBuild(cl_program program, cl_device_id device_id) {
 	//-----------------------
 }
 
-void setupHashStructures(cl::Device device, int device_id, cl::Context context, cl::CommandQueue queue, int *numKeys, int *numBins, int errorCode) {
+void setupHashStructures(cl::Device device, int device_id, cl::Context context, cl::CommandQueue queue, int *numBins, int errorCode) {
 
 	//---SETUP
 	//Reads HashKernel From File
@@ -542,7 +543,7 @@ void setupHashStructures(cl::Device device, int device_id, cl::Context context, 
 	globalWorkSize = cl::NDRange(particle_list_size);
 	//-Boundaries
 	boundariesSize = sizeof(int)* *numBins;
-	hashSize = sizeof(int) * *numKeys;
+	hashSize = sizeof(int) * particle_list_size;
 	h_binBoundaries = (int*) malloc(boundariesSize);
 
 	//Values of parameters
@@ -585,7 +586,7 @@ void setupHashStructures(cl::Device device, int device_id, cl::Context context, 
 
 	//-Boundaries
 	std::cout << "\tAllocating numKeys... ";
-	d_numKeys = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(int), &numKeys, &errorCode);
+	d_numKeys = cl::Buffer(context, CL_MEM_COPY_HOST_PTR, sizeof(int), &particle_list_size, &errorCode);
 	CheckError(errorCode);
 	std::cout << "DONE" << std::endl;
 
@@ -628,15 +629,50 @@ void setupHashStructures(cl::Device device, int device_id, cl::Context context, 
 
 }
 
-void buildHash(cl::CommandQueue queue, int *numKeys, int *numBins, int errorCode) {
+void buildHash(cl::Context context, cl::CommandQueue queue, int *numBins, int errorCode) {
 	//---- EVERY FRAME
 	SYSTEMTIME bf, aft;
 	GetSystemTime(&bf);
 
 	//--Allocations and initializations
-	//-Hash
+	//-Particle number
+	particle_list_size = particleStructList.size();
+
+	//-Updates Work Size
+	globalWorkSize = cl::NDRange(particle_list_size);
+
+	//-Buffers
+	std::cout << "\tAllocating particles vector... ";
+	d_in_particles = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(ParticleStruct) * particle_list_size, NULL, &errorCode);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	std::cout << "\tAllocating hash vector... ";
+	d_hash = cl::Buffer(context, CL_MEM_READ_WRITE, sizeof(int) * particle_list_size, NULL, &errorCode);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+	
+
+	//-Bind Buffers as Kernels Args 
+	std::cout << "\tBinding particles buffer to hash kernel...";
+	errorCode = hashKernel.setArg(3, d_in_particles);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	std::cout << "\tBinding output hash buffer to hash kernel...";
+	errorCode = hashKernel.setArg(4, d_hash);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+
+	std::cout << "\tBinding input hash buffer to boundaries kernel...";
+	errorCode = boundariesKernel.setArg(0, d_hash);
+	CheckError(errorCode);
+	std::cout << "DONE" << std::endl;
+	
+	//-Reallocate Hash
 	h_out_hash = (int *)malloc(sizeof(int) * particle_list_size);
-	//-Boundaries
+	
+	//-Reset Boundaries
 	for (int i = 0; i < *numBins; i++) {
 		h_binBoundaries[i] = *numBins;
 	}
@@ -650,7 +686,7 @@ void buildHash(cl::CommandQueue queue, int *numKeys, int *numBins, int errorCode
 
 	//-Boundaries
 	std::cout << "Enqueueing write buffer requisition for numKeys...";
-	errorCode = queue.enqueueWriteBuffer(d_numKeys, CL_TRUE, 0, sizeof(int), &numKeys);
+	errorCode = queue.enqueueWriteBuffer(d_numKeys, CL_TRUE, 0, sizeof(int), &particle_list_size);
 	CheckError(errorCode);
 	std::cout << "DONE" << std::endl;
 
@@ -750,6 +786,64 @@ void printBinBoundaries(int* binBoundaries, int numBins) {
 	std::cout << "Total size: " << particleStructList.size() << std::endl;
 }
 
+/* Compares two lists of ParticleStruct */
+bool compareParticleStructLists(std::vector<ParticleStruct> l1, std::vector<ParticleStruct> l2) {
+
+	struct ParticleStructCompare : public std::unary_function<ParticleStruct, bool>
+	{
+		explicit ParticleStructCompare(const ParticleStruct &baseline) : baseline(baseline) {}
+
+		bool operator() (const ParticleStruct &arg)
+		{
+			return (baseline.current_position.x == arg.current_position.x &&
+					baseline.current_position.y == arg.current_position.y &&
+					baseline.current_position.z == arg.current_position.z &&
+					baseline.hash == arg.hash);
+		}
+		ParticleStruct baseline;
+	};
+	
+
+	std::cout << "Comparing struct lists..." << std::endl;
+	if (l1.size() != l2.size()) {
+		std::cerr << "\tERROR - List size different" << std::endl;
+		return false;
+	}
+
+	for (int i = 0; i < l1.size(); i++) {
+
+		ParticleStruct p1 = l1.at(i);
+		ParticleStruct p2 = l2.at(i);
+
+
+		if (std::find_if(l2.begin(), l2.end(), ParticleStructCompare(p1)) == l2.end()) {
+			
+			std::cerr << "\tERROR - Particle at position " << i << " of list 1 is not present in list 2" << std::endl;
+
+			std::cerr << "\t\tP1("
+				<< l1.at(i).current_position.x << ", "
+				<< l1.at(i).current_position.y << ", "
+				<< l1.at(i).current_position.z << ")" << std::endl;
+
+			return false;
+
+		}
+		else if (std::find_if(l1.begin(), l1.end(), ParticleStructCompare(p2)) == l1.end()) {
+			
+			std::cerr << "\tERROR - Particle at position " << i << " of list 2 is not present in list 1" << std::endl;
+			
+			std::cerr << "\t\tP2("
+				<< l2.at(i).current_position.x << ", "
+				<< l2.at(i).current_position.y << ", "
+				<< l2.at(i).current_position.z << ")" << std::endl;
+			return false;
+
+		}
+	}
+
+	return true;
+}
+
 int main(void)
 {
 
@@ -836,12 +930,13 @@ int main(void)
  
 	//Hash
 	cl_int* numBins = (cl_int*)malloc(sizeof(cl_int));
-	*numBins = ceil(g_xmax * 2 / g_h) * ceil(g_ymax * 2 / g_h) * ceil(g_zmax * 2 / g_h);
-	cl_int* numKeys = (cl_int*)malloc(sizeof(cl_int));
-	*numKeys = particleStructList.size();
+	*numBins = ceil(g_xmax * 2 / g_h) * ceil(g_ymax * 2 / g_h) * ceil(g_zmax * 2 / g_h);	
 
-	setupHashStructures(devices.at(chosenDeviceId), chosenDeviceId, context, queue, numKeys, numBins, errorCode);
-	buildHash(queue, numKeys, numBins, errorCode);
+	std::cout << "Setup:\n";
+	setupHashStructures(devices.at(chosenDeviceId), chosenDeviceId, context, queue, numBins, errorCode);
+
+	std::cout << "Execução 1:\n";
+	buildHash(context, queue, numBins, errorCode);
 	queue.finish();
 	getchar();
 
@@ -850,9 +945,6 @@ int main(void)
 
 	printBinBoundaries(h_binBoundaries, *numBins);
 	getchar();
-
-
-	
 
 	// ----------------------------------------------------------------
 

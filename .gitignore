@@ -38,3 +38,5 @@ CG_UFFS\.psess
 \.vscode/
 
 tcc\.code-workspace
+
+*.exe
